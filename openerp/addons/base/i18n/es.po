@@ -13057,7 +13057,7 @@ msgstr "Laos"
 #: field:res.partner,email:0
 #, python-format
 msgid "Email"
-msgstr "Email"
+msgstr "Correo Electronico"
 
 #. module: base
 #: model:res.partner.category,name:base.res_partner_category_12
