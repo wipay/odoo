@@ -1285,7 +1285,7 @@ class stock_picking(osv.osv):
                                 'name': new_picking_name,
                                 'move_lines' : [],
                                 'state':'draft',
-                            })
+                            },context=context)
                 if product_qty != 0:
                     defaults = {
                             'product_qty' : product_qty,
@@ -1299,7 +1299,7 @@ class stock_picking(osv.osv):
                     prodlot_id = prodlot_ids[move.id]
                     if prodlot_id:
                         defaults.update(prodlot_id=prodlot_id)
-                    move_obj.copy(cr, uid, move.id, defaults)
+                    move_obj.copy(cr, uid, move.id, defaults, context=context)
                 move_obj.write(cr, uid, [move.id],
                         {
                             'product_qty': move.product_qty - partial_qty[move.id],
@@ -2291,7 +2291,7 @@ class stock_move(osv.osv):
         # by default the reference currency is that of the move's company
         reference_currency_id = move.company_id.currency_id.id
 
-        default_uom = move.product_id.uom_id.id
+        default_uom = move.product_uom.id
         qty = product_uom_obj._compute_qty(cr, uid, move.product_uom.id, move.product_qty, default_uom)
 
         # if product is set to average price and a specific value was entered in the picking wizard,
