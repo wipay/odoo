@@ -104,9 +104,9 @@ class hr_attendance(osv.osv):
             conflict = None
             if prev_atts and prev_atts[0].action == att.action: # previous exists and is same action
                 conflict = self._altern_si_so_conflict_message(prev_atts[0], att)
-            if next_atts and next_atts[0].action == att.action: # next exists and is same action
+            elif next_atts and next_atts[0].action == att.action: # next exists and is same action
                 conflict = self._altern_si_so_conflict_message(att, next_atts[0])
-            if (not prev_atts) and (not next_atts) and att.action != 'sign_in': # first attendance must be sign_in
+            elif (not prev_atts) and (not next_atts) and att.action != 'sign_in': # first attendance must be sign_in
                 conflict = self._altern_si_so_conflict_message(att)
             if conflict:
                 raise osv.except_osv(_('Error!'), _('Error ! Sign in (resp. Sign out) must follow Sign out (resp. Sign in)') + '. ' + conflict)
