@@ -181,7 +181,7 @@ def init_logger():
             if tools.config['logrotate'] is not False:
                 #Modificado para generar el log cada 5 minutos y los mantenga durante 30 dias
                 #30 dias por 24 horas por 60 minutos divido para 5minutos = 8640
-                handler = logging.handlers.TimedRotatingFileHandler(logf,'M',5,8640)
+                handler = logging.handlers.TimedRotatingFileHandler(logf,'M',1,43200)
             elif os.name == 'posix':
                 handler = logging.handlers.WatchedFileHandler(logf)
             else:
