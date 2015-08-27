@@ -387,6 +387,9 @@ class sale_order(osv.osv):
         date_planned = (date_planned - timedelta(days=order.company_id.security_lead)).strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         return date_planned
 
+    def action_steps_picking(self, cr, uid, order, order_lines, picking_id=False, context=None):
+        return True
+    
     def _create_pickings_and_procurements(self, cr, uid, order, order_lines, picking_id=False, context=None):
         """Create the required procurements to supply sales order lines, also connecting
         the procurements to appropriate stock moves in order to bring the goods to the
@@ -434,6 +437,7 @@ class sale_order(osv.osv):
         wf_service = netsvc.LocalService("workflow")
         if picking_id:
             wf_service.trg_validate(uid, 'stock.picking', picking_id, 'button_confirm', cr)
+            self.action_steps_picking(cr, uid, order, order_lines, picking_id, context)
         for proc_id in proc_ids:
             wf_service.trg_validate(uid, 'procurement.order', proc_id, 'button_confirm', cr)
 
