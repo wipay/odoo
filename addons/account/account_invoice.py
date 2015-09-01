@@ -1510,9 +1510,11 @@ class account_invoice_line(osv.osv):
             taxes = res.taxes_id and res.taxes_id or (a and self.pool.get('account.account').browse(cr, uid, a, context=context).tax_ids or False)
         else:
             taxes = res.supplier_taxes_id and res.supplier_taxes_id or (a and self.pool.get('account.account').browse(cr, uid, a, context=context).tax_ids or False)
-        # Este codigo fue modificado por TRESCLOUD
+        # Este código fue modificado por TRESCLOUD
         ##################################################################################
-        tax_id = fpos_obj.map_tax(cr, uid, fpos, taxes, context=context)                 # 
+        ctx = context.copy()                                                             #
+        ctx.update({'product': product})                                                 #
+        tax_id = fpos_obj.map_tax(cr, uid, fpos, taxes, context=ctx)                     # 
         ##################################################################################
         if type in ('in_invoice', 'in_refund'):
             result.update( {'price_unit': price_unit or res.standard_price,'invoice_line_tax_id': tax_id} )
