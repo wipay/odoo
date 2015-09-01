@@ -1514,7 +1514,7 @@ class account_invoice_line(osv.osv):
         ##################################################################################
         ctx = context.copy()                                                             #
         ctx.update({'product': product})                                                 #
-        tax_id = fpos_obj.map_tax(cr, uid, fpos, taxes, context=context)                 # 
+        tax_id = fpos_obj.map_tax(cr, uid, fpos, taxes, context=ctx)                     # 
         ##################################################################################
         if type in ('in_invoice', 'in_refund'):
             result.update( {'price_unit': price_unit or res.standard_price,'invoice_line_tax_id': tax_id} )
