@@ -387,6 +387,17 @@ class sale_order(osv.osv):
         date_planned = (date_planned - timedelta(days=order.company_id.security_lead)).strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         return date_planned
 
+    def action_steps_picking(self, cr, uid, order, order_lines, picking_id=False, context=None):
+        '''
+        :param cr: Cursor estándar de base de datos PostgreSQL.
+        :param uid: ID del usuario actual.
+        :param order: Registro Activo de sale.order
+        :param order_lines: Lista de Registros Activos de sale.order.line
+        :param picking_id: Registro Activo de stock.picking, opcional.
+        :param context: Datos adicionales de contexto.
+        '''
+        return True
+    
     def _create_pickings_and_procurements(self, cr, uid, order, order_lines, picking_id=False, context=None):
         """Create the required procurements to supply sales order lines, also connecting
         the procurements to appropriate stock moves in order to bring the goods to the
@@ -434,6 +445,7 @@ class sale_order(osv.osv):
         wf_service = netsvc.LocalService("workflow")
         if picking_id:
             wf_service.trg_validate(uid, 'stock.picking', picking_id, 'button_confirm', cr)
+            self.action_steps_picking(cr, uid, order, order_lines, picking_id, context)
         for proc_id in proc_ids:
             wf_service.trg_validate(uid, 'procurement.order', proc_id, 'button_confirm', cr)
 
@@ -600,6 +612,14 @@ class sale_order_line(osv.osv):
         if not product:
             res['value'].update({'product_packaging': False})
             return res
+        
+         # set product uom in context to get virtual stock in current uom
+        if res.get('value', {}).get('product_uom'):
+            # use the uom changed by super call
+           context.update({'uom': res['value']['product_uom']})
+        elif uom:
+            # fallback on selected
+            context.update({'uom': uom})
 
         # set product uom in context to get virtual stock in current uom
         if res.get('value', {}).get('product_uom'):
