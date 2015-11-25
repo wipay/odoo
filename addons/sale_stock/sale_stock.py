@@ -243,6 +243,11 @@ class sale_order(osv.osv):
         :param str userdate: date string in in user time zone
         :return: UTC datetime string for server-side use
         """
+        #Este código fue modificado por TRESCLOUD
+        ####################################################################################
+        if len(userdate.split(' ')) == 2:                                                  #
+            return userdate                                                                # 
+        ####################################################################################
         # TODO: move to fields.datetime in server after 7.0
         user_date = datetime.strptime(userdate, DEFAULT_SERVER_DATE_FORMAT)
         if context and context.get('tz'):
