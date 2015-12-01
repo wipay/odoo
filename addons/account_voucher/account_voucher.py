@@ -1209,6 +1209,15 @@ class account_voucher(osv.osv):
         voucher = self.browse(cr, uid, voucher_id, context=context)
         return currency_obj.compute(cr, uid, voucher.currency_id.id, voucher.company_id.currency_id.id, amount, context=context)
 
+    def _get_voucher_line_partner(self, voucher, line, context=None):
+        """
+        Specifies the partner associated with the current line for the current voucher.
+        :param voucher:
+        :param line:
+        :return: The associated partner (this implementation defaults to using the voucher partner id.
+        """
+        return voucher.partner_id.id
+
     def voucher_move_line_create(self, cr, uid, voucher_id, line_total, move_id, company_currency, current_currency, context=None):
         '''
         Create one account move line, on the given account move, per voucher line where amount is not 0.0.
@@ -1263,7 +1272,7 @@ class account_voucher(osv.osv):
                 'name': line.name or '/',
                 'account_id': line.account_id.id,
                 'move_id': move_id,
-                'partner_id': voucher.partner_id.id,
+                'partner_id': self._get_voucher_line_partner(voucher, line, context),
                 'currency_id': line.move_line_id and (company_currency <> line.move_line_id.currency_id.id and line.move_line_id.currency_id.id) or False,
                 'analytic_account_id': line.account_analytic_id and line.account_analytic_id.id or False,
                 'quantity': 1,
@@ -1332,7 +1341,7 @@ class account_voucher(osv.osv):
                     'name': _('change')+': '+(line.name or '/'),
                     'account_id': line.account_id.id,
                     'move_id': move_id,
-                    'partner_id': line.voucher_id.partner_id.id,
+                    'partner_id': self._get_voucher_line_partner(voucher, line, context),
                     'currency_id': line.move_line_id.currency_id.id,
                     'amount_currency': -1 * foreign_currency_diff,
                     'quantity': 1,
