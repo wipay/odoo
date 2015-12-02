@@ -423,7 +423,10 @@ class sale_order(osv.osv):
         :return: True
         """
         move_obj = self.pool.get('stock.move')
-        picking_obj = self.pool.get('stock.picking')
+        #######################
+        ###Codigo modificado por TRESCLOUD
+        picking_obj = self.pool.get('stock.picking.out')
+        ########################
         procurement_obj = self.pool.get('procurement.order')
         proc_ids = []
 
