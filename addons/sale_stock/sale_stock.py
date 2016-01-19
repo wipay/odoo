@@ -403,6 +403,12 @@ class sale_order(osv.osv):
         '''
         return True
     
+    def steps_of_sale(self, cr, uid, order, order_lines, picking_id, context=None):
+        '''
+        NO IMPLEMENTADO
+        '''
+        return True
+    
     def _create_pickings_and_procurements(self, cr, uid, order, order_lines, picking_id=False, context=None):
         """Create the required procurements to supply sales order lines, also connecting
         the procurements to appropriate stock moves in order to bring the goods to the
@@ -455,7 +461,8 @@ class sale_order(osv.osv):
             wf_service.trg_validate(uid, 'stock.picking', picking_id, 'button_confirm', cr)
             self.action_steps_picking(cr, uid, order, order_lines, picking_id, context)
         for proc_id in proc_ids:
-            wf_service.trg_validate(uid, 'procurement.order', proc_id, 'button_confirm', cr)
+            if self.steps_of_sale(cr, uid, order, order_lines, picking_id, context):
+                wf_service.trg_validate(uid, 'procurement.order', proc_id, 'button_confirm', cr)
 
         val = {}
         if order.state == 'shipping_except':
