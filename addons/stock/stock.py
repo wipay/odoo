@@ -1232,7 +1232,20 @@ class stock_picking(osv.osv):
                 move_obj.unlink(cr, uid, ids2, ctx)
 
         return super(stock_picking, self).unlink(cr, uid, ids, context=context)
-
+    
+    #===================================================================
+    # Este codigo fue modificado por TRESCLOUD
+    #===================================================================
+    
+    def product_lot_hook(self, cr, uid, picking_id, context=None):
+        '''
+        This method is used for doing new things with product lots 
+        :param cr: Database Cursor
+        :param uid: User doing an action
+        :param picking_id: ID of stock picking
+        :param context: Context variables for use.
+        '''
+        return True
     # FIXME: needs refactoring, this code is partially duplicated in stock_move.do_partial()!
     def do_partial(self, cr, uid, ids, partial_datas, context=None):
         """ Makes partial picking and moves done.
@@ -1361,6 +1374,10 @@ class stock_picking(osv.osv):
                 delivered_pack_id = pick.id
 
             delivered_pack = self.browse(cr, uid, delivered_pack_id, context=context)
+            #===================================================================
+            # Este codigo fue modificado por TRESCLOUD
+            #===================================================================
+            self.product_lot_hook(cr, uid, delivered_pack_id, context=context)
             res[pick.id] = {'delivered_picking': delivered_pack.id or False}
 
         return res
