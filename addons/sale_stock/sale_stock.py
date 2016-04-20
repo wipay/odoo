@@ -667,7 +667,12 @@ class sale_order_line(osv.osv):
         res_packing = self.product_packaging_change(cr, uid, ids, pricelist, product, qty, uom, partner_id, packaging, context=context)
         res['value'].update(res_packing.get('value', {}))
         warning_msgs = res_packing.get('warning') and res_packing['warning']['message'] or ''
-        compare_qty = float_compare(product_obj.virtual_available, qty, precision_rounding=uom2.rounding)
+        #===================================================================
+        # Este codigo fue modificado por TRESCLOUD
+        #===================================================================
+        compare_qty = 0
+        if product_obj.type != 'service':
+            compare_qty = float_compare(product_obj.virtual_available, qty, precision_rounding=uom2.rounding)
         if (product_obj.type=='product') and int(compare_qty) == -1 \
            and (product_obj.procure_method=='make_to_stock'):
             warn_msg = _('You plan to sell %.2f %s but you only have %.2f %s available !\nThe real stock is %.2f %s. (without reservations)') % \
