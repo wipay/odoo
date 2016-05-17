@@ -1360,7 +1360,7 @@ class stock_picking(osv.osv):
             if new_picking:
                 wf_service.trg_validate(uid, 'stock.picking', new_picking, 'button_confirm', cr)
                 # Then we finish the good picking
-                self.write(cr, uid, [pick.id], {'backorder_id': new_picking})
+                self.write(cr, uid, [pick.id], {'backorder_id': new_picking}, context=context)
                 self.action_move(cr, uid, [new_picking], context=context)
                 wf_service.trg_validate(uid, 'stock.picking', new_picking, 'button_done', cr)
                 wf_service.trg_write(uid, 'stock.picking', pick.id, cr)
