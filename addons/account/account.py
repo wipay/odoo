@@ -2214,8 +2214,23 @@ class account_tax(osv.osv):
             elif tax.type=='fixed':
                 amount = tax.amount
 
-            elif tax.type=='code':
-                localdict = {'price_unit':cur_price_unit, 'product':product, 'partner':partner, 'document_date': context.get('document_date')}
+            elif tax.type=='code':                
+                #Determinamos el porcentaje total de impuesto a aplicar
+                percentage = 0.0                
+                tesdict = {                       
+                    'price_unit':1.0, 
+                    'product':False, 
+                    'partner':False, 
+                    'document_date': context.get('document_date')
+                }
+                eval(tax.python_compute_inv, tesdict, mode="exec", nocopy=True)
+                percentage = tesdict['result']
+                localdict = {
+                    'price_unit':cur_price_unit/(1+percentage), 
+                    'product':product, 
+                    'partner':partner, 
+                    'document_date': context.get('document_date')
+                }                
                 eval(tax.python_compute_inv, localdict, mode="exec", nocopy=True)
                 amount = localdict['result']
             elif tax.type=='balance':
