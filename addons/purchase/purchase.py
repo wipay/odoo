@@ -882,7 +882,7 @@ class purchase_order_line(osv.osv):
         if context is None:
             context = {}
         for line in self.browse(cr, uid, ids, context=context):
-            context.update({'document_date': line.order_id.date_order})
+            context.update({'document_date': line.order_id.date_order, 'force_vat': line.order_id.force_vat})
             taxes = tax_obj.compute_all(cr, uid, line.taxes_id, line.price_unit, line.product_qty, line.product_id, line.order_id.partner_id, context=context)
             cur = line.order_id.pricelist_id.currency_id
             res[line.id] = cur_obj.round(cr, uid, cur, taxes['total'])

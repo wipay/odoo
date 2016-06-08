@@ -2075,7 +2075,7 @@ class account_tax(osv.osv):
                 data['tax_amount']=quantity
                # data['amount'] = quantity
             elif tax.type=='code':
-                localdict = {'price_unit':cur_price_unit, 'product':product, 'partner':partner, 'document_date': context.get('document_date')}
+                localdict = {'price_unit':cur_price_unit, 'product':product, 'partner':partner, 'document_date': context.get('document_date'), 'force_vat': context.get('force_vat')}
                 eval(tax.python_compute, localdict, mode="exec", nocopy=True)
                 amount = localdict['result']
                 data['amount'] = amount
@@ -2221,7 +2221,8 @@ class account_tax(osv.osv):
                     'price_unit':1.0, 
                     'product':False, 
                     'partner':False, 
-                    'document_date': context.get('document_date')
+                    'document_date': context.get('document_date'),
+                    'force_vat': context.get('force_vat')
                 }
                 eval(tax.python_compute_inv, tesdict, mode="exec", nocopy=True)
                 percentage = tesdict['result']
@@ -2229,7 +2230,8 @@ class account_tax(osv.osv):
                     'price_unit':cur_price_unit/(1+percentage), 
                     'product':product, 
                     'partner':partner, 
-                    'document_date': context.get('document_date')
+                    'document_date': context.get('document_date'),
+                    'force_vat': context.get('force_vat')
                 }                
                 eval(tax.python_compute_inv, localdict, mode="exec", nocopy=True)
                 amount = localdict['result']
