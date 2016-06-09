@@ -140,6 +140,13 @@ class stock_invoice_onshipping(osv.osv_memory):
         context['inv_type'] = inv_type
         if isinstance(onshipdata_obj[0]['journal_id'], tuple):
             onshipdata_obj[0]['journal_id'] = onshipdata_obj[0]['journal_id'][0]
+        if active_picking.sale_id:
+            force_vat = active_picking.sale_id.force_vat
+        elif active_picking.purchase_id:
+            force_vat = active_picking.purchase_id.force_vat
+        else:
+            force_vat = 'automatic'
+        context.update({'force_vat': force_vat})
         res = picking_pool.action_invoice_create(cr, uid, active_ids,
               journal_id = onshipdata_obj[0]['journal_id'],
               group = onshipdata_obj[0]['group'],
