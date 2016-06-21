@@ -968,6 +968,7 @@ class account_invoice(osv.osv):
                     entry_type = 'cont_voucher'
 
             diff_currency_p = inv.currency_id.id <> company_currency
+            ctx.update({'currency_id': inv.currency_id.id})
             # create one move line for the total and possibly adjust the other lines amount
             total = 0
             total_currency = 0
