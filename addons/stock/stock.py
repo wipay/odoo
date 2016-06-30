@@ -1865,7 +1865,7 @@ class stock_move(osv.osv):
         return {'warning': warning}
 
     def onchange_quantity(self, cr, uid, ids, product_id, product_qty,
-                          product_uom, product_uos):
+                          product_uom, product_uos, context=None):
         """ On change of product quantity finds UoM and UoS quantities
         @param product_id: Product id
         @param product_qty: Changed Quantity of product
@@ -1873,15 +1873,21 @@ class stock_move(osv.osv):
         @param product_uos: Unit of sale of product
         @return: Dictionary of values
         """
+        if context is None:
+            context = {}
         result = {
                   'product_uos_qty': 0.00
           }
         warning = {}
-
-        if (not product_id) or (product_qty <=0.0):
-            result['product_qty'] = 0.0
-            return {'value': result}
-
+        if context.get('origin') == 'manual_adjustment':
+            if not product_id:
+                result['product_qty'] = 0.0
+                return {'value': result}
+        else:
+            if not product_id or product_qty <= 0.0:
+                result['product_qty'] = 0.0
+                return {'value': result}
+            
         product_obj = self.pool.get('product.product')
         uos_coeff = product_obj.read(cr, uid, product_id, ['uos_coeff'])
         
