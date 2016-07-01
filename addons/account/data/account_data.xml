@@ -7,7 +7,7 @@
             <field name="type">sale</field>
         </record>
 
-        <!--
+        <!-- 
         Payment term
         -->
         <record id="account_payment_term_immediate" model="account.payment.term">
