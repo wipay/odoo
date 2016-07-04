@@ -185,10 +185,14 @@ class stock_partial_picking(osv.osv_memory):
             line_uom = wizard_line.product_uom
             move_id = wizard_line.move_id.id
 
+            #Este código fue modificado por TRESCLOUD
+            ###################################################################################################
             #Quantiny must be Positive
-            if wizard_line.quantity < 0:
-                raise osv.except_osv(_('Warning!'), _('Please provide proper Quantity.'))
-
+            if not context.get('origin') == 'manual_adjustment':
+                if wizard_line.quantity < 0:
+                    raise osv.except_osv(_('Warning!'), _('Please provide proper Quantity.'))
+            ###################################################################################################
+            
             #Compute the quantity for respective wizard_line in the line uom (this jsut do the rounding if necessary)
             qty_in_line_uom = uom_obj._compute_qty(cr, uid, line_uom.id, wizard_line.quantity, line_uom.id)
 
