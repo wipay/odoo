@@ -1879,10 +1879,13 @@ class stock_move(osv.osv):
                   'product_uos_qty': 0.00
           }
         warning = {}
+        #Este código fue modificado por TRESCLOUD
+        ###################################################################################################
         if context.get('origin') == 'manual_adjustment':
             if not product_id:
                 result['product_qty'] = 0.0
                 return {'value': result}
+        ##################################################################################################
         else:
             if not product_id or product_qty <= 0.0:
                 result['product_qty'] = 0.0
