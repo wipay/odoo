@@ -71,13 +71,21 @@ class account_payment_term(osv.osv):
     _order = "name"
 
     def compute(self, cr, uid, id, value, date_ref=False, context=None):
+        context = context or {}
         if not date_ref:
             date_ref = datetime.now().strftime('%Y-%m-%d')
         pt = self.browse(cr, uid, id, context=context)
         amount = value
         result = []
         obj_precision = self.pool.get('decimal.precision')
-        prec = obj_precision.precision_get(cr, uid, 'Account')
+        curr_obj = self.pool.get('res.currency')
+        user_id = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+        curr_id = 0
+        if 'currency_id' in context or context.get('currency_id'):
+            curr_id = curr_obj.browse(cr, uid, context.get('currency_id'), context=context)
+        else:
+            curr_id = user_id.company_id.currency_id
+        prec = curr_id.accuracy
         for line in pt.line_ids:
             if line.value == 'fixed':
                 amt = round(line.value_amount, prec)
