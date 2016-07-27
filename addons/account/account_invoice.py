@@ -1402,7 +1402,10 @@ class account_invoice_line(osv.osv):
                 if line.invoice_id.type in ('out_invoice','in_invoice'):
                     context.update({'document_date': line.invoice_id.date_invoice, 'force_vat':line.invoice_id.force_vat})
                 else:
-                    context.update({'document_date': line.invoice_id.invoice_rectification_id.date_invoice, 'force_vat':line.invoice_id.invoice_rectification_id.force_vat})
+                    if line.invoice_id.invoice_rectification_id:
+                        context.update({'document_date': line.invoice_id.invoice_rectification_id.date_invoice, 'force_vat':line.invoice_id.invoice_rectification_id.force_vat})
+                    else:
+                        context.update({'document_date': line.invoice_id.date_invoice, 'force_vat':'line.invoice_id.force_vat'})
             price = line.price_unit * (1-(line.discount or 0.0)/100.0)
             taxes = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, price, line.quantity, product=line.product_id, partner=line.invoice_id.partner_id, context=context)
             res[line.id] = taxes['total']
