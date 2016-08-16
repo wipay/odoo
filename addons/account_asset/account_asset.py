@@ -95,12 +95,22 @@ class account_asset_asset(osv.osv):
         @param id: ids of a account.asset.asset objects
         @return: Returns a dictionary of the effective dates of the last depreciation entry made for given asset ids. If there isn't any, return the purchase date of this asset
         """
-        cr.execute("""
-            SELECT a.id as id, COALESCE(MAX(l.date),a.purchase_date) AS date
-            FROM account_asset_asset a
-            LEFT JOIN account_move_line l ON (l.asset_id = a.id)
-            WHERE a.id IN %s
-            GROUP BY a.id, a.purchase_date """, (tuple(ids),))
+        if context is None:
+            context = {}
+        if context.get('posted'):
+            cr.execute("""
+                SELECT a.id as id, CAST(CAST(COALESCE(MAX(l.date),a.purchase_date) AS DATE) + CAST('1 month' AS INTERVAL) AS DATE) AS date
+                FROM account_asset_asset a
+                LEFT JOIN account_move_line l ON (l.asset_id = a.id)
+                WHERE a.id IN %s
+                GROUP BY a.id, a.purchase_date """, (tuple(ids),))
+        else:
+            cr.execute("""
+                SELECT a.id as id, COALESCE(MAX(l.date),a.purchase_date) AS date
+                FROM account_asset_asset a
+                LEFT JOIN account_move_line l ON (l.asset_id = a.id)
+                WHERE a.id IN %s
+                GROUP BY a.id, a.purchase_date """, (tuple(ids),))
         return dict(cr.fetchall())
 
     def _compute_board_amount(self, cr, uid, asset, i, residual_amount, amount_to_depr, undone_dotation_number, posted_depreciation_line_ids, total_days, depreciation_date, context=None):
@@ -141,6 +151,8 @@ class account_asset_asset(osv.osv):
         return undone_dotation_number
 
     def compute_depreciation_board(self, cr, uid, ids, context=None):
+        if context is None:
+            context = {}
         depreciation_lin_obj = self.pool.get('account.asset.depreciation.line')
         currency_obj = self.pool.get('res.currency')
         for asset in self.browse(cr, uid, ids, context=context):
@@ -150,9 +162,10 @@ class account_asset_asset(osv.osv):
             old_depreciation_line_ids = depreciation_lin_obj.search(cr, uid, [('asset_id', '=', asset.id), ('move_id', '=', False)])
             if old_depreciation_line_ids:
                 depreciation_lin_obj.unlink(cr, uid, old_depreciation_line_ids, context=context)
-
             amount_to_depr = residual_amount = asset.value_residual
             if asset.prorata:
+                if posted_depreciation_line_ids:
+                   context.update({'posted': True}) 
                 depreciation_date = datetime.strptime(self._get_last_depreciation_date(cr, uid, [asset.id], context)[asset.id], '%Y-%m-%d')
             else:
                 # depreciation_date = 1st January of purchase year
