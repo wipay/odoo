@@ -83,8 +83,11 @@ class sale_order(osv.osv):
         if context is None:
             context = {}
         val = 0.0
+        cur_obj = self.pool.get('res.currency')
+        cur = line.order_id.pricelist_id.currency_id
         for c in self.pool.get('account.tax').compute_all(cr, uid, line.tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line.product_uom_qty, line.product_id, line.order_id.partner_id, context=context)['taxes']:
-            val += c.get('amount', 0.0)
+            if c.get('type_ec', False) != 'solidarity_compensation':
+                val += c.get('amount', 0.0)
         return val
 
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
@@ -101,13 +104,23 @@ class sale_order(osv.osv):
             }
             val = val1 = 0.0
             cur = order.pricelist_id.currency_id
+            #TODO: Falta agregar el escenario para calculo de impuestos sobre el subtotal!
+            #funciona para escenario de calculo de impuestos por linea
             for line in order.order_line:
                 val1 += line.price_subtotal
                 val += self._amount_line_tax(cr, uid, line, context=context)
-            res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
+            res[order.id]['amount_tax'] = self._compute_amount_tax2(cr, uid, order, val, cur, context=context)
             res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
             res[order.id]['amount_total'] = res[order.id]['amount_untaxed'] + res[order.id]['amount_tax']
         return res
+    
+    def _compute_amount_tax2(self, cr, uid, order, val, cur, context=None):
+        '''
+        Funcion complementaria que permite calcular el amount_tax en casos esepciales
+        y permitir su uso y calculo en otras partes 
+        '''
+        cur_obj = self.pool.get('res.currency')
+        return cur_obj.round(cr, uid, cur, val)
 
 
     def _invoiced_rate(self, cursor, user, ids, name, arg, context=None):
