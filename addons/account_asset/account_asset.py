@@ -27,6 +27,8 @@ from openerp.osv import fields, osv
 import openerp.addons.decimal_precision as dp
 from tools.translate import _
 
+import calendar
+
 class account_asset_category(osv.osv):
     _name = 'account.asset.category'
     _description = 'Asset category'
@@ -123,7 +125,9 @@ class account_asset_asset(osv.osv):
                 amount = amount_to_depr / (undone_dotation_number - len(posted_depreciation_line_ids))
                 if asset.prorata:
                     amount = amount_to_depr / asset.method_number
-                    days = total_days - float(depreciation_date.strftime('%j'))
+                    #days = total_days - float(depreciation_date.strftime('%j'))
+                    total_days = calendar.monthrange(depreciation_date.year,depreciation_date.month)[1]
+                    days = total_days - depreciation_date.day
                     if i == 1:
                         amount = (amount_to_depr / asset.method_number) / total_days * days
                     elif i == undone_dotation_number:
