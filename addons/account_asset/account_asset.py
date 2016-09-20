@@ -179,7 +179,9 @@ class account_asset_asset(osv.osv):
                     last_depreciation_date = datetime.strptime(depreciation_lin_obj.browse(cr,uid,posted_depreciation_line_ids[0],context=context).depreciation_date, '%Y-%m-%d')
                     depreciation_date = (last_depreciation_date+relativedelta(months=+asset.method_period))
                 else:
-                    depreciation_date = datetime(purchase_date.year, 1, 1)
+                    purchase_date_next_month = purchase_date + relativedelta(months=1)
+                    depreciation_date = datetime(purchase_date_next_month.year, purchase_date_next_month.month, 1)
+                    #depreciation_date = datetime(purchase_date.year, 1, 1)
             day = depreciation_date.day
             month = depreciation_date.month
             year = depreciation_date.year
@@ -227,7 +229,7 @@ class account_asset_asset(osv.osv):
 
     def _amount_residual(self, cr, uid, ids, name, args, context=None):
         cr.execute("""SELECT
-                l.asset_id as id, SUM(abs(l.debit-l.credit)) AS amount
+                l.asset_id as id, SUM(l.debit-l.credit) AS amount
             FROM
                 account_move_line l
             WHERE
