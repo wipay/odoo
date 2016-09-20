@@ -127,7 +127,7 @@ class account_asset_asset(osv.osv):
                     amount = amount_to_depr / asset.method_number
                     #days = total_days - float(depreciation_date.strftime('%j'))
                     total_days = calendar.monthrange(depreciation_date.year,depreciation_date.month)[1]
-                    days = total_days - depreciation_date.day
+                    days = total_days - depreciation_date.day + 1
                     if i == 1:
                         amount = (amount_to_depr / asset.method_number) / total_days * days
                     elif i == undone_dotation_number:
@@ -184,11 +184,16 @@ class account_asset_asset(osv.osv):
             month = depreciation_date.month
             year = depreciation_date.year
             total_days = (year % 4) and 365 or 366
-
             undone_dotation_number = self._compute_board_undone_dotation_nb(cr, uid, asset, depreciation_date, total_days, context=context)
             for x in range(len(posted_depreciation_line_ids), undone_dotation_number):
                 i = x + 1
                 amount = self._compute_board_amount(cr, uid, asset, i, residual_amount, amount_to_depr, undone_dotation_number, posted_depreciation_line_ids, total_days, depreciation_date, context=context)
+                # Se verifica que cada depreciación sea diferente de cero
+                # en caso de que sea cero implica que no debe incluirse esta depreciacion
+                # para esto se redondea el valor a 8 decimales, con esto se verifca valores muy cercanos
+                # a cero sin afectar valores hasta con 8 decimales, se puede ampliar mas
+                if round(amount, 8) == 0.0:
+                    break
                 residual_amount -= amount
                 vals = {
                      'amount': amount,
