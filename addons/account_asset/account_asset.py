@@ -123,7 +123,7 @@ class account_asset_asset(osv.osv):
         else:
             if asset.method == 'linear':
                 amount = amount_to_depr / (undone_dotation_number - len(posted_depreciation_line_ids))
-                if asset.prorata:
+                if asset.prorata and len(posted_depreciation_line_ids) == 0:
                     amount = amount_to_depr / asset.method_number
                     #days = total_days - float(depreciation_date.strftime('%j'))
                     total_days = calendar.monthrange(depreciation_date.year,depreciation_date.month)[1]
@@ -134,7 +134,7 @@ class account_asset_asset(osv.osv):
                         amount = (amount_to_depr / asset.method_number) / total_days * (total_days - days)
             elif asset.method == 'degressive':
                 amount = residual_amount * asset.method_progress_factor
-                if asset.prorata:
+                if asset.prorata and len(posted_depreciation_line_ids) == 0:
                     days = total_days - float(depreciation_date.strftime('%j'))
                     if i == 1:
                         amount = (residual_amount * asset.method_progress_factor) / total_days * days
@@ -142,7 +142,7 @@ class account_asset_asset(osv.osv):
                         amount = (residual_amount * asset.method_progress_factor) / total_days * (total_days - days)
         return amount
 
-    def _compute_board_undone_dotation_nb(self, cr, uid, asset, depreciation_date, total_days, context=None):
+    def _compute_board_undone_dotation_nb(self, cr, uid, asset, depreciation_date, total_days, posted_depreciation_line_ids, context=None):
         undone_dotation_number = asset.method_number
         if asset.method_time == 'end':
             end_date = datetime.strptime(asset.method_end, '%Y-%m-%d')
@@ -150,7 +150,7 @@ class account_asset_asset(osv.osv):
             while depreciation_date <= end_date:
                 depreciation_date = (datetime(depreciation_date.year, depreciation_date.month, depreciation_date.day) + relativedelta(months=+asset.method_period))
                 undone_dotation_number += 1
-        if asset.prorata:
+        if asset.prorata and len(posted_depreciation_line_ids) == 0:
             undone_dotation_number += 1
         return undone_dotation_number
 
@@ -186,7 +186,7 @@ class account_asset_asset(osv.osv):
             month = depreciation_date.month
             year = depreciation_date.year
             total_days = (year % 4) and 365 or 366
-            undone_dotation_number = self._compute_board_undone_dotation_nb(cr, uid, asset, depreciation_date, total_days, context=context)
+            undone_dotation_number = self._compute_board_undone_dotation_nb(cr, uid, asset, depreciation_date, total_days, posted_depreciation_line_ids, context=context)
             for x in range(len(posted_depreciation_line_ids), undone_dotation_number):
                 i = x + 1
                 amount = self._compute_board_amount(cr, uid, asset, i, residual_amount, amount_to_depr, undone_dotation_number, posted_depreciation_line_ids, total_days, depreciation_date, context=context)
