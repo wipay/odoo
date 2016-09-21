@@ -190,7 +190,7 @@ class account_asset_asset(osv.osv):
             for x in range(len(posted_depreciation_line_ids), undone_dotation_number):
                 i = x + 1
                 amount = self._compute_board_amount(cr, uid, asset, i, residual_amount, amount_to_depr, undone_dotation_number, posted_depreciation_line_ids, total_days, depreciation_date, context=context)
-                # Se verifica que cada depreciación sea diferente de cero
+                # TODO: Se verifica que cada depreciación sea diferente de cero
                 # en caso de que sea cero implica que no debe incluirse esta depreciacion
                 # para esto se redondea el valor a 8 decimales, con esto se verifca valores muy cercanos
                 # a cero sin afectar valores hasta con 8 decimales, se puede ampliar mas
