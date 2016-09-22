@@ -180,7 +180,7 @@ class account_asset_asset(osv.osv):
                     depreciation_date = (last_depreciation_date+relativedelta(months=+asset.method_period))
                 else:
                     purchase_date_next_month = purchase_date + relativedelta(months=1)
-                    depreciation_date = datetime(purchase_date_next_month.year, purchase_date_next_month.month, 1)
+                    depreciation_date = datetime(purchase_date_next_month.year, purchase_date_next_month.month, calendar.monthrange(purchase_date_next_month.year, purchase_date_next_month.month)[1])
                     #depreciation_date = datetime(purchase_date.year, 1, 1)
             day = depreciation_date.day
             month = depreciation_date.month
@@ -209,7 +209,7 @@ class account_asset_asset(osv.osv):
                 depreciation_lin_obj.create(cr, uid, vals, context=context)
                 # Considering Depr. Period as months
                 depreciation_date = (datetime(year, month, day) + relativedelta(months=+asset.method_period))
-                day = depreciation_date.day
+                day = depreciation_date.day if asset.prorata else calendar.monthrange(depreciation_date.year, depreciation_date.month)[1]
                 month = depreciation_date.month
                 year = depreciation_date.year
         return True
