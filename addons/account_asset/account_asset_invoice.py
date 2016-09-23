@@ -20,6 +20,9 @@
 ##############################################################################
 
 from openerp.osv import fields, osv
+# TRESCLOUD: Se comenta completamente la clase account_inovice por que
+# el trabajo de creacion se lo hace a travez de un wizard y no requiere 
+# estas funcionalidades
 
 #class account_invoice(osv.osv):
 
