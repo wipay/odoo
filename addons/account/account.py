@@ -90,7 +90,7 @@ class account_payment_term(osv.osv):
         prec = curr_id.accuracy
         for line in pt.line_ids:
             if line.value == 'fixed':
-                #amt = round(line.value_amount, prstock_warehouse_idec)
+                #amt = round(line.value_amount, prec)
                 amt = currency_obj.round(cr, uid, curr_id, line.value_amount)
             elif line.value == 'procent':
                 #amt = round(value * line.value_amount, prec)
