@@ -70,8 +70,10 @@ class account_payment_term(osv.osv):
     }
     _order = "name"
 
+    #Este metodo fue modificado por Trescloud, para usar el redondeo de moneda, se estaban generando descuadres
     def compute(self, cr, uid, id, value, date_ref=False, context=None):
         context = context or {}
+        currency_obj = self.pool.get('res.currency')
         if not date_ref:
             date_ref = datetime.now().strftime('%Y-%m-%d')
         pt = self.browse(cr, uid, id, context=context)
@@ -88,11 +90,14 @@ class account_payment_term(osv.osv):
         prec = curr_id.accuracy
         for line in pt.line_ids:
             if line.value == 'fixed':
-                amt = round(line.value_amount, prec)
+                #amt = round(line.value_amount, prstock_warehouse_idec)
+                amt = currency_obj.round(cr, uid, curr_id, line.value_amount)
             elif line.value == 'procent':
-                amt = round(value * line.value_amount, prec)
+                #amt = round(value * line.value_amount, prec)
+                amt = currency_obj.round(cr, uid, curr_id, value * line.value_amount)
             elif line.value == 'balance':
-                amt = round(amount, prec)
+                #amt = round(amount, prec)
+                amt = currency_obj.round(cr, uid, curr_id, amount)
             if amt:
                 next_date = (datetime.strptime(date_ref, '%Y-%m-%d') + relativedelta(days=line.days))
                 if line.days2 < 0:
@@ -102,9 +107,9 @@ class account_payment_term(osv.osv):
                     next_date += relativedelta(day=line.days2, months=1)
                 result.append( (next_date.strftime('%Y-%m-%d'), amt) )
                 amount -= amt
-
         amount = reduce(lambda x,y: x+y[1], result, 0.0)
-        dist = round(value-amount, prec)
+        #dist = round(value-amount, prec)
+        dist = currency_obj.round(cr, uid, curr_id, value-amount)
         if dist:
             result.append( (time.strftime('%Y-%m-%d'), dist) )
         return result
