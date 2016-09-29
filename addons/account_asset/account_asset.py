@@ -208,7 +208,7 @@ class account_asset_asset(osv.osv):
                      'sequence': i,
                      'name': str(asset.id) +'/' + str(i),
                      'remaining_value': residual_amount,
-                     'depreciated_value': (asset.purchase_value - asset.salvage_value) - (residual_amount + amount),
+                     'depreciated_value': (asset.purchase_value - asset.salvage_value) - (residual_amount + amount_round),
                      'depreciation_date': depreciation_date.strftime('%Y-%m-%d'),
                 }
                 depreciation_lin_obj.create(cr, uid, vals, context=context)
