@@ -118,6 +118,7 @@ class account_asset_asset(osv.osv):
     def _compute_board_amount(self, cr, uid, asset, i, residual_amount, amount_to_depr, undone_dotation_number, posted_depreciation_line_ids, total_days, depreciation_date, context=None):
         #by default amount = 0
         amount = 0
+        purchase_date = datetime.strptime(asset.purchase_date, '%Y-%m-%d')
         if i == undone_dotation_number:
             amount = residual_amount
         else:
@@ -125,29 +126,32 @@ class account_asset_asset(osv.osv):
                 amount = amount_to_depr / (undone_dotation_number - len(posted_depreciation_line_ids))
                 # TRESCLOUD: Se verifica si existen lineas ya depreciadas por que el calculo difiere
                 # Si hay lineas debe depreciarse la diferencia como si no fuera prorrateado
-                if asset.prorata and len(posted_depreciation_line_ids) == 0:
-                    amount = amount_to_depr / asset.method_number
-                    # TRESCLOUD: Se deprecia al final del mes, ademas se inicia al siguiente dia
-                    #days = total_days - float(depreciation_date.strftime('%j'))
+                if asset.prorata:
+                    # TRESCLOUD: Se deprecia al final del mes, ademas se inicia la depreciacio al siguiente dia
+                    # de la fecha indicada.
+                    # Para recalculo de depreciacion prorrateada cuando ya existen asientos se cumplen estas condiciones:
+                    # 1) Se realizan n depreciaciones + 1
+                    # 2) Se calcula el valor resatnte dividiendo para el nuemero de cuotas enteras + la fraccion de mes que falta 
                     total_days = calendar.monthrange(depreciation_date.year,depreciation_date.month)[1]
                     days = total_days - depreciation_date.day + 1
-                    if i == 1:
-                        amount = (amount_to_depr / asset.method_number) / total_days * days
-                    elif i == undone_dotation_number:
-                        amount = (amount_to_depr / asset.method_number) / total_days * (total_days - days)
+                    if len(posted_depreciation_line_ids) == 0:
+                        amount = amount_to_depr / asset.method_number
+                        if i == 1:
+                            amount = (amount_to_depr / asset.method_number) / total_days * days
+                    else:
+                        last_depreciation_date = (purchase_date + relativedelta(months=+undone_dotation_number))
+                        total_days = calendar.monthrange(last_depreciation_date.year, last_depreciation_date.month)[1]
+                        amount = amount_to_depr / ((asset.method_number - len(posted_depreciation_line_ids)) + (float(depreciation_date.day) / float(total_days)))
             elif asset.method == 'degressive':
                 amount = residual_amount * asset.method_progress_factor
-                # TRESCLOUD: Se verifica si existen lineas ya depreciadas por que el calculo difiere
-                # Si hay lineas debe depreciarse la diferencia como si no fuera prorrateado
-                if asset.prorata and len(posted_depreciation_line_ids) == 0:
+                if asset.prorata:
                     days = total_days - float(depreciation_date.strftime('%j'))
                     if i == 1:
                         amount = (residual_amount * asset.method_progress_factor) / total_days * days
                     elif i == undone_dotation_number:
                         amount = (residual_amount * asset.method_progress_factor) / total_days * (total_days - days)
         return amount
-    # TRESCLOUD: Modificado parametros de la funcion para verificar si ya existen lineas depreciadas
-    def _compute_board_undone_dotation_nb(self, cr, uid, asset, depreciation_date, total_days, posted_depreciation_line_ids, context=None):
+    def _compute_board_undone_dotation_nb(self, cr, uid, asset, depreciation_date, total_days, context=None):
         undone_dotation_number = asset.method_number
         if asset.method_time == 'end':
             end_date = datetime.strptime(asset.method_end, '%Y-%m-%d')
@@ -155,9 +159,7 @@ class account_asset_asset(osv.osv):
             while depreciation_date <= end_date:
                 depreciation_date = (datetime(depreciation_date.year, depreciation_date.month, depreciation_date.day) + relativedelta(months=+asset.method_period))
                 undone_dotation_number += 1
-        # TRESCLOUD: Se verifica si existen lineas ya depreciadas, en ese caso no se requiere
-        # agregar un periodo mas
-        if asset.prorata and len(posted_depreciation_line_ids) == 0:
+        if asset.prorata:
             undone_dotation_number += 1
         return undone_dotation_number
 
@@ -193,18 +195,15 @@ class account_asset_asset(osv.osv):
             year = depreciation_date.year
             total_days = (year % 4) and 365 or 366
             # TRESCLOUD: se requiere verificar si ya existen lineas depreciadas y se envia como parametro
-            undone_dotation_number = self._compute_board_undone_dotation_nb(cr, uid, asset, depreciation_date, total_days, posted_depreciation_line_ids, context=context)
+            undone_dotation_number = self._compute_board_undone_dotation_nb(cr, uid, asset, depreciation_date, total_days, context=context)
             for x in range(len(posted_depreciation_line_ids), undone_dotation_number):
                 i = x + 1
                 amount = self._compute_board_amount(cr, uid, asset, i, residual_amount, amount_to_depr, undone_dotation_number, posted_depreciation_line_ids, total_days, depreciation_date, context=context)
-                # TRESCLOUD: En base a currency se determina si el valor residual 
-                # es cero usando funciones propias de OpenERP, requerido en recalculo de 
-                # depreciaciones prorrateadas con depreciaciones ya ejecutadas
-                if currency_obj.is_zero(cr, uid, asset.currency_id, amount):
-                    break
-                residual_amount -= amount
+                # TRESCLOUD: Problemas con redondeo fallaba por 3 o 4 centavos en la cuota final
+                amount_round = round(amount, self.pool.get('decimal.precision').precision_get(cr, uid, 'Account'))
+                residual_amount -= amount_round
                 vals = {
-                     'amount': amount,
+                     'amount': amount_round,
                      'asset_id': asset.id,
                      'sequence': i,
                      'name': str(asset.id) +'/' + str(i),
