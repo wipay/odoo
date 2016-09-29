@@ -126,7 +126,7 @@ class account_asset_asset(osv.osv):
                 amount = amount_to_depr / (undone_dotation_number - len(posted_depreciation_line_ids))
                 # TRESCLOUD: Se verifica si existen lineas ya depreciadas por que el calculo difiere
                 # Si hay lineas debe depreciarse la diferencia como si no fuera prorrateado
-                if asset.prorata:
+                if asset.prorata and depreciation_date.day != 1:
                     # TRESCLOUD: Se deprecia al final del mes, ademas se inicia la depreciacio al siguiente dia
                     # de la fecha indicada.
                     # Para recalculo de depreciacion prorrateada cuando ya existen asientos se cumplen estas condiciones:
@@ -159,7 +159,7 @@ class account_asset_asset(osv.osv):
             while depreciation_date <= end_date:
                 depreciation_date = (datetime(depreciation_date.year, depreciation_date.month, depreciation_date.day) + relativedelta(months=+asset.method_period))
                 undone_dotation_number += 1
-        if asset.prorata:
+        if asset.prorata and depreciation_date.day != 1:
             undone_dotation_number += 1
         return undone_dotation_number
 
@@ -208,7 +208,7 @@ class account_asset_asset(osv.osv):
                      'sequence': i,
                      'name': str(asset.id) +'/' + str(i),
                      'remaining_value': residual_amount,
-                     'depreciated_value': (asset.purchase_value - asset.salvage_value) - (residual_amount + amount),
+                     'depreciated_value': (asset.purchase_value - asset.salvage_value) - (residual_amount + amount_round),
                      'depreciation_date': depreciation_date.strftime('%Y-%m-%d'),
                 }
                 depreciation_lin_obj.create(cr, uid, vals, context=context)
