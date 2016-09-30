@@ -139,8 +139,10 @@ class account_asset_asset(osv.osv):
                         if i == 1:
                             amount = (amount_to_depr / asset.method_number) / total_days * days
                     else:
-                        last_depreciation_date = (purchase_date + relativedelta(months=+undone_dotation_number))
-                        total_days = calendar.monthrange(last_depreciation_date.year, last_depreciation_date.month)[1]
+                        # TRESCLOUD: la porcion de dias debe calcularse a 31 por casos de prorrateo com el siguiente:
+                        # depreciacion en 29, 30, 31 pero ultima depreciacion en febrero (28 dias)
+                        #last_depreciation_date = (purchase_date + relativedelta(months=+undone_dotation_number))
+                        total_days = 31#calendar.monthrange(last_depreciation_date.year, last_depreciation_date.month)[1]
                         amount = amount_to_depr / ((asset.method_number - len(posted_depreciation_line_ids)) + (float(depreciation_date.day) / float(total_days)))
             elif asset.method == 'degressive':
                 amount = residual_amount * asset.method_progress_factor
@@ -194,6 +196,8 @@ class account_asset_asset(osv.osv):
             month = depreciation_date.month
             year = depreciation_date.year
             total_days = (year % 4) and 365 or 366
+            # TRESCLOUD: Se lee la depreciacion acumulada por que en recalculos la tabla requiere retomar desde este valor
+            accumulated_depreciation = asset.accumulated_depreciation
             # TRESCLOUD: se requiere verificar si ya existen lineas depreciadas y se envia como parametro
             undone_dotation_number = self._compute_board_undone_dotation_nb(cr, uid, asset, depreciation_date, total_days, context=context)
             for x in range(len(posted_depreciation_line_ids), undone_dotation_number):
@@ -208,7 +212,9 @@ class account_asset_asset(osv.osv):
                      'sequence': i,
                      'name': str(asset.id) +'/' + str(i),
                      'remaining_value': residual_amount,
-                     'depreciated_value': (asset.purchase_value - asset.salvage_value) - (residual_amount + amount_round),
+                     # TRESCLOUD: Para recalculos realizados la tabla debe reconstruirse desde el valor anterior depreciado
+                     # Sea por las lineas o por las opciones avanzadas aplciadas.
+                     'depreciated_value': accumulated_depreciation + (asset.value_residual or asset.purchase_value - asset.salvage_value) - (residual_amount + amount_round),
                      'depreciation_date': depreciation_date.strftime('%Y-%m-%d'),
                 }
                 depreciation_lin_obj.create(cr, uid, vals, context=context)
