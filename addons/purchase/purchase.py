@@ -755,6 +755,13 @@ class purchase_order(osv.osv):
     def copy(self, cr, uid, id, default=None, context=None):
         if not default:
             default = {}
+        # ESTE CODIGO FUE MODIFICADO POR TRESCLOUD
+        name = False
+        if not 'name' in default:
+            name = self.pool.get('ir.sequence').get(cr, uid, 'purchase.order'),    
+        else:
+            name = default.get('name')
+        #########################################
         default.update({
             'state':'draft',
             'shipped':False,
@@ -762,7 +769,7 @@ class purchase_order(osv.osv):
             'invoice_ids': [],
             'picking_ids': [],
             'partner_ref': '',
-            'name': self.pool.get('ir.sequence').get(cr, uid, 'purchase.order'),
+            'name': name,
         })
         return super(purchase_order, self).copy(cr, uid, id, default, context)
 
