@@ -26,7 +26,7 @@ from dateutil.relativedelta import relativedelta
 from openerp.osv import fields, osv
 import openerp.addons.decimal_precision as dp
 from tools.translate import _
-# TRESCLOD, requerido para mobtener el ultimo dia del mes
+# TRESCLOUD, requerido para obtener el ultimo dia del mes
 import calendar
 
 class account_asset_category(osv.osv):
@@ -98,7 +98,7 @@ class account_asset_asset(osv.osv):
         @return: Returns a dictionary of the effective dates of the last depreciation entry made for given asset ids. If there isn't any, return the purchase date of this asset
         """
         # TRESCLOUD: El siguiente código fue modificado por que en la tabla de depreciaciones cuando se 
-        # ejecutaba un depreciacion se generaba para el mismo perido una copia en borrador
+        # ejecutaba un depreciacion se generaba para el mismo periodo una copia en borrador
         if context is None:
             context = {}
         if context.get('posted'):
@@ -128,8 +128,8 @@ class account_asset_asset(osv.osv):
                 # TRESCLOUD: Se verifica la fecha de depreciacion para el caso particular de que
                 # se requiera prorratear pero a inicio de mes, este caso es como no hacer prorrateo
                 if asset.prorata and depreciation_date.day != 1:
-                    # TRESCLOUD: Se deprecia al final del mes como regla general, y al ser prorrateado se inicia la depreciacion 
-                    # al siguiente dia de la fecha indicada en el campo purchase_date
+                    # TRESCLOUD: Al ser prorrateado se inicia la depreciacion 
+                    # al dia de la fecha indicada en el campo purchase_date
                     # Para recalculo de depreciacion prorrateada cuando ya existen asientos se cumplen estas condiciones:
                     # 1) Se realizan las n depreciaciones indicadas + 1
                     # 2) Se calcula el valor restante dividiendo para el numero de cuotas enteras + la fraccion de mes que falta 
@@ -248,7 +248,7 @@ class account_asset_asset(osv.osv):
     def _amount_residual(self, cr, uid, ids, name, args, context=None):
         # TRESCLOUD: Para que el nuevo wizard que permite aumentar o disminuir el valor depreciado
         # afecte correctamente el campo amount residual es necesario que la sumatoria considere
-        # todos los asientos con su signo
+        # todos los asientos con su signo, antes usaba el valor absoluto eliminando el signo.
         cr.execute("""SELECT
                 l.asset_id as id, SUM(l.debit-l.credit) AS amount
             FROM
