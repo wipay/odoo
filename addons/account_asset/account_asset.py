@@ -97,6 +97,8 @@ class account_asset_asset(osv.osv):
         @param id: ids of a account.asset.asset objects
         @return: Returns a dictionary of the effective dates of the last depreciation entry made for given asset ids. If there isn't any, return the purchase date of this asset
         """
+        # TRESCLOUD: El siguiente código fue modificado por que en la tabla de depreciaciones cuando se 
+        # ejecutaba un depreciacion se generaba para el mismo perido una copia en borrador
         if context is None:
             context = {}
         if context.get('posted'):
@@ -118,20 +120,19 @@ class account_asset_asset(osv.osv):
     def _compute_board_amount(self, cr, uid, asset, i, residual_amount, amount_to_depr, undone_dotation_number, posted_depreciation_line_ids, total_days, depreciation_date, context=None):
         #by default amount = 0
         amount = 0
-        purchase_date = datetime.strptime(asset.purchase_date, '%Y-%m-%d')
         if i == undone_dotation_number:
             amount = residual_amount
         else:
             if asset.method == 'linear':
                 amount = amount_to_depr / (undone_dotation_number - len(posted_depreciation_line_ids))
-                # TRESCLOUD: Se verifica si existen lineas ya depreciadas por que el calculo difiere
-                # Si hay lineas debe depreciarse la diferencia como si no fuera prorrateado
+                # TRESCLOUD: Se verifica la fecha de depreciacion para el caso particular de que
+                # se requiera prorratear pero a inicio de mes, este caso es como no hacer prorrateo
                 if asset.prorata and depreciation_date.day != 1:
-                    # TRESCLOUD: Se deprecia al final del mes, ademas se inicia la depreciacio al siguiente dia
-                    # de la fecha indicada.
+                    # TRESCLOUD: Se deprecia al final del mes como regla general, y al ser prorrateado se inicia la depreciacion 
+                    # al siguiente dia de la fecha indicada en el campo purchase_date
                     # Para recalculo de depreciacion prorrateada cuando ya existen asientos se cumplen estas condiciones:
-                    # 1) Se realizan n depreciaciones + 1
-                    # 2) Se calcula el valor resatnte dividiendo para el nuemero de cuotas enteras + la fraccion de mes que falta 
+                    # 1) Se realizan las n depreciaciones indicadas + 1
+                    # 2) Se calcula el valor restante dividiendo para el numero de cuotas enteras + la fraccion de mes que falta 
                     total_days = calendar.monthrange(depreciation_date.year,depreciation_date.month)[1]
                     days = total_days - depreciation_date.day + 1
                     if len(posted_depreciation_line_ids) == 0:
@@ -141,8 +142,7 @@ class account_asset_asset(osv.osv):
                     else:
                         # TRESCLOUD: la porcion de dias debe calcularse a 31 por casos de prorrateo com el siguiente:
                         # depreciacion en 29, 30, 31 pero ultima depreciacion en febrero (28 dias)
-                        #last_depreciation_date = (purchase_date + relativedelta(months=+undone_dotation_number))
-                        total_days = 31#calendar.monthrange(last_depreciation_date.year, last_depreciation_date.month)[1]
+                        total_days = 31
                         amount = amount_to_depr / ((asset.method_number - len(posted_depreciation_line_ids)) + (float(depreciation_date.day) / float(total_days)))
             elif asset.method == 'degressive':
                 amount = residual_amount * asset.method_progress_factor
@@ -153,6 +153,7 @@ class account_asset_asset(osv.osv):
                     elif i == undone_dotation_number:
                         amount = (residual_amount * asset.method_progress_factor) / total_days * (total_days - days)
         return amount
+
     def _compute_board_undone_dotation_nb(self, cr, uid, asset, depreciation_date, total_days, context=None):
         undone_dotation_number = asset.method_number
         if asset.method_time == 'end':
@@ -161,13 +162,16 @@ class account_asset_asset(osv.osv):
             while depreciation_date <= end_date:
                 depreciation_date = (datetime(depreciation_date.year, depreciation_date.month, depreciation_date.day) + relativedelta(months=+asset.method_period))
                 undone_dotation_number += 1
+        # TRESCLOUD: Verifico si la depreciacion prorrateada inicia en el
+        # dia uno del mes, de ser el caso se le trata como una depreciacion
+        # sin prorrateo
         if asset.prorata and depreciation_date.day != 1:
             undone_dotation_number += 1
         return undone_dotation_number
 
     def compute_depreciation_board(self, cr, uid, ids, context=None):
-        if context is None:
-            context = {}
+        # TRESCLOUD: Se controla el context
+        context = context or {}
         depreciation_lin_obj = self.pool.get('account.asset.depreciation.line')
         currency_obj = self.pool.get('res.currency')
         for asset in self.browse(cr, uid, ids, context=context):
@@ -179,6 +183,8 @@ class account_asset_asset(osv.osv):
                 depreciation_lin_obj.unlink(cr, uid, old_depreciation_line_ids, context=context)
             amount_to_depr = residual_amount = asset.value_residual
             if asset.prorata:
+                # TRESCLOUD: El siguiente código fue modificado por que en la tabla de depreciaciones cuando se 
+                # ejecutaba un depreciacion se generaba para el mismo perido una copia en borrador
                 if posted_depreciation_line_ids:
                    context.update({'posted': True}) 
                 depreciation_date = datetime.strptime(self._get_last_depreciation_date(cr, uid, [asset.id], context)[asset.id], '%Y-%m-%d')
@@ -198,7 +204,6 @@ class account_asset_asset(osv.osv):
             total_days = (year % 4) and 365 or 366
             # TRESCLOUD: Se lee la depreciacion acumulada por que en recalculos la tabla requiere retomar desde este valor
             accumulated_depreciation = asset.accumulated_depreciation
-            # TRESCLOUD: se requiere verificar si ya existen lineas depreciadas y se envia como parametro
             undone_dotation_number = self._compute_board_undone_dotation_nb(cr, uid, asset, depreciation_date, total_days, context=context)
             for x in range(len(posted_depreciation_line_ids), undone_dotation_number):
                 i = x + 1
@@ -207,21 +212,21 @@ class account_asset_asset(osv.osv):
                 amount_round = round(amount, self.pool.get('decimal.precision').precision_get(cr, uid, 'Account'))
                 residual_amount -= amount_round
                 vals = {
+                     # TRESCLOUD: Se trabaja con valores redondeados
                      'amount': amount_round,
                      'asset_id': asset.id,
                      'sequence': i,
                      'name': str(asset.id) +'/' + str(i),
                      'remaining_value': residual_amount,
                      # TRESCLOUD: Para recalculos realizados la tabla debe reconstruirse desde el valor anterior depreciado
-                     # Sea por las lineas o por las opciones avanzadas aplciadas.
+                     # o el valor de compra, sea que exista uno u otro. Sea por las linea de depreciacion existente
+                     # o por las opciones avanzadas aplicadas.
                      'depreciated_value': accumulated_depreciation + (asset.value_residual or asset.purchase_value - asset.salvage_value) - (residual_amount + amount_round),
                      'depreciation_date': depreciation_date.strftime('%Y-%m-%d'),
                 }
                 depreciation_lin_obj.create(cr, uid, vals, context=context)
                 # Considering Depr. Period as months
                 depreciation_date = (datetime(year, month, day) + relativedelta(months=+asset.method_period))
-                # TRESCLOUD: El dia depende si es prorrateado o no, en caso no prorrateado se usa
-                # el ultimo dia del mes
                 day = depreciation_date.day
                 month = depreciation_date.month
                 year = depreciation_date.year
@@ -534,3 +539,4 @@ class account_asset_history(osv.osv):
 account_asset_history()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+
