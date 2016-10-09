@@ -576,6 +576,7 @@ class account_invoice(osv.osv):
 
     def onchange_payment_term_date_invoice(self, cr, uid, ids, payment_term_id, date_invoice):
         res = {}
+        context = {}
         if isinstance(ids, (int, long)):
             ids = [ids]
         if not date_invoice:
@@ -584,7 +585,10 @@ class account_invoice(osv.osv):
             inv = self.browse(cr, uid, ids[0])
             #To make sure the invoice due date should contain due date which is entered by user when there is no payment term defined
             return {'value':{'date_due': inv.date_due and inv.date_due or date_invoice}}
-        pterm_list = self.pool.get('account.payment.term').compute(cr, uid, payment_term_id, value=1, date_ref=date_invoice)
+        #Código modificado por TRESCLOUD para pasar por contexto el id de la factura activa y hacer el cálculo
+        #de los plazos de pago correctamente
+        context.update({'active_id': ids[0]})
+        pterm_list = self.pool.get('account.payment.term').compute(cr, uid, payment_term_id, value=1, date_ref=date_invoice, context=context)
         if pterm_list:
             pterm_list = [line[0] for line in pterm_list]
             pterm_list.sort()
@@ -915,6 +919,8 @@ class account_invoice(osv.osv):
         move_obj = self.pool.get('account.move')
         if context is None:
             context = {}
+        if isinstance(ids, (int, long)):
+            ids = [ids]
         for inv in self.browse(cr, uid, ids, context=context):
             if not inv.journal_id.sequence_id:
                 raise osv.except_osv(_('Error!'), _('Please define sequence on the journal related to this invoice.'))
@@ -978,6 +984,9 @@ class account_invoice(osv.osv):
             name = inv['name'] or inv['supplier_invoice_number'] or '/'
             totlines = False
             if inv.payment_term:
+                #Código modificado por TRESCLOUD para pasar por contexto el id de la factura activa y hacer el cálculo
+                #de los plazos de pago correctamente
+                ctx.update({'active_id': ids[0]})
                 totlines = payment_term_obj.compute(cr,
                         uid, inv.payment_term.id, total, inv.date_invoice or False, context=ctx)
             if totlines:
