@@ -165,8 +165,20 @@ class account_asset_asset(osv.osv):
         # TRESCLOUD: Verifico si la depreciacion prorrateada inicia en el
         # dia uno del mes, de ser el caso se le trata como una depreciacion
         # sin prorrateo
+        #
+        # Estas lineas verifica si en la lista de campos existe el denominado asset_type
+        # Esto por que el campo esta en el modulo asset y por ahora se tendra dividido la funcionalidad
+        # para manejar bienes de control
+        asset_type = False
+        if 'asset_type' in self.pool.get('account.asset')._columns:
+            asset_type = asset.asset_type
+        #
+        #
         if asset.prorata and depreciation_date.day != 1:
-            undone_dotation_number += 1
+            if asset_type and asset_type == 'good_control':
+                undone_dotation_number = 0 
+            else:
+                undone_dotation_number += 1
         return undone_dotation_number
 
     def compute_depreciation_board(self, cr, uid, ids, context=None):
