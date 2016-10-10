@@ -576,6 +576,7 @@ class account_invoice(osv.osv):
 
     def onchange_payment_term_date_invoice(self, cr, uid, ids, payment_term_id, date_invoice):
         res = {}
+        #Variable agregada por TRESCLOUD
         context = {}
         if isinstance(ids, (int, long)):
             ids = [ids]
@@ -919,6 +920,7 @@ class account_invoice(osv.osv):
         move_obj = self.pool.get('account.move')
         if context is None:
             context = {}
+        #Validación agregada por TRESCLOUD
         if isinstance(ids, (int, long)):
             ids = [ids]
         for inv in self.browse(cr, uid, ids, context=context):
