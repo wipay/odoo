@@ -170,7 +170,7 @@ class account_asset_asset(osv.osv):
         # Esto por que el campo esta en el modulo asset y por ahora se tendra dividido la funcionalidad
         # para manejar bienes de control
         asset_type = False
-        if 'asset_type' in self.pool.get('account.asset')._columns:
+        if 'asset_type' in self._columns:
             asset_type = asset.asset_type
         #
         #
