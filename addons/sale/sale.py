@@ -97,6 +97,12 @@ class sale_order(osv.osv):
         res = {}
         for order in self.browse(cr, uid, ids, context=context):
             context.update({'document_date': order.date_order.split(' ')[0],'force_vat': order.force_vat})
+            #Código modificado por TRESCLOUD para evitar error en caso que el módulo law_of_solidarity no este instalado
+            solidarity_compensation = 0.0
+            try:
+                solidarity_compensation = order.solidarity_compensation
+            except:
+                pass
             res[order.id] = {
                 'amount_untaxed': 0.0,
                 'amount_tax': 0.0,
@@ -111,7 +117,8 @@ class sale_order(osv.osv):
                 val += self._amount_line_tax(cr, uid, line, context=context)
             res[order.id]['amount_tax'] = self._compute_amount_tax2(cr, uid, order, val, cur, context=context)
             res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
-            res[order.id]['amount_total'] = res[order.id]['amount_untaxed'] + res[order.id]['amount_tax']
+            #Código modificado por TRESCLOUD para restar la compensación(naturaleza negativa)
+            res[order.id]['amount_total'] = res[order.id]['amount_untaxed'] + res[order.id]['amount_tax'] + solidarity_compensation
         return res
     
     def _compute_amount_tax2(self, cr, uid, order, val, cur, context=None):
