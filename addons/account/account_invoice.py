@@ -588,7 +588,7 @@ class account_invoice(osv.osv):
             return {'value':{'date_due': inv.date_due and inv.date_due or date_invoice}}
         #Código modificado por TRESCLOUD para pasar por contexto el id de la factura activa y hacer el cálculo
         #de los plazos de pago correctamente
-        context.update({'active_id': ids[0]})
+        context.update({'active_id': ids[0] if ids else []})
         pterm_list = self.pool.get('account.payment.term').compute(cr, uid, payment_term_id, value=1, date_ref=date_invoice, context=context)
         if pterm_list:
             pterm_list = [line[0] for line in pterm_list]
