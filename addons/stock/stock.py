@@ -1976,7 +1976,8 @@ class stock_move(osv.osv):
             result['location_id'] = loc_id
         if loc_dest_id:
             result['location_dest_id'] = loc_dest_id
-        return {'value': result}
+        #El siguiente código fue modificado por TRESCLOUD
+        return {'value': result, 'domain': {'product_uom':[('category_id','=',product.uom_id.category_id.id)]}}
 
     def onchange_move_type(self, cr, uid, ids, type, context=None):
         """ On change of move type gives sorce and destination location.
