@@ -667,7 +667,8 @@ class account_account(osv.osv):
         #Checking whether the account is set as a property to any Partner or not
         value = 'account.account,' + str(ids[0])
         partner_prop_acc = self.pool.get('ir.property').search(cr, uid, [('value_reference','=',value)], context=context)
-        if partner_prop_acc:
+        #El siguiente código fue modificado por TRESCLOUD
+        if partner_prop_acc and not context.get('origin') == 'object_merge':
             raise osv.except_osv(_('Warning!'), _('You cannot remove/deactivate an account which is set on a customer or supplier.'))
         return True
 
