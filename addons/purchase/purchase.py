@@ -758,7 +758,7 @@ class purchase_order(osv.osv):
         # ESTE CODIGO FUE MODIFICADO POR TRESCLOUD
         name = False
         if not 'name' in default:
-            name = self.pool.get('ir.sequence').get(cr, uid, 'purchase.order'),    
+            name = self.pool.get('ir.sequence').get(cr, uid, 'purchase.order')
         else:
             name = default.get('name')
         #########################################
