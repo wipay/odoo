@@ -1802,11 +1802,19 @@ class stock_move(osv.osv):
         'company_id': lambda self,cr,uid,c: self.pool.get('res.company')._company_default_get(cr, uid, 'stock.move', context=c),
         'date_expected': lambda *a: time.strftime('%Y-%m-%d %H:%M:%S'),
     }
+    
+    #Este método fue agregado por TRESCLOUD
+    def user_return_product_consume(self, cr, uid, context=None):
+        if context is None:
+            context = {}
+        vals = [1] # Usuario administrador
+        return vals
 
     def write(self, cr, uid, ids, vals, context=None):
         if isinstance(ids, (int, long)):
             ids = [ids]
-        if uid != 1:
+        #La siguiente línea fue modificada por TRESCLOUD
+        if uid not in self.user_return_product_consume(cr, uid, context=context):
             frozen_fields = set(['product_qty', 'product_uom', 'product_uos_qty', 'product_uos', 'location_id', 'location_dest_id', 'product_id'])
             for move in self.browse(cr, uid, ids, context=context):
                 if move.state == 'done':
