@@ -397,7 +397,7 @@ class account_asset_depreciation_line(osv.osv):
         'parent_state': fields.related('asset_id', 'state', type='char', string='State of Asset'),
         'amount': fields.float('Current Depreciation', digits_compute=dp.get_precision('Account'), required=True),
         'remaining_value': fields.float('Next Period Depreciation', digits_compute=dp.get_precision('Account'),required=True),
-        'depreciated_value': fields.float('Amount Already Depreciated', required=True),
+        'depreciated_value': fields.float('Amount Already Depreciated', digits_compute=dp.get_precision('Account'), required=True),
         'depreciation_date': fields.date('Depreciation Date', select=1),
         'move_id': fields.many2one('account.move', 'Depreciation Entry'),
         'move_check': fields.function(_get_move_check, method=True, type='boolean', string='Posted', store=True)
@@ -421,7 +421,7 @@ class account_asset_depreciation_line(osv.osv):
             company_currency = line.asset_id.company_id.currency_id.id
             current_currency = line.asset_id.currency_id.id
             context.update({'date': depreciation_date})
-            amount = currency_obj.compute(cr, uid, current_currency, company_currency, line.amount, context=context)
+            amount = currency_obj.compute(cr, uid, current_currency, company_currency, line.amount, round=False, context=context)
             sign = (line.asset_id.category_id.journal_id.type == 'purchase' and 1) or -1
             asset_name = "/"
             reference = line.asset_id.name
