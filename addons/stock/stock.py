@@ -909,8 +909,13 @@ class stock_picking(osv.osv):
         "Done" pressed on a Picking view). 
         @return: True
         """
+        #=======================================================================
+        # CODIGO MODIFICADO POR TRESCLOUD
+        #=======================================================================
+        context = context or {}
         for pick in self.browse(cr, uid, ids, context=context):
             todo = []
+            context.update(partner_id=pick.partner_id.id)
             for move in pick.move_lines:
                 if move.state == 'draft':
                     self.pool.get('stock.move').action_confirm(cr, uid, [move.id],
@@ -2308,6 +2313,12 @@ class stock_move(osv.osv):
         :raise: osv.except_osv() is any mandatory account or journal is not defined.
         """
         product_obj=self.pool.get('product.product')
+        #=======================================================================
+        # CODIGO MODIFICADO POR TRESCLOUD
+        #=======================================================================
+        partner_obj=self.pool.get('res.partner')
+        fpos_obj = self.pool.get('account.fiscal.position')
+        fpos = False
         accounts = product_obj.get_product_accounts(cr, uid, move.product_id.id, context)
         if move.location_id.valuation_out_account_id:
             acc_src = move.location_id.valuation_out_account_id.id
@@ -2318,8 +2329,18 @@ class stock_move(osv.osv):
             acc_dest = move.location_dest_id.valuation_in_account_id.id
         else:
             acc_dest = accounts['stock_account_output']
-
-        acc_valuation = accounts.get('property_stock_valuation_account_id', False)
+        
+        if context and 'partner_id' in context:
+            partn_id = context.get('partner_id')
+            if partn_id:
+                partner_id = partner_obj.browse(cr, uid, partn_id, context=context)
+                fposition_id = partner_id.property_account_position.id
+                fpos = fposition_id and fpos_obj.browse(cr, uid, fposition_id, context=context) or False
+                acc_src = fpos_obj.map_account(cr, uid, fpos, acc_src)
+                acc_dest = fpos_obj.map_account(cr, uid, fpos, acc_dest)
+        
+        acc_valuation = fpos_obj.map_account(cr, uid, fpos, accounts.get('property_stock_valuation_account_id', False))
+        #=======================================================================
         journal_id = accounts['stock_journal']
 
         if acc_dest == acc_valuation:
