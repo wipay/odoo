@@ -2352,8 +2352,12 @@ class stock_move(osv.osv):
 
         # by default the reference currency is that of the move's company
         reference_currency_id = move.company_id.currency_id.id
-
-        default_uom = move.product_uom.id
+        # TRESCLOUD: en compras el costeo falla por que trata de convertir a la unidad base del producto
+        # lo cual no debe realizarse, en ventas si es necesario y por eso se usa la unidad de medida
+        # predeterminada del producto.
+        default_uom = move.product_id.uom_id.id
+        if move.picking_id and move.picking_id.purchase_id and move.picking_id.purchase_id.id:
+            default_uom = move.product_uom.id
         qty = product_uom_obj._compute_qty(cr, uid, move.product_uom.id, move.product_qty, default_uom)
 
         # if product is set to average price and a specific value was entered in the picking wizard,
