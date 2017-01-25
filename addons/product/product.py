@@ -803,7 +803,7 @@ class product_product(osv.osv):
             qty_default_uos = qty_default_uom * product.uos_coeff
             return uom_obj._compute_qty_obj(cr, uid, product.uos_id, qty_default_uos, uos)
         else:
-            return uom_obj._compute_qty_obj(cr, uid, uom, qty, uos)
+            return uom_obj._compute_qty_obj(cr, uid, uom, qty, uos, context=context)
 
 
 product_product()
