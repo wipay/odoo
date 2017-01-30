@@ -973,17 +973,18 @@ account_fiscalyear()
 class account_period(osv.osv):
     _name = "account.period"
     _description = "Account period"
+    _inherit = "mail.thread"
     _columns = {
-        'name': fields.char('Period Name', size=64, required=True),
-        'code': fields.char('Code', size=12),
-        'special': fields.boolean('Opening/Closing Period', size=12,
+        'name': fields.char('Period Name', size=64, required=True, track_visibility='onchange'),
+        'code': fields.char('Code', size=12, track_visibility='onchange'),
+        'special': fields.boolean('Opening/Closing Period', size=12, track_visibility='onchange',
             help="These periods can overlap."),
-        'date_start': fields.date('Start of Period', required=True, states={'done':[('readonly',True)]}),
-        'date_stop': fields.date('End of Period', required=True, states={'done':[('readonly',True)]}),
-        'fiscalyear_id': fields.many2one('account.fiscalyear', 'Fiscal Year', required=True, states={'done':[('readonly',True)]}, select=True),
-        'state': fields.selection([('draft','Open'), ('done','Closed')], 'Status', readonly=True,
+        'date_start': fields.date('Start of Period', required=True, states={'done':[('readonly',True)]}, track_visibility='onchange'),
+        'date_stop': fields.date('End of Period', required=True, states={'done':[('readonly',True)]}, track_visibility='onchange'),
+        'fiscalyear_id': fields.many2one('account.fiscalyear', 'Fiscal Year', required=True, states={'done':[('readonly',True)]}, select=True, track_visibility='onchange'),
+        'state': fields.selection([('draft','Open'), ('done','Closed')], 'Status', readonly=True, track_visibility='onchange',
                                   help='When monthly periods are created. The status is \'Draft\'. At the end of monthly period it is in \'Done\' status.'),
-        'company_id': fields.related('fiscalyear_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True)
+        'company_id': fields.related('fiscalyear_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True, track_visibility='onchange')
     }
     _defaults = {
         'state': 'draft',
