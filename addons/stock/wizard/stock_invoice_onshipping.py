@@ -122,6 +122,14 @@ class stock_invoice_onshipping(osv.osv_memory):
             raise osv.except_osv(_('Error!'), _('Please create Invoices.'))
         if inv_type == "out_invoice":
             action_model,action_id = data_pool.get_object_reference(cr, uid, 'account', "action_invoice_tree1")
+            #Este código fue modificado por TRESCLOUD
+            ###################################################################################################
+            if context.get('origin') == 'manual_adjustment':
+                try:
+                    action_model,action_id = data_pool.get_object_reference(cr, uid, 'invoiced_stock', "action_adjust_manual_accounting_stock")
+                except:
+                    pass
+            ####################################################################################################
         elif inv_type == "in_invoice":
             action_model,action_id = data_pool.get_object_reference(cr, uid, 'account', "action_invoice_tree2")
             #Este código fue modificado por TRESCLOUD
