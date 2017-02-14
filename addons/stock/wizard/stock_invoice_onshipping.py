@@ -65,12 +65,15 @@ class stock_invoice_onshipping(osv.osv_memory):
             value = journal_obj.search(cr, uid, domain)
             #El siguiente codigo fue agregado por TRESCLOUD
             try:
+                user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
                 if journal_type == 'sale_refund':
-                    user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
                     journal_id = user.company_id.customer_credit_note_journal_id.id
                     if user.printer_id.journal_credit_notes_id:
                         journal_id = user.printer_id.journal_credit_notes_id.id
                     value = [journal_id]
+                if context.get('origin') == 'manual_adjustment':
+                    if user.company_id.adjust_journal_accounting_stock_id:
+                        value = [user.company_id.adjust_journal_accounting_stock_id.id]
             except:
                 pass #Ignoramos cualquier error y mantenemos el funcionamiento nativo         
             for jr_type in journal_obj.browse(cr, uid, value, context=context):
