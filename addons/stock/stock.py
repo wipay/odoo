@@ -1102,7 +1102,10 @@ class stock_picking(osv.osv):
             fiscal_position = fp_obj.browse(cr, uid, invoice_vals['fiscal_position'], context=context)
             account_id = fp_obj.map_account(cr, uid, fiscal_position, account_id)
         # set UoS if it's a sale and the picking doesn't have one
-        uos_id = move_line.product_uos and move_line.product_uos.id or False
+        #El siguiente código fue modificado por TRESCLOUD
+        ###########################################################################################################################
+        uos_id = move_line.product_uos and move_line.product_uos.id or move_line.product_uom and move_line.product_uom.id or False
+        ###########################################################################################################################
         if not uos_id and invoice_vals['type'] in ('out_invoice', 'out_refund'):
             uos_id = move_line.product_uom.id
 
