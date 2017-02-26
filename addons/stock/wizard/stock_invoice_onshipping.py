@@ -66,13 +66,15 @@ class stock_invoice_onshipping(osv.osv_memory):
             #El siguiente codigo fue agregado por TRESCLOUD
             try:
                 user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+                obj, move_reason_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'ecua_stock', 'move_reason_in_14')
                 if journal_type == 'sale_refund':
                     journal_id = user.company_id.customer_credit_note_journal_id.id
                     if user.printer_id.journal_credit_notes_id:
                         journal_id = user.printer_id.journal_credit_notes_id.id
                     value = [journal_id]
-                if context.get('origin') == 'manual_adjustment':
-                    if user.company_id.adjust_journal_accounting_stock_id:
+                if context.get('active_id'):
+                    picking = self.pool.get(context.get('active_model')).browse(cr, uid, context.get('active_id'), context=context)
+                    if picking.move_reason_id.id == move_reason_id:
                         value = [user.company_id.adjust_journal_accounting_stock_id.id]
             except:
                 pass #Ignoramos cualquier error y mantenemos el funcionamiento nativo         
