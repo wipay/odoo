@@ -1102,7 +1102,10 @@ class stock_picking(osv.osv):
             fiscal_position = fp_obj.browse(cr, uid, invoice_vals['fiscal_position'], context=context)
             account_id = fp_obj.map_account(cr, uid, fiscal_position, account_id)
         # set UoS if it's a sale and the picking doesn't have one
-        uos_id = move_line.product_uos and move_line.product_uos.id or False
+        #El siguiente código fue modificado por TRESCLOUD
+        ###########################################################################################################################
+        uos_id = move_line.product_uos and move_line.product_uos.id or move_line.product_uom and move_line.product_uom.id or False
+        ###########################################################################################################################
         if not uos_id and invoice_vals['type'] in ('out_invoice', 'out_refund'):
             uos_id = move_line.product_uom.id
 
@@ -1634,8 +1637,8 @@ class stock_move(osv.osv):
         'create_date': fields.datetime('Creation Date', readonly=True, select=True),
         'date': fields.datetime('Date', required=True, select=True, help="Move date: scheduled date until move is done, then date of actual move processing", states={'done': [('readonly', True)]}),
         'date_expected': fields.datetime('Scheduled Date', states={'done': [('readonly', True)]},required=True, select=True, help="Scheduled date for the processing of this move"),
-        'product_id': fields.many2one('product.product', 'Product', required=True, select=True, domain=[('type','<>','service')],states={'done': [('readonly', True)]}),
-
+        'product_id': fields.many2one('product.product', 'Product', required=True, select=True, domain=[('type','<>','service')],
+                                      states={'done': [('readonly', True)]}, ondelete='restrict'),
         'product_qty': fields.float('Quantity', digits_compute=dp.get_precision('Product Unit of Measure'),
             required=True,states={'done': [('readonly', True)]},
             help="This is the quantity of products from an inventory "
@@ -1646,24 +1649,31 @@ class stock_move(osv.osv):
                 "backorder. Changing this quantity on assigned moves affects "
                 "the product reservation, and should be done with care."
         ),
-        'product_uom': fields.many2one('product.uom', 'Unit of Measure', required=True,states={'done': [('readonly', True)]}),
+        'product_uom': fields.many2one('product.uom', 'Unit of Measure', required=True,states={'done': [('readonly', True)]},
+                                       ondelete='restrict'),
         'product_uos_qty': fields.float('Quantity (UOS)', digits_compute=dp.get_precision('Product UoS'), states={'done': [('readonly', True)]}),
-        'product_uos': fields.many2one('product.uom', 'Product UOS', states={'done': [('readonly', True)]}),
-        'product_packaging': fields.many2one('product.packaging', 'Packaging', help="It specifies attributes of packaging like type, quantity of packaging,etc."),
-
-        'location_id': fields.many2one('stock.location', 'Source Location', required=True, select=True,states={'done': [('readonly', True)]}, help="Sets a location if you produce at a fixed location. This can be a partner location if you subcontract the manufacturing operations."),
-        'location_dest_id': fields.many2one('stock.location', 'Destination Location', required=True,states={'done': [('readonly', True)]}, select=True, help="Location where the system will stock the finished products."),
-        'partner_id': fields.many2one('res.partner', 'Destination Address ', states={'done': [('readonly', True)]}, help="Optional address where goods are to be delivered, specifically used for allotment"),
-
-        'prodlot_id': fields.many2one('stock.production.lot', 'Serial Number', help="Serial number is used to put a serial number on the production", select=True, ondelete='restrict'),
-        'tracking_id': fields.many2one('stock.tracking', 'Pack', select=True, states={'done': [('readonly', True)]}, help="Logistical shipping unit: pallet, box, pack ..."),
-
+        'product_uos': fields.many2one('product.uom', 'Product UOS', states={'done': [('readonly', True)]}, ondelete='restrict'),
+        'product_packaging': fields.many2one('product.packaging', 'Packaging', ondelete='restrict', 
+                                             help="It specifies attributes of packaging like type, quantity of packaging,etc."),
+        'location_id': fields.many2one('stock.location', 'Source Location', required=True, ondelete='restrict', 
+                                       select=True,states={'done': [('readonly', True)]}, help="Sets a location if you produce at a fixed location. This can be a partner location if you subcontract the manufacturing operations."),
+        'location_dest_id': fields.many2one('stock.location', 'Destination Location', ondelete='restrict', 
+                                            required=True,states={'done': [('readonly', True)]}, select=True, help="Location where the system will stock the finished products."),
+        'partner_id': fields.many2one('res.partner', 'Destination Address ', ondelete='restrict', 
+                                      states={'done': [('readonly', True)]}, help="Optional address where goods are to be delivered, specifically used for allotment"),
+        'prodlot_id': fields.many2one('stock.production.lot', 'Serial Number',  
+                                      help="Serial number is used to put a serial number on the production", 
+                                      select=True, ondelete='restrict'),
+        'tracking_id': fields.many2one('stock.tracking', 'Pack', select=True, ondelete='restrict',
+                                        states={'done': [('readonly', True)]}, help="Logistical shipping unit: pallet, box, pack ..."),
         'auto_validate': fields.boolean('Auto Validate'),
-
-        'move_dest_id': fields.many2one('stock.move', 'Destination Move', help="Optional: next stock move when chaining them", select=True),
-        'move_history_ids': fields.many2many('stock.move', 'stock_move_history_ids', 'parent_id', 'child_id', 'Move History (child moves)'),
-        'move_history_ids2': fields.many2many('stock.move', 'stock_move_history_ids', 'child_id', 'parent_id', 'Move History (parent moves)'),
-        'picking_id': fields.many2one('stock.picking', 'Reference', select=True,states={'done': [('readonly', True)]}),
+        'move_dest_id': fields.many2one('stock.move', 'Destination Move', ondelete='restrict', 
+                                        help="Optional: next stock move when chaining them", select=True),
+        'move_history_ids': fields.many2many('stock.move', 'stock_move_history_ids', 'parent_id', 'child_id', 'Move History (child moves)',
+                                             ondelete='restrict',),
+        'move_history_ids2': fields.many2many('stock.move', 'stock_move_history_ids', 'child_id', 'parent_id', 'Move History (parent moves)',
+                                              ondelete='restrict'),
+        'picking_id': fields.many2one('stock.picking', 'Reference', select=True,states={'done': [('readonly', True)]},ondelete='restrict'),
         'note': fields.text('Notes'),
         'state': fields.selection([('draft', 'New'),
                                    ('cancel', 'Cancelled'),
@@ -1677,12 +1687,14 @@ class stock_move(osv.osv):
                        "* Waiting Availability: This state is reached when the procurement resolution is not straight forward. It may need the scheduler to run, a component to me manufactured...\n"\
                        "* Available: When products are reserved, it is set to \'Available\'.\n"\
                        "* Done: When the shipment is processed, the state is \'Done\'."),
-        'price_unit': fields.float('Unit Price', digits_compute= dp.get_precision('Product Price'), help="Technical field used to record the product cost set by the user during a picking confirmation (when average price costing method is used)"),
-        'price_currency_id': fields.many2one('res.currency', 'Currency for average price', help="Technical field used to record the currency chosen by the user during a picking confirmation (when average price costing method is used)"),
-        'company_id': fields.many2one('res.company', 'Company', required=True, select=True),
-        'backorder_id': fields.related('picking_id','backorder_id',type='many2one', relation="stock.picking", string="Back Order of", select=True),
+        'price_unit': fields.float('Unit Price', digits_compute= dp.get_precision('Product Price'), ondelete='restrict', 
+                                   help="Technical field used to record the product cost set by the user during a picking confirmation (when average price costing method is used)"),
+        'price_currency_id': fields.many2one('res.currency', 'Currency for average price', ondelete='restrict',
+                                             help="Technical field used to record the currency chosen by the user during a picking confirmation (when average price costing method is used)"),
+        'company_id': fields.many2one('res.company', 'Company', required=True, ondelete='restrict', select=True),
+        'backorder_id': fields.related('picking_id','backorder_id',type='many2one', relation="stock.picking", 
+                                       string="Back Order of", ondelete='restrict', select=True),
         'origin': fields.related('picking_id','origin',type='char', size=64, relation="stock.picking", string="Source", store=True),
-
         # used for colors in tree views:
         'scrapped': fields.related('location_dest_id','scrap_location',type='boolean',relation='stock.location',string='Scrapped', readonly=True),
         'type': fields.related('picking_id', 'type', type='selection', selection=[('out', 'Sending Goods'), ('in', 'Getting Goods'), ('internal', 'Internal')], string='Shipping Type'),
@@ -2373,7 +2385,6 @@ class stock_move(osv.osv):
 
         # by default the reference currency is that of the move's company
         reference_currency_id = move.company_id.currency_id.id
-
         # TRESCLOUD: en compras el costeo falla por que trata de convertir a la unidad base del producto
         # lo cual no debe realizarse, en ventas si es necesario y por eso se usa la unidad de medida
         # predeterminada del producto.

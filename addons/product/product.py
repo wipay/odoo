@@ -298,14 +298,14 @@ class product_template(osv.osv):
 
     _columns = {
         'name': fields.char('Name', size=128, required=True, translate=True, select=True, track_visibility='onchange'),
-        'product_manager': fields.many2one('res.users','Product Manager'),
+        'product_manager': fields.many2one('res.users','Product Manager',ondelete='restrict',),
         'description': fields.text('Description',translate=True, track_visibility='onchange'),
         'description_purchase': fields.text('Purchase Description',translate=True),
         'description_sale': fields.text('Sale Description',translate=True),
         'type': fields.selection([('consu', 'Consumable'),('service','Service')], 'Product Type', required=True, track_visibility='onchange', help="Consumable are product where you don't manage stock, a service is a non-material product provided by a company or an individual."),
         'produce_delay': fields.float('Manufacturing Lead Time', help="Average delay in days to produce this product. In the case of multi-level BOM, the manufacturing lead times of the components will be added."),
         'rental': fields.boolean('Can be Rent'),
-        'categ_id': fields.many2one('product.category','Category', required=True, change_default=True, domain="[('type','=','normal')]", track_visibility='onchange', help="Select category for the current product"),
+        'categ_id': fields.many2one('product.category','Category', required=True, change_default=True, ondelete='restrict', domain="[('type','=','normal')]", track_visibility='onchange', help="Select category for the current product"),
         'list_price': fields.float('Sale Price', digits_compute=dp.get_precision('Product Price'), track_visibility='onchange', help="Base price to compute the customer price. Sometimes called the catalog price."),
         'standard_price': fields.float('Cost', digits_compute=dp.get_precision('Product Price'), track_visibility='onchange', help="Cost price of the product used for standard stock valuation in accounting and used as a base price on purchase orders.", groups="base.group_user"),
         'volume': fields.float('Volume', help="The volume in m3."),
@@ -320,16 +320,16 @@ class product_template(osv.osv):
             ('sellable','Normal'),
             ('end','End of Lifecycle'),
             ('obsolete','Obsolete')], 'Status', track_visibility='onchange'),
-        'uom_id': fields.many2one('product.uom', 'Unit of Measure', required=True, track_visibility='onchange', help="Default Unit of Measure used for all stock operation."),
-        'uom_po_id': fields.many2one('product.uom', 'Purchase Unit of Measure', required=True, help="Default Unit of Measure used for purchase orders. It must be in the same category than the default unit of measure."),
-        'uos_id' : fields.many2one('product.uom', 'Unit of Sale',
+        'uom_id': fields.many2one('product.uom', 'Unit of Measure', ondelete='restrict', required=True, track_visibility='onchange', help="Default Unit of Measure used for all stock operation."),
+        'uom_po_id': fields.many2one('product.uom', 'Purchase Unit of Measure', ondelete='restrict', required=True, help="Default Unit of Measure used for purchase orders. It must be in the same category than the default unit of measure."),
+        'uos_id' : fields.many2one('product.uom', 'Unit of Sale', ondelete='restrict',
             help='Sepcify a unit of measure here if invoicing is made in another unit of measure than inventory. Keep empty to use the default unit of measure.'),
         'uos_coeff': fields.float('Unit of Measure -> UOS Coeff', digits_compute= dp.get_precision('Product UoS'),
             help='Coefficient to convert default Unit of Measure to Unit of Sale\n'
             ' uos = uom * coeff'),
         'mes_type': fields.selection((('fixed', 'Fixed'), ('variable', 'Variable')), 'Measure Type'),
         'seller_ids': fields.one2many('product.supplierinfo', 'product_id', 'Supplier'),
-        'company_id': fields.many2one('res.company', 'Company', select=1),
+        'company_id': fields.many2one('res.company', 'Company', select=1, ondelete='restrict',),
     }
 
     def _get_uom_id(self, cr, uid, *args):
@@ -565,7 +565,7 @@ class product_product(osv.osv):
         'packaging' : fields.one2many('product.packaging', 'product_id', 'Logistical Units', help="Gives the different ways to package the same product. This has no impact on the picking order and is mainly used if you use the EDI module."),
         'price_extra': fields.float('Variant Price Extra', digits_compute=dp.get_precision('Product Price')),
         'price_margin': fields.float('Variant Price Margin', digits_compute=dp.get_precision('Product Price')),
-        'pricelist_id': fields.dummy(string='Pricelist', relation='product.pricelist', type='many2one'),
+        'pricelist_id': fields.dummy(string='Pricelist', relation='product.pricelist', type='many2one', ondelete='restrict'),
         'name_template': fields.related('product_tmpl_id', 'name', string="Template Name", type='char', size=128, store={
             'product.template': (_get_name_template_ids, ['name'], 10),
             'product.product': (lambda self, cr, uid, ids, c=None: ids, ['product_tmpl_id'], 10),
@@ -803,7 +803,7 @@ class product_product(osv.osv):
             qty_default_uos = qty_default_uom * product.uos_coeff
             return uom_obj._compute_qty_obj(cr, uid, product.uos_id, qty_default_uos, uos)
         else:
-            return uom_obj._compute_qty_obj(cr, uid, uom, qty, uos)
+            return uom_obj._compute_qty_obj(cr, uid, uom, qty, uos, context=context)
 
 
 product_product()

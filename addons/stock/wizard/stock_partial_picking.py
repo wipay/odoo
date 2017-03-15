@@ -238,6 +238,20 @@ class stock_partial_picking(osv.osv_memory):
         
         # Do the partial delivery and open the picking that was delivered
         # We don't need to find which view is required, stock.picking does it.
+        dif_uom_prod = "Los siguientes productos poseen problemas de conversion:\n"
+        prod_problem = ''
+        for move, value in partial_data.iteritems():
+            if isinstance(value, dict):
+                from_unit = uom_obj.browse(cr, uid, value.get('product_uom', 0))
+                move_id = stock_move.browse(cr, uid, int(move.split('move')[1]))
+                to_unit = move_id.product_uos or from_unit
+                print from_unit, to_unit, move_id
+                if from_unit.category_id.id <> to_unit.category_id.id:
+                    prod_problem += '\n' + (move_id.product_id.default_code or \
+                    move_id.product_id.name) + ', desde UdM: ' + \
+                    from_unit.name + ' a UdM: ' + to_unit.name
+        if prod_problem:
+            raise osv.except_osv(_('Error!'), _(dif_uom_prod + prod_problem))
         done = stock_picking.do_partial(
             cr, uid, [partial.picking_id.id], partial_data, context=context)
         if done[partial.picking_id.id]['delivered_picking'] == partial.picking_id.id:

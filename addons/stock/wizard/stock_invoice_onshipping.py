@@ -64,15 +64,27 @@ class stock_invoice_onshipping(osv.osv_memory):
                 domain = [('type', '=', journal_type)]
             value = journal_obj.search(cr, uid, domain)
             #El siguiente codigo fue agregado por TRESCLOUD
+            adjust_journal_accounting_stock = True
             try:
+                user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+                obj, move_reason_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'ecua_stock', 'move_reason_in_14')
                 if journal_type == 'sale_refund':
-                    user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
                     journal_id = user.company_id.customer_credit_note_journal_id.id
                     if user.printer_id.journal_credit_notes_id:
                         journal_id = user.printer_id.journal_credit_notes_id.id
                     value = [journal_id]
+                if context.get('active_id'):
+                    picking = self.pool.get(context.get('active_model')).browse(cr, uid, context.get('active_id'), context=context)
+                    if picking.move_reason_id.id == move_reason_id:
+                        if not user.company_id.adjust_journal_accounting_stock_id:
+                            adjust_journal_accounting_stock = False
+                        value = [user.company_id.adjust_journal_accounting_stock_id.id]
             except:
-                pass #Ignoramos cualquier error y mantenemos el funcionamiento nativo         
+                pass
+            finally:
+                if not adjust_journal_accounting_stock:
+                    raise osv.except_osv(_(u'¡Error de Usuario!'),
+                                         _(u'Por favor configure el diario de ajuste de inventario contable en la compañía.'))
             for jr_type in journal_obj.browse(cr, uid, value, context=context):
                 t1 = jr_type.id,jr_type.name
                 if t1 not in vals:
@@ -122,6 +134,14 @@ class stock_invoice_onshipping(osv.osv_memory):
             raise osv.except_osv(_('Error!'), _('Please create Invoices.'))
         if inv_type == "out_invoice":
             action_model,action_id = data_pool.get_object_reference(cr, uid, 'account', "action_invoice_tree1")
+            #Este código fue modificado por TRESCLOUD
+            ###################################################################################################
+            if context.get('origin') == 'manual_adjustment':
+                try:
+                    action_model,action_id = data_pool.get_object_reference(cr, uid, 'invoiced_stock', "action_adjust_manual_accounting_stock")
+                except:
+                    pass
+            ####################################################################################################
         elif inv_type == "in_invoice":
             action_model,action_id = data_pool.get_object_reference(cr, uid, 'account', "action_invoice_tree2")
             #Este código fue modificado por TRESCLOUD
