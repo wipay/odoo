@@ -65,6 +65,7 @@ class stock_invoice_onshipping(osv.osv_memory):
             value = journal_obj.search(cr, uid, domain)
             #El siguiente codigo fue agregado por TRESCLOUD
             adjust_journal_accounting_stock = True
+            adjust_journal_manufacture = True
             try:
                 user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
                 obj, move_reason_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'ecua_stock', 'move_reason_in_14')
@@ -78,13 +79,21 @@ class stock_invoice_onshipping(osv.osv_memory):
                     if picking.move_reason_id.id == move_reason_id:
                         if not user.company_id.adjust_journal_accounting_stock_id:
                             adjust_journal_accounting_stock = False
-                        value = [user.company_id.adjust_journal_accounting_stock_id.id]
+                        if not user.company_id.adjust_journal_manufacture_id:
+                            adjust_journal_manufacture = False
+                        if picking.manufacture:
+                            value = [user.company_id.adjust_journal_manufacture_id.id]
+                        else:
+                            value = [user.company_id.adjust_journal_accounting_stock_id.id]
             except:
                 pass
             finally:
-                if not adjust_journal_accounting_stock:
+                if not adjust_journal_accounting_stock and not value[0]:
                     raise osv.except_osv(_(u'¡Error de Usuario!'),
                                          _(u'Por favor configure el diario de ajuste de inventario contable en la compañía.'))
+                if not adjust_journal_manufacture and not value[0]:
+                    raise osv.except_osv(_(u'¡Error de Usuario!'),
+                                         _(u'Por favor configure el diario de ajuste de manufactura en la compañía.'))
             for jr_type in journal_obj.browse(cr, uid, value, context=context):
                 t1 = jr_type.id,jr_type.name
                 if t1 not in vals:
