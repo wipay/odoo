@@ -1108,7 +1108,14 @@ class stock_picking(osv.osv):
         ###########################################################################################################################
         if not uos_id and invoice_vals['type'] in ('out_invoice', 'out_refund'):
             uos_id = move_line.product_uom.id
-
+        #El siguiente codigo fue modificado por TRESCLOUD
+        ###########################################################################################################################
+        quantity = move_line.product_uos_qty or move_line.product_qty
+        module_ids = self.pool.get('ir.module.module').search(cr, uid, [('name','=','invoiced_stock'), ('state','=','installed')], context=context)
+        if module_ids:
+            if picking.manufacture:
+                quantity = move_line.product_qty
+        ###########################################################################################################################
         return {
             'name': name,
             'origin': origin,
@@ -1118,7 +1125,7 @@ class stock_picking(osv.osv):
             'account_id': account_id,
             'price_unit': self._get_price_unit_invoice(cr, uid, move_line, invoice_vals['type']),
             'discount': self._get_discount_invoice(cr, uid, move_line),
-            'quantity': move_line.product_uos_qty or move_line.product_qty,
+            'quantity': quantity,
             'invoice_line_tax_id': [(6, 0, self._get_taxes_invoice(cr, uid, move_line, invoice_vals['type']))],
             'account_analytic_id': self._get_account_analytic_invoice(cr, uid, picking, move_line),
         }
