@@ -2414,6 +2414,17 @@ class stock_move(osv.osv):
             if context is None:
                 context = {}
             currency_ctx = dict(context, currency_id = move.company_id.currency_id.id)
+            #Logica agregada por TRESCLOUD para que el redondeo de los apuntes contables se hagan en base a la moneda configurada en el
+            #diario, en caso que no exista, se mantiene la logica nativa que es en base a la moneda de la compañia
+            ##############################################################################################################
+            accounts = self.pool.get('product.product').get_product_accounts(cr, uid, move.product_id.id, context=context)
+            journal_id = accounts.get('stock_journal')
+            if journal_id:
+                journal = self.pool.get('account.journal').browse(cr, uid, journal_id, context=context)
+                if journal.currency:
+                    currency_ctx.update({'currency_id': journal.currency.id})
+                    reference_currency_id = journal.currency.id
+            ##############################################################################################################
             amount_unit = move.product_id.price_get('standard_price', context=currency_ctx)[move.product_id.id]
             reference_amount = amount_unit * qty
 
@@ -2602,6 +2613,17 @@ class stock_move(osv.osv):
         src_main_currency_id = src_acct.company_id.currency_id.id
         dest_main_currency_id = dest_acct.company_id.currency_id.id
         cur_obj = self.pool.get('res.currency')
+        #Logica agregada por TRESCLOUD para que el redondeo de los apuntes contables se hagan en base a la moneda configurada en el
+        #diario, en caso que no exista, se mantiene la logica nativa que es en base a la moneda de la compañia
+        ##############################################################################################################
+        accounts = self.pool.get('product.product').get_product_accounts(cr, uid, move.product_id.id, context=context)
+        journal_id = accounts.get('stock_journal')
+        if journal_id:
+            journal = self.pool.get('account.journal').browse(cr, uid, journal_id, context=context)
+            if journal.currency:
+                src_main_currency_id = journal.currency.id
+                dest_main_currency_id = journal.currency.id
+        ##############################################################################################################
         if reference_currency_id != src_main_currency_id:
             # fix credit line:
             credit_line_vals['credit'] = cur_obj.compute(cr, uid, reference_currency_id, src_main_currency_id, reference_amount, context=context)
