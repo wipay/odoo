@@ -99,10 +99,9 @@ class sale_order(osv.osv):
             context.update({'document_date': order.date_order.split(' ')[0],'force_vat': order.force_vat})
             #Código modificado por TRESCLOUD para evitar error en caso que el módulo law_of_solidarity no este instalado
             solidarity_compensation = 0.0
-            try:
+            module_ids = self.pool.get('ir.module.module').search(self.cr, self.uid, [('name','=','law_of_solidarity'), ('state','=','installed')], context=context)
+            if module_ids:
                 solidarity_compensation = order.solidarity_compensation
-            except:
-                pass
             res[order.id] = {
                 'amount_untaxed': 0.0,
                 'amount_tax': 0.0,
