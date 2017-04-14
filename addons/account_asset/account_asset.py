@@ -196,7 +196,7 @@ class account_asset_asset(osv.osv):
             amount_to_depr = residual_amount = asset.value_residual
             module_ids = self.pool.get('ir.module.module').search(cr, uid, [('name','=','asset'), ('state','=','installed')], context=context)
             if module_ids:
-                amount_to_depr = residual_amount = asset.value_residual - asset.accumulated_depreciation - asset.total_devaluations + asset.total_revaluations
+                amount_to_depr = residual_amount = asset.value_residual
             if asset.prorata:
                 # TRESCLOUD: El siguiente código fue modificado por que en la tabla de depreciaciones cuando se 
                 # ejecutaba un depreciacion se generaba para el mismo perido una copia en borrador
