@@ -404,14 +404,21 @@ class account_asset_asset(osv.osv):
         return super(account_asset_asset, self).copy(cr, uid, id, default, context=context)
 
     def _compute_entries(self, cr, uid, ids, period_id, context=None):
-        result = []
-        period_obj = self.pool.get('account.period')
-        depreciation_obj = self.pool.get('account.asset.depreciation.line')
-        period = period_obj.browse(cr, uid, period_id, context=context)
-        depreciation_ids = depreciation_obj.search(cr, uid, [('asset_id', 'in', ids), ('depreciation_date', '<=', period.date_stop), ('depreciation_date', '>=', period.date_start), ('move_check', '=', False)], context=context)
         if context is None:
             context = {}
-        context.update({'depreciation_date':period.date_stop})
+        period_obj = self.pool.get('account.period')
+        account_move_obj = self.pool.get('account.move')
+        depreciation_obj = self.pool.get('account.asset.depreciation.line')
+        period = period_obj.browse(cr, uid, period_id, context=context)
+        context.update({'depreciation_date': period.date_stop})
+        depreciation_ids = depreciation_obj.search(cr, uid, [('asset_id', 'in', ids), ('depreciation_date', '<=', period.date_stop), ('depreciation_date', '>=', period.date_start), ('move_check', '=', False)], context=context)
+        if context.get('reproces_accounting_entry'):
+            depreciation_ids = depreciation_obj.search(cr, uid, [('asset_id', 'in', ids), ('depreciation_date', '<=', period.date_stop), ('depreciation_date', '>=', period.date_start)], context=context)
+            #Anulamos y eliminamos los apuntes contables existentes para que se vuelvan a generar
+            for depreciation in depreciation_obj.browse(cr, uid, depreciation_ids, context=context):
+                if depreciation.move_id:
+                    account_move_obj.button_cancel(cr, uid, [depreciation.move_id.id], context=context)
+                    account_move_obj.unlink(cr, uid, [depreciation.move_id.id], context=context)
         return depreciation_obj.create_move(cr, uid, depreciation_ids, context=context)
 
     def create(self, cr, uid, vals, context=None):
