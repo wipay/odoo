@@ -28,6 +28,9 @@ import openerp.addons.decimal_precision as dp
 from tools.translate import _
 # TRESCLOUD, requerido para obtener el ultimo dia del mes
 import calendar
+import logging
+_logger = logging.getLogger(__name__)
+
 
 class account_asset_category(osv.osv):
     _name = 'account.asset.category'
@@ -475,7 +478,11 @@ class account_asset_depreciation_line(osv.osv):
         currency_obj = self.pool.get('res.currency')
         created_move_ids = []
         asset_ids = []
+        count = 0
         for line in self.browse(cr, uid, ids, context=context):
+            count += 1
+            progress = 'Procesando linea ' + str(count) +' de '+ str(len(ids)) + ' con line_id = ' + str(line.id)
+            _logger.debug(progress)
             depreciation_date = context.get('depreciation_date') or line.depreciation_date or time.strftime('%Y-%m-%d')
             ctx = dict(context, account_period_prefer_normal=True)
             period_ids = period_obj.find(cr, uid, depreciation_date, context=ctx)
