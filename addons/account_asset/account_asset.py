@@ -482,7 +482,7 @@ class account_asset_depreciation_line(osv.osv):
         for line in self.browse(cr, uid, ids, context=context):
             count += 1
             progress = 'Procesando linea ' + str(count) +' de '+ str(len(ids)) + ' con line_id = ' + str(line.id)
-            _logger.debug(progress)
+            _logger.info(progress)
             depreciation_date = context.get('depreciation_date') or line.depreciation_date or time.strftime('%Y-%m-%d')
             ctx = dict(context, account_period_prefer_normal=True)
             period_ids = period_obj.find(cr, uid, depreciation_date, context=ctx)
