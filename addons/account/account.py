@@ -2151,7 +2151,7 @@ class account_tax(osv.osv):
         #la factura la misma logica implementada en los totales de la misma, los
         #totales usan precision de moneda(2) y los impuestos usaban precision de
         #account(no siempre es 2) y esto trae error de redondeo        
-        if context.get('origin') == 'invoice_tax_line' and context.get('precision'):
+        if context.get('origin') in ('invoice_tax_line', 'sale_tax_line') and context.get('precision'):
             precision = context.get('precision') 
         tax_compute_precision = precision
         if taxes and taxes[0].company_id.tax_calculation_rounding_method == 'round_globally':

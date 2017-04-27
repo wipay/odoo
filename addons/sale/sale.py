@@ -670,7 +670,7 @@ class sale_order_line(osv.osv):
         if context is None:
             context = {}
         for line in self.browse(cr, uid, ids, context=context):
-            context.update({'document_date': line.order_id.date_order.split(' ')[0]})
+            context.update({'document_date': line.order_id.date_order.split(' ')[0], 'origin': 'sale_tax_line', 'precision': line.order_id.currency_id.accuracy})
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
             taxes = tax_obj.compute_all(cr, uid, line.tax_id, price, line.product_uom_qty, line.product_id, line.order_id.partner_id, context=context)
             cur = line.order_id.pricelist_id.currency_id
