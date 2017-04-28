@@ -1311,7 +1311,10 @@ class stock_picking(osv.osv):
                              'price_currency_id': product_currency})
 
             # every line of the picking is empty, do not generate anything
-            empty_picking = not any(q for q in move_product_qty.values() if q > 0)
+            if context.get('origin') == 'manual_adjustment':
+                empty_picking = not any(q for q in move_product_qty.values() if q > 0 or q < 0)
+            else:
+                empty_picking = not any(q for q in move_product_qty.values() if q > 0)
 
             for move in too_few:
                 product_qty = move_product_qty[move.id]
