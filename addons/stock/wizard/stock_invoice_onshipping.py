@@ -73,7 +73,7 @@ class stock_invoice_onshipping(osv.osv_memory):
                     journal_id = user.company_id.customer_credit_note_journal_id.id
                     if user.printer_id.journal_credit_notes_id:
                         journal_id = user.printer_id.journal_credit_notes_id.id
-                    value = [journal_id]
+                    value = [journal_id] if journal_id else value
                 if context.get('active_id'):
                     picking = self.pool.get(context.get('active_model')).browse(cr, uid, context.get('active_id'), context=context)
                     if picking.move_reason_id.id == move_reason_id:
