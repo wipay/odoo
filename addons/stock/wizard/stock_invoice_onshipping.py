@@ -84,7 +84,9 @@ class stock_invoice_onshipping(osv.osv_memory):
                         if picking.manufacture:
                             value = [user.company_id.adjust_journal_manufacture_id.id]
                         else:
-                            value = [user.company_id.adjust_journal_accounting_stock_id.id]
+                            #En los ajustes de inv fisico se muestran los diarios de ajuste de inv contable y diario de ventas
+                            value.append(user.company_id.adjust_journal_accounting_stock_id.id)
+                            value.reverse()
             except:
                 pass
             finally:
@@ -146,20 +148,26 @@ class stock_invoice_onshipping(osv.osv_memory):
             #Este código fue modificado por TRESCLOUD
             ###################################################################################################
             if context.get('origin') == 'manual_adjustment':
-                try:
-                    action_model,action_id = data_pool.get_object_reference(cr, uid, 'invoiced_stock', "action_adjust_manual_accounting_stock")
-                except:
-                    pass
+                module_ids = self.pool.get('ir.module.module').search(cr, uid, [('name','=','invoiced_stock'), ('state','=','installed')], context=context)
+                if module_ids:
+                    obj, adjustment_journal_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'invoiced_stock', 'journal_adjust_accounting_stock')
+                    journal_id = context.get('journal_id')
+                    #Para comparar convertirmos el journal al int pues llega como unicode
+                    if journal_id and int(journal_id) == adjustment_journal_id:
+                        action_model,action_id = data_pool.get_object_reference(cr, uid, 'invoiced_stock', "action_adjust_manual_accounting_stock")
             ####################################################################################################
         elif inv_type == "in_invoice":
             action_model,action_id = data_pool.get_object_reference(cr, uid, 'account', "action_invoice_tree2")
             #Este código fue modificado por TRESCLOUD
             ###################################################################################################
             if context.get('origin') == 'manual_adjustment':
-                try:
-                    action_model,action_id = data_pool.get_object_reference(cr, uid, 'invoiced_stock', "action_adjust_manual_accounting_stock")
-                except:
-                    pass
+                module_ids = self.pool.get('ir.module.module').search(cr, uid, [('name','=','invoiced_stock'), ('state','=','installed')], context=context)
+                if module_ids:
+                    obj, adjustment_journal_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'invoiced_stock', 'journal_adjust_accounting_stock')
+                    journal_id = context.get('journal_id')
+                    #Para comparar convertirmos el journal al int pues llega como unicode
+                    if journal_id and int(journal_id) == adjustment_journal_id:
+                        action_model,action_id = data_pool.get_object_reference(cr, uid, 'invoiced_stock', "action_adjust_manual_accounting_stock")
             ####################################################################################################
         elif inv_type == "out_refund":
             action_model,action_id = data_pool.get_object_reference(cr, uid, 'account', "action_invoice_tree3")
