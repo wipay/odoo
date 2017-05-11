@@ -739,9 +739,11 @@ class stock_picking(osv.osv):
     def fields_view_get(self, cr, uid, view_id=None, view_type=False, context=None, toolbar=False, submenu=False):
         if view_type == 'form' and not view_id:
             mod_obj = self.pool.get('ir.model.data')
-            if self._name == "stock.picking.in":
+            context = context or {}
+            type = context.get('type') or context.get('default_type') or False
+            if self._name == "stock.picking.in" or type == 'in':
                 model, view_id = mod_obj.get_object_reference(cr, uid, 'stock', 'view_picking_in_form')
-            if self._name == "stock.picking.out":
+            if self._name == "stock.picking.out" or type == 'out':
                 model, view_id = mod_obj.get_object_reference(cr, uid, 'stock', 'view_picking_out_form')
         return super(stock_picking, self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=submenu)
 
