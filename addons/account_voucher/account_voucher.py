@@ -839,13 +839,13 @@ class account_voucher(osv.osv):
                 'move_line_id':line.id,
                 'account_id':line.account_id.id,
                 'amount_original': amount_original,
-                'amount':  (line.id in move_lines_found) and min(abs(remaining_amount), amount_unreconciled) or 0.0,
+                'amount': (line.id in move_lines_found) and min(abs(remaining_amount), amount_unreconciled) or 0.0,
                 'date_original':line.date,
                 'date_due':line.date_maturity,
                 'amount_unreconciled': amount_unreconciled,
                 'currency_id': line_currency_id,
             }
-            remaining_amount -= rs['amount'] 
+            remaining_amount -= rs['amount']
             if remaining_amount <= 0.0:
                 amount_unreconciled = 0.0
             else:
