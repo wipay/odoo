@@ -850,8 +850,8 @@ class account_voucher(osv.osv):
                 amount_unreconciled = 0.0
             else:
                 remaining_amount -= amount_unreconciled
-                if remaining_amount <=00:
-                    amount_unreconciled = min(amount_unreconciled, (amount_unreconciled+remaining_amount)) 
+                if remaining_amount <= 0.0:
+                    amount_unreconciled = min(amount_unreconciled, (amount_unreconciled + remaining_amount)) 
                 else:
                     amount_unreconciled
             #in case a corresponding move_line hasn't been found, we now try to assign the voucher amount
