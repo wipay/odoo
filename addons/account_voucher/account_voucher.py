@@ -780,7 +780,7 @@ class account_voucher(osv.osv):
                 account_type = 'receivable'
 
         if not context.get('move_line_ids', False):
-            ids = move_line_pool.search(cr, uid, [('state','=','valid'), ('account_id.type', '=', account_type), ('reconcile_id', '=', False), ('partner_id', '=', partner_id)], order='date_created, date_maturity desc', context=context)
+            ids = move_line_pool.search(cr, uid, [('state','=','valid'), ('account_id.type', '=', account_type), ('reconcile_id', '=', False), ('partner_id', '=', partner_id)], order='date_created, date_maturity asc', context=context)
         else:
             ids = context['move_line_ids']
         invoice_id = context.get('invoice_id', False)
@@ -788,7 +788,7 @@ class account_voucher(osv.osv):
         move_lines_found = []
 
         #order the lines by most old first
-        ids.reverse()
+       # ids.reverse()
         account_move_lines = move_line_pool.browse(cr, uid, ids, context=context)
 
         #compute the total debit/credit and look for a matching open amount or invoice
@@ -846,6 +846,14 @@ class account_voucher(osv.osv):
                 'currency_id': line_currency_id,
             }
             remaining_amount -= rs['amount']
+            if remaining_amount <= 0.0:
+                amount_unreconciled = 0.0
+            else:
+                remaining_amount -= amount_unreconciled
+                if remaining_amount <= 0.0:
+                    amount_unreconciled = min(amount_unreconciled, (amount_unreconciled + remaining_amount)) 
+                else:
+                    amount_unreconciled
             #in case a corresponding move_line hasn't been found, we now try to assign the voucher amount
             #on existing invoices: we split voucher amount by most old first, but only for lines in the same currency
             if not move_lines_found:
