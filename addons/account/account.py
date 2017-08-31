@@ -2055,6 +2055,12 @@ class account_tax(osv.osv):
             else:
                 res.append(tax)
         return res
+    
+    def _compute_base_amount(self, cr, uid, taxes, tax, price_unit, product=None, partner=None, quantity=0, context=None):
+        """"Calcula base imponible para casos especiales
+        """
+        tax_base = price_unit
+        return tax_base
 
     def _unit_compute(self, cr, uid, taxes, price_unit, product=None, partner=None, quantity=0, context=None):
         context = context or {}
@@ -2080,6 +2086,7 @@ class account_tax(osv.osv):
                     'tax_code_id': tax.tax_code_id.id,
                     'ref_tax_code_id': tax.ref_tax_code_id.id,
             }
+            data['price_unit'] = self._compute_base_amount(cr, uid, taxes, tax, price_unit, product=product, partner=partner, quantity=quantity, context=context)
             res.append(data)
             if tax.type=='percent':
                 amount = cur_price_unit * tax.amount
