@@ -2087,11 +2087,11 @@ class account_tax(osv.osv):
                     'ref_tax_code_id': tax.ref_tax_code_id.id,
             }
             data['price_unit'] = self._compute_base_amount(cr, uid, taxes, tax, price_unit, product=product, partner=partner, quantity=quantity, context=context)
+            cur_price_unit = data['price_unit']
             res.append(data)
             if tax.type=='percent':
                 amount = cur_price_unit * tax.amount
                 data['amount'] = amount
-
             elif tax.type=='fixed':
                 data['amount'] = tax.amount
                 data['tax_amount']=quantity
