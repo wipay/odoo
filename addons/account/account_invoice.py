@@ -1504,6 +1504,20 @@ class account_invoice_line(osv.osv):
                     node.set('domain', "[('sale_ok', '=', True)]")
             res['arch'] = etree.tostring(doc)
         return res
+    
+    def get_account_account(self, cr, uid, product, partner, type, context=None):
+        """
+        HOOK creado para cambiar de manera facil la cuenta contable
+        """
+        if type in ('out_invoice','out_refund'):
+            a = product.property_account_income.id
+            if not a:
+                a = product.categ_id.property_account_income_categ.id
+        else:
+            a = product.property_account_expense.id
+            if not a:
+                a = product.categ_id.property_account_expense_categ.id
+        return a
 
     def product_id_change(self, cr, uid, ids, product, uom_id, qty=0, name='', type='out_invoice', partner_id=False, fposition_id=False, price_unit=False, currency_id=False, context=None, company_id=None):
         if context is None:
@@ -1528,14 +1542,7 @@ class account_invoice_line(osv.osv):
         result = {}
         res = self.pool.get('product.product').browse(cr, uid, product, context=context)
 
-        if type in ('out_invoice','out_refund'):
-            a = res.property_account_income.id
-            if not a:
-                a = res.categ_id.property_account_income_categ.id
-        else:
-            a = res.property_account_expense.id
-            if not a:
-                a = res.categ_id.property_account_expense_categ.id
+        a = self.get_account_account(cr, uid, res, part, type, context=context)
         a = fpos_obj.map_account(cr, uid, fpos, a)
         if a:
             result['account_id'] = a
