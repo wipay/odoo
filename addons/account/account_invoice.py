@@ -1543,14 +1543,6 @@ class account_invoice_line(osv.osv):
         res = self.pool.get('product.product').browse(cr, uid, product, context=context)
 
         a = self.get_account_account(cr, uid, res, part, type, context=context)
-#         if type in ('out_invoice','out_refund'):
-#             a = res.property_account_income.id
-#             if not a:
-#                 a = res.categ_id.property_account_income_categ.id
-#         else:
-#             a = res.property_account_expense.id
-#             if not a:
-#                 a = res.categ_id.property_account_expense_categ.id
         a = fpos_obj.map_account(cr, uid, fpos, a)
         if a:
             result['account_id'] = a
