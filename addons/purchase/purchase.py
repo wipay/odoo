@@ -588,6 +588,7 @@ class purchase_order(osv.osv):
                 'account_id': pay_acc_id,
                 'type': 'in_invoice',
                 'partner_id': order.partner_id.id,
+                # TRESCLOUD Se cambia por metodo para cambiar la moneda.
                 'currency_id': self._get_invoice_currency(cr, uid, ids, order, context=context),
                 'journal_id': len(journal_ids) and journal_ids[0] or False,
                 'invoice_line': [(6, 0, inv_lines)],
