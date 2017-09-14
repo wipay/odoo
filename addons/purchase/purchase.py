@@ -536,6 +536,13 @@ class purchase_order(osv.osv):
             wf_service.trg_delete(uid, 'purchase.order', p_id, cr)
             wf_service.trg_create(uid, 'purchase.order', p_id, cr)
         return True
+    
+    def _get_invoice_currency(self, cr, uid, ids, order, context=None):
+        """
+        HOOK para cambiar la moneda de la factura cunado se crea 
+        la factura desde compras.
+        """
+        return order.pricelist_id.currency_id.id
 
     def action_invoice_create(self, cr, uid, ids, context=None):
         """Generates invoice for given ids of purchase orders and links that invoice ID to purchase order.
@@ -581,7 +588,7 @@ class purchase_order(osv.osv):
                 'account_id': pay_acc_id,
                 'type': 'in_invoice',
                 'partner_id': order.partner_id.id,
-                'currency_id': order.pricelist_id.currency_id.id,
+                'currency_id': self._get_invoice_currency(cr, uid, ids, order, context=context),
                 'journal_id': len(journal_ids) and journal_ids[0] or False,
                 'invoice_line': [(6, 0, inv_lines)],
                 'origin': order.name,
