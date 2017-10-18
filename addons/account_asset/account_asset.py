@@ -418,8 +418,13 @@ class account_asset_asset(osv.osv):
         if context.get('reproces_accounting_entry'):
             depreciation_ids = depreciation_obj.search(cr, uid, [('asset_id', 'in', ids), ('depreciation_date', '<=', period.date_stop), ('depreciation_date', '>=', period.date_start)], context=context)
             #Anulamos y eliminamos los apuntes contables existentes para que se vuelvan a generar
+            count = 0
+            len_depreciation_ids = len(depreciation_ids)
             for depreciation in depreciation_obj.browse(cr, uid, depreciation_ids, context=context):
                 if depreciation.move_id:
+                    count += 1
+                    progress = u'Eliminando asiento contable de línea de depreciación de activo ' + str(count) + u' de ' + str(len_depreciation_ids) + u' con id = ' + str(depreciation.id)
+                    _logger.info(progress)
                     account_move_obj.button_cancel(cr, uid, [depreciation.move_id.id], context=context)
                     account_move_obj.unlink(cr, uid, [depreciation.move_id.id], context=context)
         return depreciation_obj.create_move(cr, uid, depreciation_ids, context=context)
@@ -479,9 +484,10 @@ class account_asset_depreciation_line(osv.osv):
         created_move_ids = []
         asset_ids = []
         count = 0
+        len_ids = len(ids)
         for line in self.browse(cr, uid, ids, context=context):
             count += 1
-            progress = 'Procesando linea ' + str(count) +' de '+ str(len(ids)) + ' con line_id = ' + str(line.id)
+            progress = u'Generando asiento contable de línea de depreciación de activo ' + str(count) + u' de ' + str(len_ids) + u' con id = ' + str(line.id)
             _logger.info(progress)
             depreciation_date = context.get('depreciation_date') or line.depreciation_date or time.strftime('%Y-%m-%d')
             ctx = dict(context, account_period_prefer_normal=True)
