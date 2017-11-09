@@ -833,6 +833,15 @@ class AccountInvoice(models.Model):
                 line.append((0, 0, val))
         return line
 
+
+    @api.multi
+    def _get_account_partner(self):
+        '''
+        Se crea el metodo para poder sobreescribir en personalizaciones de clientes particulares, ya que en oportunidades se necesita
+        cambiar el cliente del movimiento contable generado por la factura.
+        '''
+        return self.partner_id
+
     @api.multi
     def action_move_create(self):
         """ Creates invoice related analytics and financial move lines """
@@ -901,7 +910,9 @@ class AccountInvoice(models.Model):
                     'currency_id': diff_currency and inv.currency_id.id,
                     'invoice_id': inv.id
                 })
-            part = self.env['res.partner']._find_accounting_partner(inv.partner_id)
+            #Metodo Implementado por 3CLoud
+            partner = inv._get_account_partner()
+            part = self.env['res.partner']._find_accounting_partner(partner)
             line = [(0, 0, self.line_get_convert(l, part.id)) for l in iml]
             line = inv.group_lines(iml, line)
 
