@@ -411,11 +411,37 @@ class account_asset_asset(osv.osv):
             context = {}
         period_obj = self.pool.get('account.period')
         account_move_obj = self.pool.get('account.move')
+        account_asset_obj = self.pool.get('account.asset.asset')
         depreciation_obj = self.pool.get('account.asset.depreciation.line')
         period = period_obj.browse(cr, uid, period_id, context=context)
         context.update({'depreciation_date': period.date_stop})
         depreciation_ids = depreciation_obj.search(cr, uid, [('asset_id', 'in', ids), ('depreciation_date', '<=', period.date_stop), ('depreciation_date', '>=', period.date_start), ('move_check', '=', False)], context=context)
         if context.get('reproces_accounting_entry'):
+            #Antes de reprocesar los asientos contables vinculados a las lineas de depreciacion verificamos si existen asientos
+            #huerfanos para el diario de activos fijos en el periodo analizado, de existir deben ser borrados
+            #Asumimos que todos los activos tienen el mismo diario para los asientos de depreciacion "Diario de Activos Fijos"
+            if ids: #En caso que lleguen activos fijos
+                journal_ids = account_asset_obj.search(cr, uid, [('id','=',ids[0])], context=context)
+                journal = account_asset_obj.browse(cr, uid, journal_ids[0], context=context).category_id.journal_id
+                count = 0
+                cr.execute('''
+                    select 
+                        id
+                    from account_move
+                    where journal_id = %s and period_id = %s and id not in 
+                    (select move_id from account_asset_depreciation_line where depreciation_date >= %s and depreciation_date <= %s and move_id is not null)
+                ''', (journal.id, period.id, period.date_start, period.date_stop,))
+                records = cr.fetchall()
+                len_records = len(records)
+                for record in records:
+                    count += 1
+                    progress = u'Eliminando asiento contable huerfano ' + str(count) + u' de ' + str(len_records) + u' con id = ' + str(record[0])
+                    _logger.info(progress)
+                    account_move_obj.button_cancel(cr, uid, [record[0]], context=context)
+                    account_move_obj.unlink(cr, uid, [record[0]], context=context)
+                    cr.commit()
+                    time.sleep(0.2)#Esperamos 200 milisegundos para realizar la siguiente transacción
+            #Se obtienen las depreciaciones existentes para los activos y fechas seleccionadas
             depreciation_ids = depreciation_obj.search(cr, uid, [('asset_id', 'in', ids), ('depreciation_date', '<=', period.date_stop), ('depreciation_date', '>=', period.date_start)], context=context)
             #Anulamos y eliminamos los apuntes contables existentes para que se vuelvan a generar
             count = 0
