@@ -998,10 +998,17 @@ class account_voucher(osv.osv):
             for line in voucher.move_ids:
                 # refresh to make sure you don't unreconcile an already unreconciled entry
                 line.refresh()
-                if line.reconcile_id:
-                    move_lines = [move_line.id for move_line in line.reconcile_id.line_id]
+                if line.reconcile_id or line.reconcile_partial_id:
+                    # Este codigo fue modificado por TRESCLOUD.
+                    move_lines = [move_line.id for move_line in line.reconcile_id.line_id or []]
+                    move_lines += [move_line.id for move_line in line.reconcile_partial_id.line_partial_ids or []]
                     move_lines.remove(line.id)
-                    reconcile_pool.unlink(cr, uid, [line.reconcile_id.id])
+                    reconcile_to_unlink = []
+                    if line.reconcile_id:
+                        reconcile_to_unlink = [line.reconcile_id and line.reconcile_id.id]
+                    elif line.reconcile_partial_id: 
+                        reconcile_to_unlink += [line.reconcile_partial_id and line.reconcile_partial_id.id]
+                    reconcile_pool.unlink(cr, uid, reconcile_to_unlink)
                     if len(move_lines) >= 2:
                         move_line_pool.reconcile_partial(cr, uid, move_lines, 'auto',context=context)
             if voucher.move_id:
