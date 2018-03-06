@@ -726,7 +726,7 @@ class stock_picking(osv.osv):
         default = default.copy()
         picking_obj = self.browse(cr, uid, id, context=context)
         if ('name' not in default) or (picking_obj.name == '/'):
-            seq_obj_name = 'stock.picking.' + picking_obj.type
+            seq_obj_name = 'stock.picking' + ('.' + picking_obj.type if picking_obj.type != 'internal' else '')
             default['name'] = self.pool.get('ir.sequence').get(cr, uid, seq_obj_name)
             default.setdefault('origin', False)
             default.setdefault('backorder_id', False)
@@ -1137,7 +1137,9 @@ class stock_picking(osv.osv):
         invoices_group = {}
         res = {}
         inv_type = type
-        for picking in self.browse(cr, uid, ids, context=context):
+        for picking_id in ids:
+            # The browse inside the loop is done on purpose, as a change in the pickings during the loop is possible
+            picking = self.browse(cr, uid, picking_id, context=context)
             if picking.invoice_state != '2binvoiced':
                 continue
             partner = self._get_partner_to_invoice(cr, uid, picking, context=context)
@@ -1312,7 +1314,8 @@ class stock_picking(osv.osv):
                     else:
                         picking = 'stock.picking.%s'%(pick.type)
                     self.write(cr, uid, [pick.id], 
-                               {'name': sequence_obj.get(cr, uid, picking ),
+                               {'name': sequence_obj.get(cr, uid,
+                                            'stock.picking' + ('.' + pick.type if pick.type != 'internal' else '')),
                                })
                     pick.refresh()
                     new_picking = self.copy(cr, uid, pick.id,
@@ -2390,7 +2393,7 @@ class stock_move(osv.osv):
         if move.location_dest_id.usage != 'internal' and move.product_id.cost_method == 'average':
             reference_amount = qty * move.product_id.standard_price
         elif move.product_id.cost_method == 'average' and move.price_unit:
-            reference_amount = qty * move.price_unit
+            reference_amount = move.product_qty * move.price_unit
             reference_currency_id = move.price_currency_id.id or reference_currency_id
 
         # Otherwise we default to the company's valuation price type, considering that the values of the
@@ -2562,7 +2565,7 @@ class stock_move(osv.osv):
                     'product_id': move.product_id and move.product_id.id or False,
                     'quantity': move.product_qty,
                     'ref': move.picking_id and move.picking_id.name or False,
-                    'date': time.strftime('%Y-%m-%d'),
+                    'date': fields.date.context_today(self, cr, uid),
                     'partner_id': partner_id,
                     'debit': reference_amount,
                     'account_id': dest_account_id,
@@ -2572,7 +2575,7 @@ class stock_move(osv.osv):
                     'product_id': move.product_id and move.product_id.id or False,
                     'quantity': move.product_qty,
                     'ref': move.picking_id and move.picking_id.name or False,
-                    'date': time.strftime('%Y-%m-%d'),
+                    'date': fields.date.context_today(self, cr, uid),
                     'partner_id': partner_id,
                     'credit': reference_amount,
                     'account_id': src_account_id,

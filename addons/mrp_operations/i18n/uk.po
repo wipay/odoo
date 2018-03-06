@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Odoo 7.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-14 00:10+0000\n"
-"PO-Revision-Date: 2015-06-03 18:30+0000\n"
+"PO-Revision-Date: 2016-06-02 08:02+0000\n"
 "Last-Translator: Martin Trigaux\n"
 "Language-Team: Ukrainian (http://www.transifex.com/odoo/odoo-7/language/uk/)\n"
 "MIME-Version: 1.0\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: model:ir.ui.menu,name:mrp_operations.menu_mrp_production_wc_order
 #: view:mrp.production.workcenter.line:0 view:mrp.workorder:0
 msgid "Work Orders"
-msgstr ""
+msgstr "Наряди"
 
 #. module: mrp_operations
 #: code:addons/mrp_operations/mrp_operations.py:484
@@ -44,7 +44,7 @@ msgstr ""
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0 view:mrp.workorder:0
 msgid "Group By..."
-msgstr ""
+msgstr "Група"
 
 #. module: mrp_operations
 #: model:process.node,note:mrp_operations.process_node_workorder0
@@ -54,23 +54,23 @@ msgstr ""
 #. module: mrp_operations
 #: field:mrp.production.workcenter.line,uom:0
 msgid "Unit of Measure"
-msgstr ""
+msgstr "Одиниця виміру"
 
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
 msgid "March"
-msgstr ""
+msgstr "March"
 
 #. module: mrp_operations
 #: model:ir.actions.act_window,name:mrp_operations.mrp_production_wc_resource_planning
 msgid "Work Centers"
-msgstr ""
+msgstr "Робочі центри"
 
 #. module: mrp_operations
 #: view:mrp.production:0 view:mrp.production.workcenter.line:0
 #: selection:mrp_operations.operation.code,start_stop:0
 msgid "Resume"
-msgstr ""
+msgstr "Резюме"
 
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
@@ -90,12 +90,12 @@ msgstr "Як чорновик"
 #. module: mrp_operations
 #: field:mrp.production,allow_reorder:0
 msgid "Free Serialisation"
-msgstr ""
+msgstr "Без черговості"
 
 #. module: mrp_operations
 #: model:ir.model,name:mrp_operations.model_mrp_production
 msgid "Manufacturing Order"
-msgstr ""
+msgstr "Замовлення на виробництво"
 
 #. module: mrp_operations
 #: model:process.process,name:mrp_operations.process_process_mrpoperationprocess0
@@ -165,7 +165,7 @@ msgstr ""
 #: model:ir.actions.act_window,name:mrp_operations.mrp_production_operation_action
 #: view:mrp.production.workcenter.line:0
 msgid "Operations"
-msgstr ""
+msgstr "Операції"
 
 #. module: mrp_operations
 #: model:ir.model,name:mrp_operations.model_stock_move
@@ -188,7 +188,7 @@ msgstr ""
 #. module: mrp_operations
 #: field:mrp.workorder,nbr:0
 msgid "# of Lines"
-msgstr ""
+msgstr "К-сть рядків"
 
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
@@ -234,7 +234,7 @@ msgstr "У виробництві"
 #: model:ir.actions.act_window,name:mrp_operations.action_report_mrp_workorder
 #: model:ir.model,name:mrp_operations.model_mrp_production_workcenter_line
 msgid "Work Order"
-msgstr ""
+msgstr "Наряд"
 
 #. module: mrp_operations
 #: model:process.transition,note:mrp_operations.process_transition_workstartoperation0
@@ -256,7 +256,7 @@ msgstr ""
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
 msgid "Planned Date"
-msgstr ""
+msgstr "Очікувана дата"
 
 #. module: mrp_operations
 #: view:mrp.workorder:0 field:mrp.workorder,product_qty:0
@@ -266,12 +266,12 @@ msgstr "К-сть"
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
 msgid "July"
-msgstr ""
+msgstr "July"
 
 #. module: mrp_operations
 #: field:mrp_operations.operation.code,name:0
 msgid "Operation Name"
-msgstr ""
+msgstr "Назва операції"
 
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
@@ -289,7 +289,7 @@ msgstr ""
 #. module: mrp_operations
 #: field:mrp_operations.operation,order_date:0
 msgid "Order Date"
-msgstr ""
+msgstr "Дата замовлення"
 
 #. module: mrp_operations
 #: model:ir.actions.act_window,name:mrp_operations.mrp_production_wc_draft_action
@@ -299,7 +299,7 @@ msgstr ""
 #. module: mrp_operations
 #: view:mrp.production:0
 msgid "Finish Order"
-msgstr ""
+msgstr "Завершити замовлення"
 
 #. module: mrp_operations
 #: model:ir.actions.act_window,help:mrp_operations.mrp_production_wc_action_form
@@ -335,12 +335,12 @@ msgstr ""
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
 msgid "September"
-msgstr ""
+msgstr "September"
 
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
 msgid "December"
-msgstr ""
+msgstr "December"
 
 #. module: mrp_operations
 #: view:mrp.workorder:0 field:mrp.workorder,month:0
@@ -350,7 +350,7 @@ msgstr "Місяць"
 #. module: mrp_operations
 #: selection:mrp.production.workcenter.line,production_state:0
 msgid "Canceled"
-msgstr ""
+msgstr "Скасовано"
 
 #. module: mrp_operations
 #: model:ir.model,name:mrp_operations.model_mrp_operations_operation
@@ -360,7 +360,7 @@ msgstr ""
 #. module: mrp_operations
 #: model:ir.model,name:mrp_operations.model_mrp_workorder
 msgid "Work Order Report"
-msgstr ""
+msgstr "Планування нарядів"
 
 #. module: mrp_operations
 #: field:mrp.production.workcenter.line,date_start:0
@@ -382,14 +382,14 @@ msgstr ""
 #: selection:mrp.workorder,state:0
 #: selection:mrp_operations.operation.code,start_stop:0
 msgid "Pause"
-msgstr ""
+msgstr "Пауза"
 
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
 #: selection:mrp.production.workcenter.line,state:0
 #: selection:mrp.workorder,state:0
 msgid "In Progress"
-msgstr ""
+msgstr "В процесі"
 
 #. module: mrp_operations
 #: code:addons/mrp_operations/mrp_operations.py:465
@@ -408,12 +408,12 @@ msgstr ""
 #: view:mrp.production:0 view:mrp.production.workcenter.line:0
 #: selection:mrp_operations.operation.code,start_stop:0
 msgid "Start"
-msgstr ""
+msgstr "Початок"
 
 #. module: mrp_operations
 #: view:mrp_operations.operation:0
 msgid "Calendar View"
-msgstr ""
+msgstr "Календарний вигляд"
 
 #. module: mrp_operations
 #: model:process.transition,note:mrp_operations.process_transition_startcanceloperation0
@@ -425,7 +425,7 @@ msgstr ""
 #. module: mrp_operations
 #: view:mrp.production:0 view:mrp.production.workcenter.line:0
 msgid "Set Draft"
-msgstr ""
+msgstr "Зробити чорновим"
 
 #. module: mrp_operations
 #: view:mrp.production:0 view:mrp.production.workcenter.line:0
@@ -449,17 +449,17 @@ msgstr ""
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
 msgid "August"
-msgstr ""
+msgstr "August"
 
 #. module: mrp_operations
 #: view:mrp.workorder:0
 msgid "Started"
-msgstr ""
+msgstr "Розпочато"
 
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
 msgid "Production started late"
-msgstr ""
+msgstr "Виробництво розпочато запізно"
 
 #. module: mrp_operations
 #: view:mrp.workorder:0
@@ -469,12 +469,12 @@ msgstr ""
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
 msgid "June"
-msgstr ""
+msgstr "June"
 
 #. module: mrp_operations
 #: view:mrp.workorder:0 field:mrp.workorder,total_cycles:0
 msgid "Total Cycles"
-msgstr ""
+msgstr "Всього циклів"
 
 #. module: mrp_operations
 #: selection:mrp.production.workcenter.line,production_state:0
@@ -484,12 +484,12 @@ msgstr "Готовий до виробництва"
 #. module: mrp_operations
 #: field:stock.move,move_dest_id_lines:0
 msgid "Children Moves"
-msgstr ""
+msgstr "Дочірні переміщення"
 
 #. module: mrp_operations
 #: model:ir.actions.act_window,name:mrp_operations.mrp_production_wc_action_planning
 msgid "Work Orders Planning"
-msgstr ""
+msgstr "Планування нарядів"
 
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0 field:mrp.workorder,date:0
@@ -499,7 +499,7 @@ msgstr "Дата"
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
 msgid "November"
-msgstr ""
+msgstr "November"
 
 #. module: mrp_operations
 #: view:mrp.workorder:0
@@ -509,12 +509,12 @@ msgstr "Пошук"
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
 msgid "October"
-msgstr ""
+msgstr "October"
 
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
 msgid "January"
-msgstr ""
+msgstr "January"
 
 #. module: mrp_operations
 #: view:mrp.production:0
@@ -543,7 +543,7 @@ msgstr ""
 #. module: mrp_operations
 #: view:mrp.workorder:0
 msgid "Current"
-msgstr ""
+msgstr "Поточний"
 
 #. module: mrp_operations
 #: field:mrp_operations.operation,code_id:0
@@ -554,7 +554,7 @@ msgstr "Код"
 #. module: mrp_operations
 #: model:ir.actions.act_window,name:mrp_operations.mrp_production_wc_confirm_action
 msgid "Confirmed Work Orders"
-msgstr ""
+msgstr "Підтверджені наряди"
 
 #. module: mrp_operations
 #: model:ir.actions.act_window,name:mrp_operations.mrp_production_code_action
@@ -626,12 +626,12 @@ msgstr ""
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
 msgid "Late"
-msgstr ""
+msgstr "Запізнено"
 
 #. module: mrp_operations
 #: field:mrp.workorder,delay:0
 msgid "Delay"
-msgstr ""
+msgstr "Затримка"
 
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0 view:mrp.workorder:0
@@ -651,12 +651,12 @@ msgstr ""
 #: field:mrp_operations.operation,workcenter_id:0
 #: model:process.node,name:mrp_operations.process_node_workorder0
 msgid "Work Center"
-msgstr ""
+msgstr "Робочий центр"
 
 #. module: mrp_operations
 #: field:mrp.production.workcenter.line,date_planned:0
 msgid "Scheduled Date"
-msgstr ""
+msgstr "Запланована дата"
 
 #. module: mrp_operations
 #: field:mrp.production.workcenter.line,product:0 view:mrp.workorder:0
@@ -667,7 +667,7 @@ msgstr "Продукт"
 #. module: mrp_operations
 #: view:mrp.workorder:0 field:mrp.workorder,total_hours:0
 msgid "Total Hours"
-msgstr ""
+msgstr "Всього годин"
 
 #. module: mrp_operations
 #: help:mrp.production,allow_reorder:0
@@ -679,14 +679,14 @@ msgstr ""
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
 msgid "May"
-msgstr ""
+msgstr "May"
 
 #. module: mrp_operations
 #: view:mrp.production:0 view:mrp.production.workcenter.line:0
 #: selection:mrp.production.workcenter.line,state:0
 #: selection:mrp.workorder,state:0
 msgid "Finished"
-msgstr ""
+msgstr "Завершено"
 
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
@@ -696,7 +696,7 @@ msgstr ""
 #. module: mrp_operations
 #: field:mrp.production.workcenter.line,delay:0
 msgid "Working Hours"
-msgstr ""
+msgstr "Робочі кодини"
 
 #. module: mrp_operations
 #: view:mrp.workorder:0
@@ -706,7 +706,7 @@ msgstr ""
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
 msgid "February"
-msgstr ""
+msgstr "February"
 
 #. module: mrp_operations
 #: model:process.transition,name:mrp_operations.process_transition_startcanceloperation0
@@ -721,7 +721,7 @@ msgstr ""
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
 msgid "April"
-msgstr ""
+msgstr "April"
 
 #. module: mrp_operations
 #: model:process.transition,name:mrp_operations.process_transition_startdoneoperation0
@@ -758,4 +758,4 @@ msgstr "Рік"
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
 msgid "Duration"
-msgstr ""
+msgstr "Тривалість"
