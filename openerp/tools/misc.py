@@ -27,6 +27,7 @@ Miscellaneous tools used by OpenERP.
 """
 
 from functools import wraps
+import cPickle
 import cProfile
 import subprocess
 import logging
@@ -36,6 +37,7 @@ import sys
 import threading
 import time
 import zipfile
+from cStringIO import StringIO
 from collections import defaultdict
 from datetime import datetime
 from itertools import islice, izip, groupby
@@ -59,7 +61,10 @@ _logger = logging.getLogger(__name__)
 
 # List of etree._Element subclasses that we choose to ignore when parsing XML.
 # We include the *Base ones just in case, currently they seem to be subclasses of the _* ones.
-SKIPPED_ELEMENT_TYPES = (etree._Comment, etree._ProcessingInstruction, etree.CommentBase, etree.PIBase)
+SKIPPED_ELEMENT_TYPES = (etree._Comment, etree._ProcessingInstruction, etree.CommentBase, etree.PIBase, etree._Entity)
+
+# Configure default global parser
+etree.set_default_parser(etree.XMLParser(resolve_entities=False))
 
 def find_in_path(name):
     try:
@@ -1086,5 +1091,26 @@ def stripped_sys_argv(*strip_args):
             or (i >= 1 and (args[i - 1] in strip_args) and takes_value[args[i - 1]])
 
     return [x for i, x in enumerate(args) if not strip(args, i)]
+
+class Pickle(object):
+    @classmethod
+    def load(cls, stream, errors=False):
+        unpickler = cPickle.Unpickler(stream)
+        # pickle builtins: str/unicode, int/long, float, bool, tuple, list, dict, None
+        unpickler.find_global = None
+        try:
+            return unpickler.load()
+        except Exception:
+            _logger.warning('Failed unpickling data, returning default: %r', errors, exc_info=True)
+            return errors
+
+    @classmethod
+    def loads(cls, text):
+        return cls.load(StringIO(text))
+
+    dumps = cPickle.dumps
+    dump = cPickle.dump
+
+pickle = Pickle
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

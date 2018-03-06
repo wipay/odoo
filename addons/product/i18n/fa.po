@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Odoo 7.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-14 00:10+0000\n"
-"PO-Revision-Date: 2015-05-29 13:15+0000\n"
+"PO-Revision-Date: 2016-07-22 23:02+0000\n"
 "Last-Translator: Martin Trigaux\n"
 "Language-Team: Persian (http://www.transifex.com/odoo/odoo-7/language/fa/)\n"
 "MIME-Version: 1.0\n"
@@ -26,7 +26,7 @@ msgstr ""
 #. module: product
 #: view:res.partner:0
 msgid "the parent company"
-msgstr ""
+msgstr "شرکت مادر"
 
 #. module: product
 #: help:product.pricelist.item,base:0
@@ -698,7 +698,7 @@ msgstr ""
 #. module: product
 #: help:product.product,message_unread:0
 msgid "If checked new messages require your attention."
-msgstr ""
+msgstr "اگر این گزینه را انتخاب کنید، پیام‌های جدید به توجه شما نیاز خواهند داشت"
 
 #. module: product
 #: field:product.product,ean13:0
@@ -920,7 +920,7 @@ msgstr ""
 #. module: product
 #: field:product.product,message_is_follower:0
 msgid "Is a Follower"
-msgstr ""
+msgstr "دنبال می کند"
 
 #. module: product
 #: field:product.product,price_extra:0
@@ -1300,7 +1300,7 @@ msgstr "این یادداشت در درخواست های پیش فاکتور ن�
 #. module: product
 #: view:product.product:0
 msgid "Inventory"
-msgstr ""
+msgstr "انبار"
 
 #. module: product
 #: field:product.product,seller_info_id:0
@@ -1311,7 +1311,7 @@ msgstr ""
 #: code:addons/product/product.py:733
 #, python-format
 msgid "%s (copy)"
-msgstr ""
+msgstr "%s (کپی)"
 
 #. module: product
 #: model:product.template,name:product.product_product_2_product_template
@@ -1432,7 +1432,7 @@ msgstr "گروه‌بندی بر اساس..."
 #. module: product
 #: field:product.product,image_medium:0
 msgid "Medium-sized image"
-msgstr ""
+msgstr "تصویر با اندازه متوسط"
 
 #. module: product
 #: selection:product.ul,type:0
@@ -1897,7 +1897,7 @@ msgstr ""
 #. module: product
 #: field:product.product,color:0
 msgid "Color Index"
-msgstr ""
+msgstr "رنگ پس زمینه"
 
 #. module: product
 #: help:product.template,sale_ok:0
@@ -2009,7 +2009,7 @@ msgstr "شرح برای تامین کنندگان"
 #. module: product
 #: field:product.supplierinfo,delay:0
 msgid "Delivery Lead Time"
-msgstr ""
+msgstr "تاریخ سررسید تحویل"
 
 #. module: product
 #: view:product.product:0
@@ -2408,7 +2408,7 @@ msgstr ""
 #: field:product.pricelist.item,product_tmpl_id:0
 #: field:product.product,product_tmpl_id:0 view:product.template:0
 msgid "Product Template"
-msgstr ""
+msgstr "قالب محصول"
 
 #. module: product
 #: field:product.template,cost_method:0

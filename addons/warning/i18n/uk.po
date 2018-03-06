@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Odoo 7.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-14 00:11+0000\n"
-"PO-Revision-Date: 2015-05-29 13:16+0000\n"
+"PO-Revision-Date: 2016-04-29 15:04+0000\n"
 "Last-Translator: Martin Trigaux\n"
 "Language-Team: Ukrainian (http://www.transifex.com/odoo/odoo-7/language/uk/)\n"
 "MIME-Version: 1.0\n"
@@ -26,12 +26,12 @@ msgstr "Рядок заявки на придбання"
 #. module: warning
 #: model:ir.model,name:warning.model_stock_picking_in
 msgid "Incoming Shipments"
-msgstr ""
+msgstr "Вхідні поставки"
 
 #. module: warning
 #: field:product.product,purchase_line_warn_msg:0
 msgid "Message for Purchase Order Line"
-msgstr ""
+msgstr "Повідомлення для рядка замовлення на куппівлю"
 
 #. module: warning
 #: model:ir.model,name:warning.model_stock_picking
@@ -51,7 +51,7 @@ msgstr "Продукт"
 #. module: warning
 #: view:product.product:0 view:res.partner:0
 msgid "Warnings"
-msgstr ""
+msgstr "Попередження"
 
 #. module: warning
 #: selection:product.product,purchase_line_warn:0
@@ -88,7 +88,7 @@ msgstr ""
 #. module: warning
 #: field:res.partner,picking_warn:0
 msgid "Stock Picking"
-msgstr ""
+msgstr "Відбір запасів"
 
 #. module: warning
 #: model:ir.model,name:warning.model_purchase_order
@@ -111,7 +111,7 @@ msgid ""
 "Selecting the \"Warning\" option will notify user with the message, "
 "Selecting \"Blocking Message\" will throw an exception with the message and "
 "block the flow. The Message has to be written in the next field."
-msgstr ""
+msgstr "Обираючи \"Попередження\" ви надішлете повідомлення користувачу. Якщо обрати \"Повідомлення блокування\", то буде запущено виключення з відповідним повідомленням користувачу та процес зупиниться. Повідомлення потрібно вказати у наступному полі."
 
 #. module: warning
 #: view:res.partner:0
@@ -150,7 +150,7 @@ msgstr ""
 #. module: warning
 #: field:product.product,sale_line_warn_msg:0
 msgid "Message for Sales Order Line"
-msgstr ""
+msgstr "Повідомлення для рядка замовлення на продаж"
 
 #. module: warning
 #: selection:product.product,purchase_line_warn:0
@@ -173,15 +173,15 @@ msgstr "Партнер"
 #. module: warning
 #: model:ir.model,name:warning.model_sale_order field:res.partner,sale_warn:0
 msgid "Sales Order"
-msgstr ""
+msgstr "Sales Order"
 
 #. module: warning
 #: model:ir.model,name:warning.model_stock_picking_out
 msgid "Delivery Orders"
-msgstr ""
+msgstr "Замовлення на доставку"
 
 #. module: warning
 #: model:ir.model,name:warning.model_sale_order_line
 #: field:product.product,sale_line_warn:0
 msgid "Sales Order Line"
-msgstr ""
+msgstr "Рядок замовлення на продаж"

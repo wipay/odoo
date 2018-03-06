@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Odoo 7.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-14 00:10+0000\n"
-"PO-Revision-Date: 2015-07-17 09:10+0000\n"
+"PO-Revision-Date: 2016-04-30 17:29+0000\n"
 "Last-Translator: Martin Trigaux\n"
 "Language-Team: Ukrainian (http://www.transifex.com/odoo/odoo-7/language/uk/)\n"
 "MIME-Version: 1.0\n"
@@ -34,7 +34,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: field:hr.timesheet.report,quantity:0 field:timesheet.report,quantity:0
 msgid "Time"
-msgstr ""
+msgstr "Час"
 
 #. module: hr_timesheet_sheet
 #: help:hr.config.settings,timesheet_max_difference:0
@@ -47,7 +47,7 @@ msgstr ""
 #: view:hr.timesheet.report:0 view:hr_timesheet_sheet.sheet:0
 #: view:timesheet.report:0
 msgid "Group By..."
-msgstr ""
+msgstr "Група"
 
 #. module: hr_timesheet_sheet
 #: field:hr_timesheet_sheet.sheet,total_attendance:0
@@ -78,7 +78,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: selection:hr.timesheet.report,month:0 selection:timesheet.report,month:0
 msgid "March"
-msgstr ""
+msgstr "March"
 
 #. module: hr_timesheet_sheet
 #: model:process.transition,name:hr_timesheet_sheet.process_transition_timesheetdraft0
@@ -93,7 +93,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: field:hr_timesheet_sheet.sheet,message_unread:0
 msgid "Unread Messages"
-msgstr ""
+msgstr "Непрочитані повідомлення"
 
 #. module: hr_timesheet_sheet
 #: view:hr.timesheet.report:0 field:hr.timesheet.report,company_id:0
@@ -120,7 +120,7 @@ msgstr "Зробити чорновиком"
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet:0
 msgid "Timesheet Period"
-msgstr ""
+msgstr "Період табелю"
 
 #. module: hr_timesheet_sheet
 #: field:hr_timesheet_sheet.sheet,date_to:0 field:timesheet.report,date_to:0
@@ -171,7 +171,7 @@ msgstr "Присутній"
 #. module: hr_timesheet_sheet
 #: view:hr.timesheet.report:0
 msgid "Total Cost"
-msgstr ""
+msgstr "Загальна вартість"
 
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet:0
@@ -183,7 +183,7 @@ msgstr "Відмовити"
 #: view:hr_timesheet_sheet.sheet:0
 #: model:ir.actions.act_window,name:hr_timesheet_sheet.act_hr_timesheet_sheet_sheet_2_hr_analytic_timesheet
 msgid "Timesheet Activities"
-msgstr ""
+msgstr "Дії по табелю"
 
 #. module: hr_timesheet_sheet
 #: code:addons/hr_timesheet_sheet/wizard/hr_timesheet_current.py:38
@@ -202,7 +202,7 @@ msgstr ""
 #: code:addons/hr_timesheet_sheet/hr_timesheet_sheet.py:236
 #, python-format
 msgid "Week "
-msgstr ""
+msgstr "Тиждень"
 
 #. module: hr_timesheet_sheet
 #: model:ir.actions.act_window,help:hr_timesheet_sheet.action_hr_timesheet_current_open
@@ -218,7 +218,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: field:hr_timesheet_sheet.sheet,message_ids:0
 msgid "Messages"
-msgstr ""
+msgstr "Повідомлення"
 
 #. module: hr_timesheet_sheet
 #: help:hr_timesheet_sheet.sheet,state:0
@@ -265,12 +265,12 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: field:hr_timesheet_sheet.sheet.account,name:0
 msgid "Project / Analytic Account"
-msgstr ""
+msgstr "Проект/Аналітичний рахунок"
 
 #. module: hr_timesheet_sheet
 #: model:process.transition,name:hr_timesheet_sheet.process_transition_validatetimesheet0
 msgid "Validation"
-msgstr ""
+msgstr "Підтвердження"
 
 #. module: hr_timesheet_sheet
 #: code:addons/hr_timesheet_sheet/hr_timesheet_sheet.py:101
@@ -281,7 +281,7 @@ msgstr "Попередження !"
 #. module: hr_timesheet_sheet
 #: help:hr_timesheet_sheet.sheet,message_unread:0
 msgid "If checked new messages require your attention."
-msgstr ""
+msgstr "Якщо позначено, то повідомленя потребує вашої уваги"
 
 #. module: hr_timesheet_sheet
 #: code:addons/hr_timesheet_sheet/hr_timesheet_sheet.py:72
@@ -302,7 +302,7 @@ msgstr ""
 #: code:addons/hr_timesheet_sheet/hr_timesheet_sheet.py:246
 #, python-format
 msgid "Invalid Action!"
-msgstr ""
+msgstr "Невірна дія!"
 
 #. module: hr_timesheet_sheet
 #: view:hr.timesheet.report:0 field:hr.timesheet.report,account_id:0
@@ -315,7 +315,7 @@ msgstr "Аналітичний рахунок"
 msgid ""
 "Holds the Chatter summary (number of messages, ...). This summary is "
 "directly in html format in order to be inserted in kanban views."
-msgstr ""
+msgstr "Містить загальну інформацію про діалоги в форматі html."
 
 #. module: hr_timesheet_sheet
 #: field:timesheet.report,nbr:0
@@ -361,7 +361,7 @@ msgstr "Записи табелю"
 #. module: hr_timesheet_sheet
 #: field:hr_timesheet_sheet.sheet,message_follower_ids:0
 msgid "Followers"
-msgstr ""
+msgstr "Хто слідкує"
 
 #. module: hr_timesheet_sheet
 #: model:process.node,note:hr_timesheet_sheet.process_node_confirmedtimesheet0
@@ -403,7 +403,7 @@ msgstr "Години"
 #. module: hr_timesheet_sheet
 #: view:hr.timesheet.report:0 view:timesheet.report:0
 msgid "Group by month of date"
-msgstr ""
+msgstr "Групувати по місяцях"
 
 #. module: hr_timesheet_sheet
 #: model:process.transition,note:hr_timesheet_sheet.process_transition_validatetimesheet0
@@ -413,7 +413,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: selection:hr.timesheet.report,month:0 selection:timesheet.report,month:0
 msgid "July"
-msgstr ""
+msgstr "July"
 
 #. module: hr_timesheet_sheet
 #: field:hr.config.settings,timesheet_range:0
@@ -425,7 +425,7 @@ msgstr ""
 #: code:addons/hr_timesheet_sheet/hr_timesheet_sheet.py:92
 #, python-format
 msgid "Configuration Error!"
-msgstr ""
+msgstr "Помилка налаштування!"
 
 #. module: hr_timesheet_sheet
 #: field:hr_timesheet_sheet.sheet,state:0 view:timesheet.report:0
@@ -441,7 +441,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: selection:hr_timesheet_sheet.sheet,state:0
 msgid "Waiting Approval"
-msgstr ""
+msgstr "Очікує затвердження"
 
 #. module: hr_timesheet_sheet
 #: view:timesheet.report:0
@@ -473,7 +473,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: model:ir.model,name:hr_timesheet_sheet.model_hr_timesheet_current_open
 msgid "hr.timesheet.current.open"
-msgstr ""
+msgstr "hr.timesheet.current.open"
 
 #. module: hr_timesheet_sheet
 #: code:addons/hr_timesheet_sheet/hr_timesheet_sheet.py:74
@@ -486,17 +486,17 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: selection:hr.timesheet.report,month:0 selection:timesheet.report,month:0
 msgid "September"
-msgstr ""
+msgstr "September"
 
 #. module: hr_timesheet_sheet
 #: selection:hr.timesheet.report,month:0 selection:timesheet.report,month:0
 msgid "December"
-msgstr ""
+msgstr "December"
 
 #. module: hr_timesheet_sheet
 #: view:hr.timesheet.current.open:0
 msgid "It will open your current timesheet"
-msgstr ""
+msgstr "Відкриється ваш поточний табель"
 
 #. module: hr_timesheet_sheet
 #: selection:hr.config.settings,timesheet_range:0 view:hr.timesheet.report:0
@@ -513,7 +513,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet:0
 msgid "In Draft"
-msgstr ""
+msgstr "В чорновому стані"
 
 #. module: hr_timesheet_sheet
 #: model:process.transition,name:hr_timesheet_sheet.process_transition_attendancetimesheet0
@@ -540,12 +540,12 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: view:hr.timesheet.current.open:0
 msgid "or"
-msgstr ""
+msgstr "або"
 
 #. module: hr_timesheet_sheet
 #: model:process.transition,name:hr_timesheet_sheet.process_transition_invoiceontimesheet0
 msgid "Billing"
-msgstr ""
+msgstr "Оплата"
 
 #. module: hr_timesheet_sheet
 #: model:process.transition,note:hr_timesheet_sheet.process_transition_timesheetdraft0
@@ -564,7 +564,7 @@ msgstr "Примітка"
 #: code:addons/hr_timesheet_sheet/static/src/xml/timesheet.xml:33
 #, python-format
 msgid "Add"
-msgstr ""
+msgstr "Додати"
 
 #. module: hr_timesheet_sheet
 #: view:timesheet.report:0 selection:timesheet.report,state:0
@@ -574,7 +574,7 @@ msgstr "Чорновик"
 #. module: hr_timesheet_sheet
 #: field:res.company,timesheet_max_difference:0
 msgid "Timesheet allowed difference(Hours)"
-msgstr ""
+msgstr "Дозволена різниця по табелю (годин)"
 
 #. module: hr_timesheet_sheet
 #: model:process.transition,note:hr_timesheet_sheet.process_transition_invoiceontimesheet0
@@ -605,27 +605,27 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: model:ir.model,name:hr_timesheet_sheet.model_account_analytic_line
 msgid "Analytic Line"
-msgstr ""
+msgstr "Рядок аналітики"
 
 #. module: hr_timesheet_sheet
 #: selection:hr.timesheet.report,month:0 selection:timesheet.report,month:0
 msgid "August"
-msgstr ""
+msgstr "August"
 
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet:0
 msgid "Differences"
-msgstr ""
+msgstr "Різниці"
 
 #. module: hr_timesheet_sheet
 #: selection:hr.timesheet.report,month:0 selection:timesheet.report,month:0
 msgid "June"
-msgstr ""
+msgstr "June"
 
 #. module: hr_timesheet_sheet
 #: field:hr_timesheet_sheet.sheet,state_attendance:0
 msgid "Current Status"
-msgstr ""
+msgstr "Поточний статус"
 
 #. module: hr_timesheet_sheet
 #: selection:hr.config.settings,timesheet_range:0
@@ -637,12 +637,12 @@ msgstr "Тиждень"
 #: model:ir.model,name:hr_timesheet_sheet.model_hr_timesheet_sheet_sheet_account
 #: model:ir.model,name:hr_timesheet_sheet.model_hr_timesheet_sheet_sheet_day
 msgid "Timesheets by Period"
-msgstr ""
+msgstr "Табелі по періоду"
 
 #. module: hr_timesheet_sheet
 #: field:hr_timesheet_sheet.sheet,message_is_follower:0
 msgid "Is a Follower"
-msgstr ""
+msgstr "Стежить"
 
 #. module: hr_timesheet_sheet
 #: view:hr.timesheet.report:0 field:hr.timesheet.report,user_id:0
@@ -665,12 +665,12 @@ msgstr "Дата"
 #. module: hr_timesheet_sheet
 #: selection:hr.timesheet.report,month:0 selection:timesheet.report,month:0
 msgid "November"
-msgstr ""
+msgstr "November"
 
 #. module: hr_timesheet_sheet
 #: view:hr.timesheet.report:0 view:timesheet.report:0
 msgid "Extended Filters..."
-msgstr ""
+msgstr "Extended Filters..."
 
 #. module: hr_timesheet_sheet
 #: field:res.company,timesheet_range:0
@@ -685,7 +685,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: selection:hr.timesheet.report,month:0 selection:timesheet.report,month:0
 msgid "October"
-msgstr ""
+msgstr "October"
 
 #. module: hr_timesheet_sheet
 #: code:addons/hr_timesheet_sheet/hr_timesheet_sheet.py:63
@@ -698,7 +698,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: selection:hr.timesheet.report,month:0 selection:timesheet.report,month:0
 msgid "January"
-msgstr ""
+msgstr "January"
 
 #. module: hr_timesheet_sheet
 #: model:process.transition,note:hr_timesheet_sheet.process_transition_attendancetimesheet0
@@ -738,7 +738,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet:0
 msgid "Submit to Manager"
-msgstr ""
+msgstr "Відправити керівнику"
 
 #. module: hr_timesheet_sheet
 #: code:addons/hr_timesheet_sheet/hr_timesheet_sheet.py:472
@@ -763,7 +763,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet.account:0
 msgid "Search Account"
-msgstr ""
+msgstr "Пошук рахунку"
 
 #. module: hr_timesheet_sheet
 #: code:addons/hr_timesheet_sheet/hr_timesheet_sheet.py:500
@@ -803,7 +803,7 @@ msgstr ""
 #: model:ir.actions.act_window,name:hr_timesheet_sheet.action_hr_timesheet_current_open
 #: model:ir.actions.server,name:hr_timesheet_sheet.ir_actions_server_timsheet_sheet
 msgid "My Timesheet"
-msgstr ""
+msgstr "Мій табель"
 
 #. module: hr_timesheet_sheet
 #: view:timesheet.report:0 selection:timesheet.report,state:0
@@ -823,7 +823,7 @@ msgstr "Скасувати"
 #. module: hr_timesheet_sheet
 #: model:process.node,name:hr_timesheet_sheet.process_node_validatedtimesheet0
 msgid "Validated"
-msgstr ""
+msgstr "Підтверджено"
 
 #. module: hr_timesheet_sheet
 #: model:process.node,name:hr_timesheet_sheet.process_node_invoiceonwork0
@@ -833,13 +833,13 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet.account:0
 msgid "Timesheet by Accounts"
-msgstr ""
+msgstr "Табель за рахунками"
 
 #. module: hr_timesheet_sheet
 #: code:addons/hr_timesheet_sheet/wizard/hr_timesheet_current.py:50
 #, python-format
 msgid "Open Timesheet"
-msgstr ""
+msgstr "Відкрити табель"
 
 #. module: hr_timesheet_sheet
 #: view:hr.timesheet.report:0 view:timesheet.report:0
@@ -868,22 +868,22 @@ msgstr ""
 #: model:ir.actions.act_window,name:hr_timesheet_sheet.action_hr_timesheet_report_stat_all
 #: model:ir.ui.menu,name:hr_timesheet_sheet.menu_hr_timesheet_report_all
 msgid "Timesheet Analysis"
-msgstr ""
+msgstr "Аналіз табелю"
 
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet:0
 msgid "Search Timesheet"
-msgstr ""
+msgstr "Пошук табелю"
 
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet:0
 msgid "Confirmed Timesheets"
-msgstr ""
+msgstr "Підтверджені табелі"
 
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet:0
 msgid "Details"
-msgstr ""
+msgstr "Деталі"
 
 #. module: hr_timesheet_sheet
 #: model:ir.model,name:hr_timesheet_sheet.model_hr_analytic_timesheet
@@ -929,7 +929,7 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: selection:hr.timesheet.report,month:0 selection:timesheet.report,month:0
 msgid "May"
-msgstr ""
+msgstr "May"
 
 #. module: hr_timesheet_sheet
 #: model:process.node,note:hr_timesheet_sheet.process_node_workontask0
@@ -949,14 +949,14 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet.day:0
 msgid "Total Attendances"
-msgstr ""
+msgstr "Всього відвідувань"
 
 #. module: hr_timesheet_sheet
 #. openerp-web
 #: code:addons/hr_timesheet_sheet/static/src/xml/timesheet.xml:39
 #, python-format
 msgid "Add a Line"
-msgstr ""
+msgstr "Додати рядок"
 
 #. module: hr_timesheet_sheet
 #: field:hr_timesheet_sheet.sheet,total_difference:0
@@ -973,12 +973,12 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: selection:hr_timesheet_sheet.sheet,state_attendance:0
 msgid "Absent"
-msgstr ""
+msgstr "Відсутній"
 
 #. module: hr_timesheet_sheet
 #: selection:hr.timesheet.report,month:0 selection:timesheet.report,month:0
 msgid "February"
-msgstr ""
+msgstr "February"
 
 #. module: hr_timesheet_sheet
 #: model:ir.actions.act_window,help:hr_timesheet_sheet.action_hr_timesheet_report_stat_all
@@ -1010,12 +1010,12 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: selection:hr.timesheet.report,month:0 selection:timesheet.report,month:0
 msgid "April"
-msgstr ""
+msgstr "April"
 
 #. module: hr_timesheet_sheet
 #: model:process.transition,name:hr_timesheet_sheet.process_transition_confirmtimesheet0
 msgid "Confirmation"
-msgstr ""
+msgstr "Підтвердження"
 
 #. module: hr_timesheet_sheet
 #: code:addons/hr_timesheet_sheet/hr_timesheet_sheet.py:130
@@ -1043,12 +1043,12 @@ msgstr ""
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet:0
 msgid "Approve"
-msgstr ""
+msgstr "Затвердити"
 
 #. module: hr_timesheet_sheet
 #: help:hr_timesheet_sheet.sheet,message_ids:0
 msgid "Messages and communication history"
-msgstr ""
+msgstr "Повідомлення та історія бесіди"
 
 #. module: hr_timesheet_sheet
 #: field:hr_timesheet_sheet.sheet,account_ids:0
@@ -1094,7 +1094,7 @@ msgstr "Відкритий"
 #. module: hr_timesheet_sheet
 #: view:hr_timesheet_sheet.sheet:0
 msgid "To Approve"
-msgstr ""
+msgstr "Підтвердити"
 
 #. module: hr_timesheet_sheet
 #. openerp-web
@@ -1113,4 +1113,4 @@ msgstr "Журнал"
 #. module: hr_timesheet_sheet
 #: model:ir.actions.act_window,name:hr_timesheet_sheet.act_hr_timesheet_sheet_sheet_by_day
 msgid "Timesheet by Day"
-msgstr ""
+msgstr "Табелі по дням"

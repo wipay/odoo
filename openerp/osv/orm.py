@@ -49,7 +49,6 @@ import datetime
 import itertools
 import logging
 import operator
-import pickle
 import re
 import simplejson
 import time
@@ -65,7 +64,7 @@ import openerp
 import openerp.netsvc as netsvc
 import openerp.tools as tools
 from openerp.tools.config import config
-from openerp.tools.misc import CountingStream
+from openerp.tools.misc import CountingStream, pickle
 from openerp.tools.safe_eval import safe_eval as eval
 from openerp.tools.translate import _
 from openerp import SUPERUSER_ID
@@ -288,6 +287,9 @@ class browse_null(object):
 
     def __unicode__(self):
         return u''
+
+    def __iter__(self):
+        raise NotImplementedError("Iteration is not allowed on browse_null")
 
 
 #
@@ -1729,6 +1731,9 @@ class BaseModel(object):
         fields = {}
         children = True
 
+        if isinstance(node, SKIPPED_ELEMENT_TYPES):
+            return fields
+
         modifiers = {}
 
         def encode(s):
@@ -2883,7 +2888,7 @@ class BaseModel(object):
                 # if val is a many2one, just write the ID
                 if type(val) == tuple:
                     val = val[0]
-                if val is not False:
+                if f._type == 'boolean' or val is not False:
                     cr.execute(update_query, (ss[1](val), key))
 
     def _check_selection_field_value(self, cr, uid, field, value, context=None):

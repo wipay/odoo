@@ -1595,7 +1595,7 @@ class account_move(osv.osv):
 
                 if line.account_id.currency_id and line.currency_id:
                     if line.account_id.currency_id.id != line.currency_id.id and (line.account_id.currency_id.id != line.account_id.company_id.currency_id.id):
-                        raise osv.except_osv(_('Error!'), _("""Cannot create move with currency different from ..""") % (line.account_id.code, line.account_id.name))
+                        raise osv.except_osv(_('Error'), _("""Couldn't create move with currency different from the secondary currency of the account "%s - %s". Clear the secondary currency field of the account definition if you want to accept all currencies.""") % (line.account_id.code, line.account_id.name))
 
             if abs(amount) < 10 ** -4:
                 # If the move is balanced
@@ -2155,6 +2155,12 @@ class account_tax(osv.osv):
         # rounding after the sum of the tax amounts of each line
         context = context or {}
         precision = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
+        #Codigo modificado por TRESCLOUD para que se aplique en los impuestos de
+        #la factura la misma logica implementada en los totales de la misma, los
+        #totales usan precision de moneda(2) y los impuestos usaban precision de
+        #account(no siempre es 2) y esto trae error de redondeo        
+        if context.get('origin') in ('invoice_tax_line', 'sale_tax_line') and context.get('precision'):
+            precision = context.get('precision') 
         tax_compute_precision = precision
         if taxes and taxes[0].company_id.tax_calculation_rounding_method == 'round_globally':
             tax_compute_precision += 5
