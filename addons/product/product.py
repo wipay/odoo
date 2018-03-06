@@ -384,6 +384,21 @@ class product_template(osv.osv):
             if product.uom_id.category_id.id <> product.uom_po_id.category_id.id:
                 return False
         return True
+    
+    # METODO IMPLEMENTADO POR TRESCLOUD.
+    def _msg_error_product(self, cr, uid, ids, context=None):
+        '''
+        Construccion del mensaje de error de productos con diferente unidad de medida
+        :param cursor: Cursor de la base de datos.
+        :param user: Usuario que ejecuta la transaccion
+        :param ids: Ids de seriales a analizar
+        :param context: Variables de contexto como idioma, zona horaria, etc
+        '''
+        str_error_product = ''
+        for product_id in self.browse(cr, uid, ids, context=context):
+            if product_id.uom_id.category_id.id <> product_id.uom_po_id.category_id.id:
+                str_error_product += product_id.name if not str_error_product else '\n' + product_id.name  
+        return (u'Error: La Unidad de Medida de venta y la Unidad de Medida de Compra debe pertenecer a la misma categoría en el/los producto(s): %s', (str_error_product,))
 
     def _check_uos(self, cursor, user, ids, context=None):
         for product in self.browse(cursor, user, ids, context=context):
@@ -394,7 +409,7 @@ class product_template(osv.osv):
         return True
 
     _constraints = [
-        (_check_uom, 'Error: The default Unit of Measure and the purchase Unit of Measure must be in the same category.', ['uom_id']),
+        (_check_uom, _msg_error_product, ['uom_id']),
     ]
 
     def name_get(self, cr, user, ids, context=None):
