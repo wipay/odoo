@@ -1257,6 +1257,19 @@ class account_voucher(osv.osv):
         """
         return voucher.partner_id.id
 
+    #El siguiente codigo fue agregado por Trescloud
+    def get_line_name(self, cr, uid, line, context=None):
+        '''
+        Este metodo devuelve el name del asiento contable, sera modificado en modulos superiores
+        :param cr: Cursor a la bd de postgres
+        :param uid: Id del usuario autenticado
+        :param line: Linea de asiento contable
+        :param context: Diccionario de contexto adicional
+        '''
+        if context is None:
+            context = {}
+        return line.name
+
     def voucher_move_line_create(self, cr, uid, voucher_id, line_total, move_id, company_currency, current_currency, context=None):
         '''
         Create one account move line, on the given account move, per voucher line where amount is not 0.0.
@@ -1308,7 +1321,8 @@ class account_voucher(osv.osv):
             move_line = {
                 'journal_id': voucher.journal_id.id,
                 'period_id': voucher.period_id.id,
-                'name': line.name or '/',
+                #El siguiente codigo fue modificado por Trescloud
+                'name': self.get_line_name(cr, uid, line, context=context) or '/',
                 'account_id': line.account_id.id,
                 'move_id': move_id,
                 'partner_id': self._get_voucher_line_partner(voucher, line, context),
