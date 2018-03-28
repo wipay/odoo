@@ -1265,6 +1265,22 @@ class stock_picking(osv.osv):
         :param context: Context variables for use.
         '''
         return True
+    #===================================================================
+    # Este codigo fue modificado por TRESCLOUD
+    #===================================================================
+    def _get_valuation_picking_in(self, cr, uid, pick, move, product_price, product_uom,
+                                  product_qty, product_currency, product_avail, 
+                                  context=None):
+        """
+        Valoracion de inventario
+        """
+        if (pick.type == 'in') and (move.product_id.cost_method == 'average'):
+            # Record the values that were chosen in the wizard, so they can be
+            # used for average price computation and inventory valuation
+            move_obj.write(cr, uid, [move.id],
+                    {'price_unit': product_price,
+                     'price_currency_id': product_currency})
+        
     # FIXME: needs refactoring, this code is partially duplicated in stock_move.do_partial()!
     def do_partial(self, cr, uid, ids, partial_datas, context=None):
         """ Makes partial picking and moves done.
@@ -1306,14 +1322,9 @@ class stock_picking(osv.osv):
                     too_few.append(move)
                 else:
                     too_many.append(move)
-
-                if (pick.type == 'in') and (move.product_id.cost_method == 'average'):
-                    # Record the values that were chosen in the wizard, so they can be
-                    # used for average price computation and inventory valuation
-                    move_obj.write(cr, uid, [move.id],
-                            {'price_unit': product_price,
-                             'price_currency_id': product_currency})
-
+                self._get_valuation_picking_in(cr, uid, pick, move, product_price, 
+                                               product_uom, product_qty, product_currency, 
+                                               product_avail, context=context)
             # every line of the picking is empty, do not generate anything
             if context.get('origin') == 'manual_adjustment':
                 empty_picking = not any(q for q in move_product_qty.values() if q > 0 or q < 0)
