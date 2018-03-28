@@ -1197,6 +1197,7 @@ class account_invoice(osv.osv):
                 'in_invoice': _('Supplier Invoice'),
                 'out_refund': _('Refund'),
                 'in_refund': _('Supplier Refund'),
+                'hr_advance': _('Employee Advance'),
                 }
         return [(r['id'], '%s %s' % (r['number'] or types[r['type']], r['name'] or '')) for r in self.read(cr, uid, ids, ['type', 'number', 'name'], context, load='_classic_write')]
 
