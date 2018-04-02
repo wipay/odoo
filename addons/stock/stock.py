@@ -1274,6 +1274,7 @@ class stock_picking(osv.osv):
         """
         Valoracion de inventario
         """
+        move_obj = self.pool.get('stock.move')
         if (pick.type == 'in') and (move.product_id.cost_method == 'average'):
             # Record the values that were chosen in the wizard, so they can be
             # used for average price computation and inventory valuation
