@@ -910,17 +910,27 @@ class Picking(models.Model):
 
             picking._create_backorder()
         return True
-
+    
+    def _get_values_create_lotes(self, pack_op_lot):
+        '''
+        Hook sera utilizado en un metodo superior.
+        '''
+        return {
+            'name': pack_op_lot.lot_name,
+            'product_id': pack_op_lot.operation_id.product_id.id
+        }
+        
     def _create_lots_for_picking(self):
         Lot = self.env['stock.production.lot']
         for pack_op_lot in self.mapped('pack_operation_ids').mapped('pack_lot_ids'):
             if not pack_op_lot.lot_id:
-                lot = Lot.create({'name': pack_op_lot.lot_name, 'product_id': pack_op_lot.operation_id.product_id.id})
+                #siguente linea es modificada por Trescloud
+                lot = Lot.create(self._get_values_create_lotes(pack_op_lot))
                 pack_op_lot.write({'lot_id': lot.id})
         # TDE FIXME: this should not be done here
         self.mapped('pack_operation_ids').mapped('pack_lot_ids').filtered(lambda op_lot: op_lot.qty == 0.0).unlink()
     create_lots_for_picking = _create_lots_for_picking
-
+    
     def _create_extra_moves(self):
         '''This function creates move lines on a picking, at the time of do_transfer, based on
         unexpected product transfers (or exceeding quantities) found in the pack operations.

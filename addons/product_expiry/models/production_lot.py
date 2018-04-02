@@ -30,10 +30,13 @@ class StockProductionLot(models.Model):
             for field in mapped_fields.keys():
                 duration = getattr(product, mapped_fields[field])
                 if duration:
-                    date = datetime.datetime.now() + datetime.timedelta(days=duration)
-                    res[field] = fields.Datetime.to_string(date)
+                    res[field] = self.get_date_product_life_time(duration)
         return res
-
+    
+    def get_date_product_life_time (self, duration):
+        
+        date = datetime.datetime.now() + datetime.timedelta(days=duration)
+        return fields.Datetime.to_string(date)
     # Assign dates according to products data
     @api.model
     def create(self, vals):
