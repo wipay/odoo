@@ -9,7 +9,7 @@
         <menuitem
             id="sales_team.menu_base_partner"
             name="CRM"
-            groups="sales_team.group_sale_manager,sales_team.group_sale_salesman"
+            groups="crm.group_claim_manager"
             web_icon="crm,static/description/icon.png"
             sequence="6"/>
 
