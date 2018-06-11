@@ -45,16 +45,14 @@
                     <div name="standard_price_uom" position="after">
                         <button string="Set standard price" type="action"
                             name="%(action_view_change_standard_price)d"
-                            attrs="{'invisible':['|', '|', ('valuation','!=', 'real_time'), ('cost_method', 'not in', ['standard']), ('product_variant_count', '>', 1)]}"
                             class="oe_link oe_read_only" colspan="2"
-                            groups="stock_account.group_inventory_valuation"/>
+                            groups="ecua_stock.group_cost_product_adjust"/>
                     </div>
                     <div name="standard_price_uom" position="after">
                         <button string="Set standard price" type="action"
                             name="%(action_view_change_standard_price)d"
-                            attrs="{'invisible':['|', '|', ('valuation','!=', 'real_time'), ('cost_method', 'not in', ['average']), ('product_variant_count', '>', 1)]}"
                             class="oe_link oe_read_only" colspan="2"
-                            groups="stock_account.group_inventory_valuation"/>
+                            groups="ecua_stock.group_cost_product_adjust"/>
                     </div>
                     <group name="accounting" position="inside">
                         <group name="property_inventory_valuation" groups="stock_account.group_inventory_valuation" attrs="{'invisible': [('type','=','service')]}">
@@ -86,14 +84,14 @@
                             name="%(action_view_change_standard_price)d"
                             attrs="{'invisible':['|',('valuation','!=', 'real_time'), ('cost_method', 'not in', ['standard'])]}"
                             class="oe_link oe_read_only" colspan="2"
-                            groups="stock_account.group_inventory_valuation"/>
+                            groups="ecua_stock.group_cost_product_adjust"/>
                     </field>
                     <field name="standard_price" position="after">
                         <button string="Set standard price" type="action"
                             name="%(action_view_change_standard_price)d"
                             attrs="{'invisible':['|',('valuation','!=', 'real_time'), ('cost_method', 'not in', ['average'])]}"
                             class="oe_link oe_read_only" colspan="2"
-                            groups="stock_account.group_inventory_valuation"/>
+                            groups="ecua_stock.group_cost_product_adjust"/>
                     </field>
                 </data>
             </field>
