@@ -540,20 +540,37 @@ class SaleOrderLine(models.Model):
           is removed from the list.
         - invoiced: the quantity invoiced is larger or equal to the quantity ordered.
         """
+        #TODO: Agregado por TRESCLOUD pues redefinimos por completo este metodo
+        #pero mantenemos la ejecución del mismo metodo en el módulo sale_stock
+        if self._context.get('_compute_invoice_status_redefined',False):
+            return
         precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         for line in self:
             if line.state not in ('sale', 'done'):
                 line.invoice_status = 'no'
             elif not float_is_zero(line.qty_to_invoice, precision_digits=precision):
                 line.invoice_status = 'to invoice'
+            #TRESCLOUD: Se agrega un hook para la qty_delivered y la qty_invoiced
             elif line.state == 'sale' and line.product_id.invoice_policy == 'order' and\
-                    float_compare(line.qty_delivered, line.product_uom_qty, precision_digits=precision) == 1:
+                    float_compare(line._get_qty_delivered(), line.product_uom_qty, precision_digits=precision) == 1:
                 line.invoice_status = 'upselling'
-            elif float_compare(line.qty_invoiced, line.product_uom_qty, precision_digits=precision) >= 0:
+            elif float_compare(line._get_qty_invoiced(), line.product_uom_qty, precision_digits=precision) >= 0:
                 line.invoice_status = 'invoiced'
             else:
                 line.invoice_status = 'no'
+    
+    #TRESCLOUD - hook para qty_delivered y qty_invoiced
+    @api.model
+    def _get_qty_delivered(self):
+        '''Hook para agregar el concepto de cantidades devueltas'''
+        return self.qty_delivered
 
+    #TRESCLOUD - hook para qty_delivered y qty_invoiced
+    @api.model
+    def _get_qty_invoiced(self):
+        '''Hook para agregar el concepto de qtys en notas de credito'''
+        return self.qty_invoiced
+            
     @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id')
     def _compute_amount(self):
         """
