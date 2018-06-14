@@ -540,10 +540,6 @@ class SaleOrderLine(models.Model):
           is removed from the list.
         - invoiced: the quantity invoiced is larger or equal to the quantity ordered.
         """
-        #TODO: Agregado por TRESCLOUD pues redefinimos por completo este metodo
-        #pero mantenemos la ejecución del mismo metodo en el módulo sale_stock
-        if self._context.get('_compute_invoice_status_redefined',False):
-            return
         precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         for line in self:
             if line.state not in ('sale', 'done'):
