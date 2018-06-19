@@ -105,6 +105,7 @@ class account_invoice(osv.osv):
         for invoice in self.browse(cr, SUPERUSER_ID, ids, context=context):
             nb_inv_in_partial_rec = max_invoice_id = 0
             result[invoice.id] = 0.0
+            nb_inv_in_partial_rec_ids = []
             if invoice.move_id:
                 for aml in invoice.move_id.line_id:
                     if aml.account_id.type in ('receivable','payable'):
@@ -119,7 +120,9 @@ class account_invoice(osv.osv):
                             #involved in this partial reconciliation (and we sum these invoices)
                             for line in aml.reconcile_partial_id.line_partial_ids:
                                 if line.invoice and invoice.type == line.invoice.type:
-                                    nb_inv_in_partial_rec += 1
+                                    if line.invoice.id not in nb_inv_in_partial_rec_ids:
+                                        nb_inv_in_partial_rec += 1
+                                        nb_inv_in_partial_rec_ids.append(line.invoice.id)
                                     #store the max invoice id as for this invoice we will make a balance instead of a simple division
                                     max_invoice_id = max(max_invoice_id, line.invoice.id)
             if nb_inv_in_partial_rec:
