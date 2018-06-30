@@ -3,19 +3,18 @@
 # * website_event_questions
 # 
 # Translators:
-# Ediz Duman <neps1192@gmail.com>, 2016
-# Azar Huseynli <azerbay1984@gmail.com>, 2016
-# Martin Trigaux <mat@odoo.com>, 2016
-# gezgin biri <gezginbiri@hotmail.com>, 2016
-# Ayhan KIZILTAN <akiziltan76@hotmail.com>, 2016
-# Murat Kaplan <muratk@projetgrup.com>, 2016
+# Ediz Duman <neps1192@gmail.com>, 2017
+# Ayhan KIZILTAN <akiziltan76@hotmail.com>, 2017
+# Martin Trigaux, 2017
+# Murat Kaplan <muratk@projetgrup.com>, 2017
+# Umur Akın <umura@projetgrup.com>, 2018
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 10.0c\n"
+"Project-Id-Version: Odoo Server 10.saas~18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-07 08:57+0000\n"
-"PO-Revision-Date: 2016-09-07 08:57+0000\n"
-"Last-Translator: Murat Kaplan <muratk@projetgrup.com>, 2016\n"
+"POT-Creation-Date: 2017-10-02 11:26+0000\n"
+"PO-Revision-Date: 2017-10-02 11:26+0000\n"
+"Last-Translator: Umur Akın <umura@projetgrup.com>, 2018\n"
 "Language-Team: Turkish (https://www.transifex.com/odoo/teams/41243/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -25,7 +24,7 @@ msgstr ""
 
 #. module: website_event_questions
 #: model:ir.ui.view,arch_db:website_event_questions.registration_attendee_details_questions
-msgid "<strong>Common Questions</strong>"
+msgid "<strong>Questions</strong>"
 msgstr ""
 
 #. module: website_event_questions
@@ -50,7 +49,7 @@ msgstr "Yanıtlar"
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_is_individual
 msgid "Ask each attendee"
-msgstr ""
+msgstr "Her katılımcıya sor"
 
 #. module: website_event_questions
 #: model:ir.model,name:website_event_questions.model_event_registration
@@ -82,34 +81,40 @@ msgstr "Oluşturulma"
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_report_display_name
 #: model:ir.model.fields,field_description:website_event_questions.field_event_registration_answer_display_name
 msgid "Display Name"
-msgstr "Adı Göstermek"
+msgstr "Görünüm Adı"
 
 #. module: website_event_questions
 #: model:ir.model,name:website_event_questions.model_event_event
+#: model:ir.model.fields,field_description:website_event_questions.field_event_question_event_id
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_report_event_id
 #: model:ir.ui.view,arch_db:website_event_questions.view_event_question_report_search
 msgid "Event"
-msgstr "Etkinlik"
+msgstr "Aktivite"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_registration_answer_event_answer_id
-msgid "Event answer id"
-msgstr ""
+msgid "Event Answer"
+msgstr "Etkinlik Cevapları"
 
 #. module: website_event_questions
-#: model:ir.model.fields,field_description:website_event_questions.field_event_question_event_id
-msgid "Event id"
-msgstr ""
+#: model:ir.model,name:website_event_questions.model_event_type
+msgid "Event Category"
+msgstr "Etkinlik Kategorisi"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_registration_answer_event_registration_id
-msgid "Event registration id"
-msgstr "Etkinlik kayıt kimliği"
+msgid "Event Registration"
+msgstr "Etkinlik Kaydı"
+
+#. module: website_event_questions
+#: model:ir.model.fields,field_description:website_event_questions.field_event_question_event_type_id
+msgid "Event Type"
+msgstr "Etkinlik Türü"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_event_general_question_ids
 msgid "General Questions"
-msgstr ""
+msgstr "Genel Sorular"
 
 #. module: website_event_questions
 #: model:event.answer,name:website_event_questions.event_suggestion_0_0
@@ -135,6 +140,8 @@ msgid ""
 "If True, this question will be asked for every attendee of a reservation. If"
 " not it will be asked only once and its value propagated to every attendees."
 msgstr ""
+"Eğer doğru ise, bu soru rezevasyonu olan her katılımcıya sorulacak. Eğer "
+"değilse, sadece bir kez sorulacak ve değeri her katılımcıya yayılacaktır."
 
 #. module: website_event_questions
 #: model:event.answer,name:website_event_questions.event_suggestion_2_1
@@ -144,7 +151,7 @@ msgstr ""
 #. module: website_event_questions
 #: model:event.question,title:website_event_questions.event_question_0
 msgid "Kind of partner"
-msgstr ""
+msgstr "İş ortağı türü"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_answer___last_update
@@ -176,9 +183,10 @@ msgstr "Hayır"
 #. module: website_event_questions
 #: model:event.answer,name:website_event_questions.event_suggestion_2_0
 msgid "Personal"
-msgstr ""
+msgstr "Personel"
 
 #. module: website_event_questions
+#: model:ir.model.fields,field_description:website_event_questions.field_event_answer_question_id
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_report_question_id
 #: model:ir.ui.view,arch_db:website_event_questions.view_event_answer_simplified_form
 #: model:ir.ui.view,arch_db:website_event_questions.view_event_question_form
@@ -187,12 +195,16 @@ msgid "Question"
 msgstr "Soru"
 
 #. module: website_event_questions
-#: model:ir.model.fields,field_description:website_event_questions.field_event_answer_question_id
-msgid "Question id"
+#: code:addons/website_event_questions/models/event.py:78
+#, python-format
+msgid "Question should belong to either event category or event but not both"
 msgstr ""
+"Soru etkinlik kategorisine ya da etkinliğe bağlı olmalı, ikisine birden "
+"değil."
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_event_question_ids
+#: model:ir.model.fields,field_description:website_event_questions.field_event_type_question_ids
 #: model:ir.ui.menu,name:website_event_questions.menu_report_event_questions
 #: model:ir.ui.view,arch_db:website_event_questions.view_event_form_inherit_question
 msgid "Questions"
@@ -204,13 +216,18 @@ msgstr "Sorular"
 #: model:ir.ui.view,arch_db:website_event_questions.view_event_question_report_pivot
 #: model:ir.ui.view,arch_db:website_event_questions.view_event_question_report_search
 msgid "Questions Analysis"
-msgstr ""
+msgstr "Soru Analizi"
+
+#. module: website_event_questions
+#: model:ir.model.fields,field_description:website_event_questions.field_event_type_use_questions
+msgid "Questions to Attendees"
+msgstr "Katılımcılara Sorular"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_report_attendee_id
 #: model:ir.ui.view,arch_db:website_event_questions.view_event_question_report_search
 msgid "Registration"
-msgstr "Kayıt"
+msgstr "Üye Ol"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_answer_sequence
@@ -226,17 +243,17 @@ msgstr "Gümüş"
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_event_specific_question_ids
 msgid "Specific Questions"
-msgstr ""
+msgstr "Belirli Sorular"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_title
 msgid "Title"
-msgstr "Ünvan"
+msgstr "Başlık"
 
 #. module: website_event_questions
 #: model:event.question,title:website_event_questions.event_question_1
 msgid "Veggie"
-msgstr ""
+msgstr "Vejeteryan"
 
 #. module: website_event_questions
 #: model:event.answer,name:website_event_questions.event_suggestion_1_0
@@ -246,19 +263,19 @@ msgstr "Evet"
 #. module: website_event_questions
 #: model:ir.model,name:website_event_questions.model_event_answer
 msgid "event.answer"
-msgstr ""
+msgstr "event.answer"
 
 #. module: website_event_questions
 #: model:ir.model,name:website_event_questions.model_event_question
 msgid "event.question"
-msgstr ""
+msgstr "event.question"
 
 #. module: website_event_questions
 #: model:ir.model,name:website_event_questions.model_event_question_report
 msgid "event.question.report"
-msgstr ""
+msgstr "event.question.report"
 
 #. module: website_event_questions
 #: model:ir.model,name:website_event_questions.model_event_registration_answer
 msgid "event.registration.answer"
-msgstr ""
+msgstr "event.registration.answer"

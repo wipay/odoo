@@ -5,7 +5,7 @@ from collections import defaultdict
 
 from odoo.exceptions import AccessError, MissingError
 from odoo.tests.common import TransactionCase
-from odoo.tools import mute_logger
+from odoo.tools import mute_logger, pycompat
 
 
 class TestORM(TransactionCase):
@@ -163,6 +163,25 @@ class TestORM(TransactionCase):
                                   ['date:month', 'date:day'], lazy=False)
         self.assertEqual(len(res), len(partner_ids))
 
+        # combine groupby and orderby
+        months = ['February 2013', 'January 2013', 'December 2012', 'November 2012']
+        res = partners.read_group([('id', 'in', partner_ids)], ['date'],
+                                  groupby=['date:month'], orderby='date:month DESC')
+        self.assertEqual([item['date:month'] for item in res], months)
+
+        # order by date should reorder by date:month
+        res = partners.read_group([('id', 'in', partner_ids)], ['date'],
+                                  groupby=['date:month'], orderby='date DESC')
+        self.assertEqual([item['date:month'] for item in res], months)
+
+        # order by date should reorder by date:day
+        days = ['11 Feb 2013', '28 Jan 2013', '14 Jan 2013', '07 Jan 2013',
+                '31 Dec 2012', '17 Dec 2012', '19 Nov 2012']
+        res = partners.read_group([('id', 'in', partner_ids)], ['date'],
+                                  groupby=['date:month', 'date:day'],
+                                  orderby='date DESC', lazy=False)
+        self.assertEqual([item['date:day'] for item in res], days)
+
     def test_write_duplicate(self):
         p1 = self.env['res.partner'].create({'name': 'W'})
         (p1 + p1).write({'name': 'X'})
@@ -193,7 +212,7 @@ class TestInherits(TransactionCase):
         """ `default_get` cannot return a dictionary or a new id """
         defaults = self.env['res.users'].default_get(['partner_id'])
         if 'partner_id' in defaults:
-            self.assertIsInstance(defaults['partner_id'], (bool, int, long))
+            self.assertIsInstance(defaults['partner_id'], (bool, pycompat.integer_types))
 
     def test_create(self):
         """ creating a user should automatically create a new partner """
@@ -297,7 +316,7 @@ class TestO2MSerialization(TransactionCase):
     def test_CREATE_commands(self):
         " returns the VALUES dict as-is "
         values = [{'foo': 'bar'}, {'foo': 'baz'}, {'foo': 'baq'}]
-        results = self.env['res.partner'].resolve_2many_commands('child_ids', map(CREATE, values))
+        results = self.env['res.partner'].resolve_2many_commands('child_ids', [CREATE(v) for v in values])
         self.assertEqual(results, values)
 
     def test_LINK_TO_command(self):
@@ -307,7 +326,7 @@ class TestO2MSerialization(TransactionCase):
             self.env['res.partner'].create({'name': 'bar'}).id,
             self.env['res.partner'].create({'name': 'baz'}).id,
         ]
-        commands = map(LINK_TO, ids)
+        commands = [LINK_TO(v) for v in ids]
 
         results = self.env['res.partner'].resolve_2many_commands('child_ids', commands, ['name'])
         self.assertItemsEqual(results, [
@@ -356,7 +375,7 @@ class TestO2MSerialization(TransactionCase):
             self.env['res.partner'].create({'name': 'bar'}).id,
             self.env['res.partner'].create({'name': 'baz'}).id,
         ]
-        commands = map(DELETE, ids)
+        commands = [DELETE(v) for v in ids]
 
         results = self.env['res.partner'].resolve_2many_commands('child_ids', commands, ['name'])
         self.assertEqual(results, [])

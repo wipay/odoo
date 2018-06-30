@@ -38,4 +38,4 @@ msgstr "Cuentas No Clasificadas"
 #. module: l10n_pa
 #: model:ir.actions.client,name:l10n_pa.action_client_l10n_pa_menu
 msgid "Open Account Dashboard Menu"
-msgstr "Abrir Menú de Contabilidad"
+msgstr ""

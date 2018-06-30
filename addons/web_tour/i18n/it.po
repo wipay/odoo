@@ -3,17 +3,18 @@
 # * web_tour
 # 
 # Translators:
-# Francesco Garganese <francesco.garganese@aeromnia.aero>, 2016
-# Giacomo Grasso <giacomo.grasso.82@gmail.com>, 2016
-# Alessandro Forte <a.forte1010@gmail.com>, 2016
-# Paolo Valier <paolo.valier@hotmail.it>, 2016
+# Martin Trigaux, 2017
+# Paolo Valier, 2018
+# Francesco Garganese <francesco.garganese@aeromnia.aero>, 2018
+# Marius Marolla <mariusmarolla@entersys.it>, 2018
+# Alessandro Forte <a.forte1010@gmail.com>, 2018
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 10.0c\n"
+"Project-Id-Version: Odoo Server 10.saas~18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-07 08:58+0000\n"
-"PO-Revision-Date: 2016-09-07 08:58+0000\n"
-"Last-Translator: Paolo Valier <paolo.valier@hotmail.it>, 2016\n"
+"POT-Creation-Date: 2017-09-20 09:54+0000\n"
+"PO-Revision-Date: 2017-09-20 09:54+0000\n"
+"Last-Translator: Alessandro Forte <a.forte1010@gmail.com>, 2018\n"
 "Language-Team: Italian (https://www.transifex.com/odoo/teams/41243/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,17 +24,10 @@ msgstr ""
 
 #. module: web_tour
 #. openerp-web
-#: code:addons/web_tour/static/src/js/tour_manager.js:494
+#: code:addons/web_tour/static/src/js/tour_manager.js:485
 #, python-format
 msgid "Click the <i>Home icon</i> to navigate across apps."
-msgstr ""
-
-#. module: web_tour
-#. openerp-web
-#: code:addons/web_tour/static/src/xml/debug_manager.xml:8
-#, python-format
-msgid "Consume Tours"
-msgstr ""
+msgstr "Clic su <i>Home icon</i> per navigare tra le applicazioni."
 
 #. module: web_tour
 #: model:ir.model.fields,field_description:web_tour.field_web_tour_tour_user_id
@@ -41,9 +35,16 @@ msgid "Consumed by"
 msgstr "Usato da"
 
 #. module: web_tour
+#. openerp-web
+#: code:addons/web_tour/static/src/xml/debug_manager.xml:8
+#, python-format
+msgid "Disable Tours"
+msgstr ""
+
+#. module: web_tour
 #: model:ir.model.fields,field_description:web_tour.field_web_tour_tour_display_name
 msgid "Display Name"
-msgstr "Nome Visualizzato"
+msgstr "Visualizza Nome"
 
 #. module: web_tour
 #: model:ir.model,name:web_tour.model_ir_http
@@ -58,12 +59,7 @@ msgstr "ID"
 #. module: web_tour
 #: model:ir.model.fields,field_description:web_tour.field_web_tour_tour___last_update
 msgid "Last Modified on"
-msgstr "Ultima modifica il"
-
-#. module: web_tour
-#: model:ir.model.fields,field_description:web_tour.field_ir_ui_menu_load_xmlid
-msgid "Load xmlid"
-msgstr ""
+msgstr "Data di ultima modifica"
 
 #. module: web_tour
 #: model:ir.ui.view,arch_db:web_tour.edit_tour_list
@@ -86,16 +82,16 @@ msgstr "Percorso"
 
 #. module: web_tour
 #. openerp-web
-#: code:addons/web_tour/static/src/js/tour_manager.js:229
+#: code:addons/web_tour/static/src/js/tour_manager.js:198
 #, python-format
 msgid "Skip tour"
-msgstr ""
+msgstr "Salta Tour"
 
 #. module: web_tour
 #. openerp-web
 #: code:addons/web_tour/static/src/xml/debug_manager.xml:11
 #, python-format
-msgid "Start tour"
+msgid "Start Tour"
 msgstr ""
 
 #. module: web_tour
@@ -106,16 +102,11 @@ msgstr "Suggerimento"
 #. module: web_tour
 #: model:ir.model.fields,field_description:web_tour.field_web_tour_tour_name
 msgid "Tour name"
-msgstr ""
+msgstr "Nome Tour"
 
 #. module: web_tour
 #: model:ir.actions.act_window,name:web_tour.edit_tour_action
 #: model:ir.model,name:web_tour.model_web_tour_tour
 #: model:ir.ui.menu,name:web_tour.menu_tour_action
 msgid "Tours"
-msgstr ""
-
-#. module: web_tour
-#: model:ir.model,name:web_tour.model_ir_ui_menu
-msgid "ir.ui.menu"
-msgstr "ir.ui.menu"
+msgstr "Tour"

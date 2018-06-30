@@ -3,8 +3,9 @@ import time
 
 import odoo
 from odoo import fields
-from odoo.tools import float_compare, mute_logger
+from odoo.tools import float_compare, mute_logger, test_reports
 from odoo.addons.point_of_sale.tests.common import TestPointOfSaleCommon
+
 
 @odoo.tests.common.at_install(False)
 @odoo.tests.common.post_install(True)
@@ -115,6 +116,46 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
         # I test that the generated journal entry is attached to the PoS order
         self.assertTrue(self.pos_order_pos0.account_move, "Journal entry has not been attached to Pos order.")
 
+    def test_order_refund(self):
+        # I create a new PoS order with 2 lines
+        order = self.PosOrder.create({
+            'company_id': self.company_id,
+            'partner_id': self.partner1.id,
+            'pricelist_id': self.partner1.property_product_pricelist.id,
+            'lines': [(0, 0, {
+                'name': "OL/0001",
+                'product_id': self.product3.id,
+                'price_unit': 450,
+                'discount': 5.0,
+                'qty': 2.0,
+                'tax_ids': [(6, 0, self.product3.taxes_id.ids)],
+            }), (0, 0, {
+                'name': "OL/0002",
+                'product_id': self.product4.id,
+                'price_unit': 300,
+                'discount': 5.0,
+                'qty': 3.0,
+                'tax_ids': [(6, 0, self.product4.taxes_id.ids)],
+            })]
+        })
+
+        # I create a refund
+        refund_action = order.refund()
+        refund = self.PosOrder.browse(refund_action['res_id'])
+
+        self.assertEqual(order.amount_total, -1*refund.amount_total,
+            "The refund does not cancel the order (%s and %s)" % (order.amount_total, refund.amount_total))
+
+        payment_context = {"active_ids": refund.ids, "active_id": refund.id}
+        refund_payment = self.PosMakePayment.with_context(**payment_context).create({
+            'amount': refund.amount_total
+        })
+
+        # I click on the validate button to register the payment.
+        refund_payment.with_context(**payment_context).check()
+
+        self.assertEqual(refund.state, 'paid', "The refund is not marked as paid")
+
     def test_order_to_picking(self):
         """
             In order to test the Point of Sale in module, I will do three orders from the sale to the payment,
@@ -138,22 +179,23 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
                 'price_unit': 450,
                 'discount': 0.0,
                 'qty': 2.0,
+                'tax_ids': [(6, 0, self.product3.taxes_id.ids)],
             }), (0, 0, {
                 'name': "OL/0002",
                 'product_id': self.product4.id,
                 'price_unit': 300,
                 'discount': 0.0,
                 'qty': 3.0,
+                'tax_ids': [(6, 0, self.product4.taxes_id.ids)],
             })]
         })
 
-        # I click on the "Make Payment" wizard to pay the PoS order with the total amount (2*450 + 3*300 = 1800)
         context_make_payment = {
             "active_ids": [self.pos_order_pos1.id],
             "active_id": self.pos_order_pos1.id
         }
         self.pos_make_payment_2 = self.PosMakePayment.with_context(context_make_payment).create({
-            'amount': 1800
+            'amount': 1845
         })
 
         # I click on the validate button to register the payment.
@@ -200,22 +242,23 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
                 'price_unit': 450,
                 'discount': 0.0,
                 'qty': (-2.0),
+                'tax_ids': [(6, 0, self.product3.taxes_id.ids)],
             }), (0, 0, {
                 'name': "OL/0004",
                 'product_id': self.product4.id,
                 'price_unit': 300,
                 'discount': 0.0,
                 'qty': (-3.0),
+                'tax_ids': [(6, 0, self.product4.taxes_id.ids)],
             })]
         })
 
-        # I click on the "Make Payment" wizard to pay the PoS order with the total amount (-2*450 + -3*300 = -1800)
         context_make_payment = {
             "active_ids": [self.pos_order_pos2.id],
             "active_id": self.pos_order_pos2.id
         }
         self.pos_make_payment_3 = self.PosMakePayment.with_context(context_make_payment).create({
-            'amount': (-1800)
+            'amount': (-1845)
         })
 
         # I click on the validate button to register the payment.
@@ -262,22 +305,23 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
                 'price_unit': 450,
                 'discount': 0.0,
                 'qty': (-2.0),
+                'tax_ids': [(6, 0, self.product3.taxes_id.ids)],
             }), (0, 0, {
                 'name': "OL/0006",
                 'product_id': self.product4.id,
                 'price_unit': 300,
                 'discount': 0.0,
                 'qty': 3.0,
+                'tax_ids': [(6, 0, self.product4.taxes_id.ids)],
             })]
         })
 
-        # I click on the "Make Payment" wizard to pay the PoS order with the total amount (-2*450 + 3*300 = 0)
         context_make_payment = {
             "active_ids": [self.pos_order_pos3.id],
             "active_id": self.pos_order_pos3.id
         }
         self.pos_make_payment_4 = self.PosMakePayment.with_context(context_make_payment).create({
-            'amount': 0
+            'amount': 45,
         })
 
         # I click on the validate button to register the payment.
@@ -353,12 +397,13 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
         self.assertFalse(self.pos_order_pos1.invoice_id, 'Invoice should not be attached to order.')
 
         # I generate an invoice from the order
-        self.invoice = self.pos_order_pos1.action_pos_order_invoice()
+        res = self.pos_order_pos1.action_pos_order_invoice()
+        self.assertIn('res_id', res, "No invoice created")
 
         # I test that the total of the attached invoice is correct
-        self.amount_total = self.pos_order_pos1.amount_total
+        invoice = self.env['account.invoice'].browse(res['res_id'])
         self.assertEqual(
-            float_compare(self.amount_total, 1752.75, precision_digits=2), 0, "Invoice not correct")
+            float_compare(invoice.amount_total, 1752.75, precision_digits=2), 0, "Invoice not correct")
 
         """In order to test the reports on Bank Statement defined in point_of_sale module, I create a bank statement line, confirm it and print the reports"""
 
@@ -436,6 +481,7 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
            'amount_total': untax + atax,
            'creation_date': fields.Datetime.now(),
            'fiscal_position_id': False,
+           'pricelist_id': self.pos_config.available_pricelist_ids[0].id,
            'lines': [[0,
              0,
              {'discount': 0,
@@ -469,6 +515,7 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
            'amount_total': untax + atax,
            'creation_date': fields.Datetime.now(),
            'fiscal_position_id': False,
+           'pricelist_id': self.pos_config.available_pricelist_ids[0].id,
            'lines': [[0,
              0,
              {'discount': 0,
@@ -502,6 +549,7 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
            'amount_total': untax + atax,
            'creation_date': fields.Datetime.now(),
            'fiscal_position_id': False,
+           'pricelist_id': self.pos_config.available_pricelist_ids[0].id,
            'lines': [[0,
              0,
              {'discount': 0,
@@ -546,6 +594,7 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
         rescue_session = self.PosSession.search([
             ('config_id', '=', self.pos_config.id),
             ('state', '=', 'opened'),
+            ('rescue', '=', True)
         ])
         self.assertEqual(len(rescue_session), 1, "One (and only one) rescue session should be created for orphan orders")
         self.assertIn("(RESCUE FOR %s)" % current_session.name, rescue_session.name, "Rescue session is not linked to the previous one")

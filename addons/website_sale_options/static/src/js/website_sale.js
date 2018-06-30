@@ -2,14 +2,14 @@ odoo.define('website_sale_options.website_sale', function(require) {
 "use strict";
 
 var ajax = require('web.ajax');
-var website = require('website.website');
-var base = require('web_editor.base');
+require('web.dom_ready');
+var weContext = require("web_editor.context");
 require('website_sale.website_sale');
 
 $('.oe_website_sale #add_to_cart, .oe_website_sale #products_grid .a-submit')
     .off('click')
     .removeClass('a-submit')
-    .click(function (event) {
+    .click(_.debounce(function (event) {
         var $form = $(this).closest('form');
         var quantity = parseFloat($form.find('input[name="add_qty"]').val() || 1);
         var product_id = parseInt($form.find('input[type="hidden"][name="product_id"], input[type="radio"][name="product_id"]:checked').first().val(),10);
@@ -17,7 +17,7 @@ $('.oe_website_sale #add_to_cart, .oe_website_sale #products_grid .a-submit')
         ajax.jsonRpc("/shop/modal", 'call', {
                 'product_id': product_id,
                 'kwargs': {
-                   'context': _.extend({'quantity': quantity}, base.get_context())
+                   'context': _.extend({'quantity': quantity}, weContext.get())
                 },
             }).then(function (modal) {
                 var $modal = $(modal);
@@ -35,11 +35,11 @@ $('.oe_website_sale #add_to_cart, .oe_website_sale #products_grid .a-submit')
                         $(this).remove();
                     });
 
-                $modal.on('click', '.a-submit', function () {
+                $modal.on('click', '.a-submit', function (ev) {
                     var $a = $(this);
                     $form.ajaxSubmit({
                         url:  '/shop/cart/update_option',
-                        data: {lang: base.get_context().lang},
+                        data: {lang: weContext.get().lang},
                         success: function (quantity) {
                             if (!$a.hasClass('js_goto_shop')) {
                                 window.location.pathname = window.location.pathname.replace(/shop([\/?].*)?$/, "shop/cart");
@@ -50,6 +50,12 @@ $('.oe_website_sale #add_to_cart, .oe_website_sale #products_grid .a-submit')
                         }
                     });
                     $modal.modal('hide');
+                    ev.preventDefault();
+                });
+
+                $modal.on('click', '.css_attribute_color input', function (event) {
+                    $modal.find('.css_attribute_color').removeClass("active");
+                    $modal.find('.css_attribute_color:has(input:checked)').addClass("active");
                 });
 
                 $modal.on("click", "a.js_add, a.js_remove", function (event) {
@@ -80,7 +86,7 @@ $('.oe_website_sale #add_to_cart, .oe_website_sale #products_grid .a-submit')
                         var product_id = $($modal.find('span.oe_price[data-product-id]')).first().data('product-id');
                         var product_ids = [product_id];
                         var $products_dom = [];
-                        $modal.find(".js_add_cart_variants[data-attribute_value_ids]").each(function(){
+                        $("ul.js_add_cart_variants[data-attribute_value_ids]").each(function(){
                             var $el = $(this);
                             $products_dom.push($el);
                             _.each($el.data("attribute_value_ids"), function (values) {
@@ -90,6 +96,6 @@ $('.oe_website_sale #add_to_cart, .oe_website_sale #products_grid .a-submit')
                 });
             });
         return false;
-    });
+    }, 200, true));
 
 });

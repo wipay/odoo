@@ -4,6 +4,7 @@
 import logging
 
 from odoo import models, fields, api, _
+from odoo.tools.float_utils import float_compare
 
 _logger = logging.getLogger(__name__)
 
@@ -46,7 +47,7 @@ class AccountBankStatementLine(models.Model):
 class AccountJournal(models.Model):
     _inherit = 'account.journal'
 
-    pos_mercury_config_id = fields.Many2one('pos_mercury.configuration', string='Mercury configuration', help='The configuration of Mercury used for this journal')
+    pos_mercury_config_id = fields.Many2one('pos_mercury.configuration', string='Mercury Credentials', help='The configuration of Mercury used for this journal')
 
 
 class PosOrder(models.Model):
@@ -71,8 +72,9 @@ class PosOrder(models.Model):
         statement_id = super(PosOrder, self).add_payment(data)
         statement_lines = self.env['account.bank.statement.line'].search([('statement_id', '=', statement_id),
                                                                          ('pos_statement_id', '=', self.id),
-                                                                         ('journal_id', '=', data['journal']),
-                                                                         ('amount', '=', data['amount'])])
+                                                                         ('journal_id', '=', data['journal'])])
+        statement_lines = statement_lines.filtered(lambda line: float_compare(line.amount, data['amount'],
+                                                                              precision_rounding=line.journal_currency_id.rounding) == 0)
 
         # we can get multiple statement_lines when there are >1 credit
         # card payments with the same amount. In that case it doesn't

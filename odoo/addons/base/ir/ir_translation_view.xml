@@ -5,7 +5,7 @@
             <field name="model">ir.translation</field>
             <field name="arch" type="xml">
                 <search string="Translations">
-                    <filter string="Untranslated"
+                    <filter string="Untranslated" name="untranslated"
                         domain="['|','|',('state','=','to_translate'),('value', '=', False),('value','=','')]"/>
                     <filter name="openerp-web"
                         string="Web-only translations"
@@ -70,6 +70,7 @@
             <field name="arch" type="xml">
                 <tree string="Translations" editable="top" create="false">
                     <field name="lang" readonly="1"/>
+                    <field name="name" readonly="1"/>
                     <field name="source"/>
                     <field name="value"/>
                     <field name="state"/>

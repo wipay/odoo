@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
+import base64
 from email.utils import formataddr
 
 import re
@@ -15,11 +15,12 @@ from odoo.tools.safe_eval import safe_eval
 
 class ChannelPartner(models.Model):
     _name = 'mail.channel.partner'
-    _description = 'Last Seen Many2many'
+    _description = 'Listeners of a Channel'
     _table = 'mail_channel_partner'
     _rec_name = 'partner_id'
 
     partner_id = fields.Many2one('res.partner', string='Recipient', ondelete='cascade')
+    partner_email = fields.Char('Email', related='partner_id.email')
     channel_id = fields.Many2one('mail.channel', string='Channel', ondelete='cascade')
     seen_message_id = fields.Many2one('mail.message', string='Last Seen')
     fold_state = fields.Selection([('open', 'Open'), ('folded', 'Folded'), ('closed', 'Closed')], string='Conversation Fold State', default='open')
@@ -34,14 +35,20 @@ class Channel(models.Model):
     _name = 'mail.channel'
     _mail_flat_thread = False
     _mail_post_access = 'read'
-    _inherit = ['mail.thread']
-    _inherits = {'mail.alias': 'alias_id'}
+    _inherit = ['mail.thread', 'mail.alias.mixin']
 
     MAX_BOUNCE_LIMIT = 10
 
     def _get_default_image(self):
         image_path = modules.get_module_resource('mail', 'static/src/img', 'groupdefault.png')
-        return tools.image_resize_image_big(open(image_path, 'rb').read().encode('base64'))
+        return tools.image_resize_image_big(base64.b64encode(open(image_path, 'rb').read()))
+
+    @api.model
+    def default_get(self, fields):
+        res = super(Channel, self).default_get(fields)
+        if not res.get('alias_contact') and (not fields or 'alias_contact' in fields):
+            res['alias_contact'] = 'everyone' if res.get('public', 'private') == 'public' else 'followers'
+        return res
 
     name = fields.Char('Name', required=True, translate=True)
     channel_type = fields.Selection([
@@ -49,7 +56,7 @@ class Channel(models.Model):
         ('channel', 'Channel')],
         'Channel Type', default='channel')
     description = fields.Text('Description')
-    uuid = fields.Char('UUID', size=50, index=True, default=lambda self: '%s' % uuid.uuid4())
+    uuid = fields.Char('UUID', size=50, index=True, default=lambda self: '%s' % uuid.uuid4(), copy=False)
     email_send = fields.Boolean('Send messages by email', default=False)
     # multi users channel
     channel_last_seen_partner_ids = fields.One2many('mail.channel.partner', 'channel_id', string='Last Seen')
@@ -81,9 +88,6 @@ class Channel(models.Model):
         help="Small-sized photo of the group. It is automatically "
              "resized as a 64x64px image, with aspect ratio preserved. "
              "Use this field anywhere a small image is required.")
-    alias_id = fields.Many2one(
-        'mail.alias', 'Alias', ondelete="restrict", required=True,
-        help="The email address associated with this group. New emails received will automatically create new topics.")
     is_subscribed = fields.Boolean(
         'Is Subscribed', compute='_compute_is_subscribed')
 
@@ -101,6 +105,13 @@ class Channel(models.Model):
         membership_ids = memberships.mapped('channel_id')
         for record in self:
             record.is_member = record in membership_ids
+
+    @api.onchange('public')
+    def _onchange_public(self):
+        if self.public == 'public':
+            self.alias_contact = 'everyone'
+        else:
+            self.alias_contact = 'followers'
 
     @api.model
     def create(self, vals):
@@ -143,6 +154,9 @@ class Channel(models.Model):
         if vals.get('group_ids'):
             self._subscribe_users()
         return result
+
+    def get_alias_model_name(self, vals):
+        return vals.get('alias_model', 'mail.channel')
 
     def _subscribe_users(self):
         for mail_channel in self:
@@ -197,7 +211,7 @@ class Channel(models.Model):
         # http://blogs.technet.com/b/exchange/archive/2006/10/06/3395024.aspx
         headers['X-Auto-Response-Suppress'] = 'OOF'
         if self.alias_domain and self.alias_name:
-            headers['List-Id'] = '%s.%s' % (self.alias_name, self.alias_domain)
+            headers['List-Id'] = '<%s.%s>' % (self.alias_name, self.alias_domain)
             headers['List-Post'] = '<mailto:%s@%s>' % (self.alias_name, self.alias_domain)
             # Avoid users thinking it was a personal message
             # X-Forge-To: will replace To: after SMTP envelope is determined by ir.mail.server
@@ -231,6 +245,16 @@ class Channel(models.Model):
         self.filtered(lambda channel: channel.channel_type == 'chat').mapped('channel_last_seen_partner_ids').write({'is_pinned': True})
         message = super(Channel, self.with_context(mail_create_nosubscribe=True)).message_post(body=body, subject=subject, message_type=message_type, subtype=subtype, parent_id=parent_id, attachments=attachments, content_subtype=content_subtype, **kwargs)
         return message
+
+    def _alias_check_contact(self, message, message_dict, alias):
+        if alias.alias_contact == 'followers' and self.ids:
+            author = self.env['res.partner'].browse(message_dict.get('author_id', False))
+            if not author or author not in self.channel_partner_ids:
+                return {
+                    'error_message': _('restricted to channel members'),
+                }
+            return True
+        return super(Channel, self)._alias_check_contact(message, message_dict, alias)
 
     @api.model_cr
     def init(self):
@@ -278,6 +302,8 @@ class Channel(models.Model):
             of the received message indicates on wich mail channel the message should be displayed.
             :param : mail.message to broadcast
         """
+        if not self:
+            return
         message.ensure_one()
         notifications = self._channel_message_notifications(message)
         self.env['bus.bus'].sendmany(notifications)
@@ -319,6 +345,7 @@ class Channel(models.Model):
                 'channel_type': channel.channel_type,
                 'public': channel.public,
                 'mass_mailing': channel.email_send,
+                'group_based_subscription': bool(channel.group_ids),
             }
             if extra_info:
                 info['info'] = extra_info
@@ -329,6 +356,13 @@ class Channel(models.Model):
                                           .channel_partner_ids
                                           .filtered(lambda p: p.id != self.env.user.partner_id.id)
                                           .read(['id', 'name', 'im_status']))
+
+            # add last message preview (only used in mobile)
+            if self._context.get('isMobile', False):
+                last_message = channel.channel_fetch_preview()
+                if last_message:
+                    info['last_message'] = last_message[0].get('last_message')
+
             # add user session state, if available and if user is logged
             if partner_channels.ids:
                 partner_channel = partner_channels.filtered(lambda c: channel.id == c.channel_id.id)
@@ -471,7 +505,15 @@ class Channel(models.Model):
             partners_to_add = partners - channel.channel_partner_ids
             channel.write({'channel_last_seen_partner_ids': [(0, 0, {'partner_id': partner_id}) for partner_id in partners_to_add.ids]})
             for partner in partners_to_add:
-                notification = _('<div class="o_mail_notification">joined <a href="#" class="o_channel_redirect" data-oe-id="%s">#%s</a></div>') % (self.id, self.name,)
+                if partner.id != self.env.user.partner_id.id:
+                    notification = _('<div class="o_mail_notification">%(author)s invited %(new_partner)s to <a href="#" class="o_channel_redirect" data-oe-id="%(channel_id)s">#%(channel_name)s</a></div>') % {
+                        'author': self.env.user.display_name,
+                        'new_partner': partner.display_name,
+                        'channel_id': channel.id,
+                        'channel_name': channel.name,
+                    }
+                else:
+                    notification = _('<div class="o_mail_notification">joined <a href="#" class="o_channel_redirect" data-oe-id="%s">#%s</a></div>') % (channel.id, channel.name,)
                 self.message_post(body=notification, message_type="notification", subtype="mail.mt_comment", author_id=partner.id)
 
         # broadcast the channel header to the added partner
@@ -547,9 +589,9 @@ class Channel(models.Model):
             'email_send': False,
             'channel_partner_ids': [(4, self.env.user.partner_id.id)]
         })
-        channel_info = new_channel.channel_info('creation')[0]
         notification = _('<div class="o_mail_notification">created <a href="#" class="o_channel_redirect" data-oe-id="%s">#%s</a></div>') % (new_channel.id, new_channel.name,)
         new_channel.message_post(body=notification, message_type="notification", subtype="mail.mt_comment")
+        channel_info = new_channel.channel_info('creation')[0]
         self.env['bus.bus'].sendone((self._cr.dbname, 'res.partner', self.env.user.partner_id.id), channel_info)
         return channel_info
 
@@ -589,12 +631,12 @@ class Channel(models.Model):
             GROUP BY mail_channel_id
             """, (tuple(self.ids),))
         channels_preview = dict((r['message_id'], r) for r in self._cr.dictfetchall())
-        last_messages = self.env['mail.message'].browse(channels_preview.keys()).message_format()
+        last_messages = self.env['mail.message'].browse(channels_preview).message_format()
         for message in last_messages:
             channel = channels_preview[message['id']]
             del(channel['message_id'])
             channel['last_message'] = message
-        return channels_preview.values()
+        return list(channels_preview.values())
 
     #------------------------------------------------------
     # Commands
@@ -640,7 +682,7 @@ class Channel(models.Model):
                 msg += _(" This channel is private. People must be invited to join it.")
         else:
             channel_partners = self.env['mail.channel.partner'].search([('partner_id', '!=', partner.id), ('channel_id', '=', self.id)])
-            msg = _("You are in a private conversation with <b>@%s</b>.") % channel_partners[0].partner_id.name
+            msg = _("You are in a private conversation with <b>@%s</b>.") % (channel_partners[0].partner_id.name if channel_partners else _('Anonymous'))
         msg += _("""<br><br>
             You can mention someone by typing <b>@username</b>, this will grab its attention.<br>
             You can mention a channel by typing <b>#channel</b>.<br>

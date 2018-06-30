@@ -13,7 +13,7 @@ class StockWarehouse(models.Model):
     manufacture_pull_id = fields.Many2one(
         'procurement.rule', 'Manufacture Rule')
     manu_type_id = fields.Many2one(
-        'stock.picking.type', 'Manufacturing Picking Type',
+        'stock.picking.type', 'Manufacturing Operation Type',
         domain=[('code', '=', 'mrp_operation')])
 
     def create_sequences_and_picking_types(self):
@@ -29,12 +29,12 @@ class StockWarehouse(models.Model):
         return result
 
     def _get_manufacture_route_id(self):
-        manufacture_route_id = self.env.ref('mrp.route_warehouse0_manufacture').id
-        if not manufacture_route_id:
-            manufacture_route_id = self.env['stock.location.route'].search([('name', 'like', _('Manufacture'))], limit=1).id
-        if not manufacture_route_id:
+        manufacture_route = self.env.ref('mrp.route_warehouse0_manufacture', raise_if_not_found=False)
+        if not manufacture_route:
+            manufacture_route = self.env['stock.location.route'].search([('name', 'like', _('Manufacture'))], limit=1)
+        if not manufacture_route:
             raise exceptions.UserError(_('Can\'t find any generic Manufacture route.'))
-        return manufacture_route_id
+        return manufacture_route.id
 
     def _get_manufacture_pull_rules_values(self, route_values):
         if not self.manu_type_id:
@@ -58,7 +58,7 @@ class StockWarehouse(models.Model):
             wh_stock_loc = warehouse.lot_stock_id
             seq = seq_obj.search([('code', '=', 'mrp.production')], limit=1)
             other_pick_type = picking_type_obj.search([('warehouse_id', '=', warehouse.id)], order = 'sequence desc', limit=1)
-            color = other_pick_type and other_pick_type.color or 0
+            color = other_pick_type.color if other_pick_type else 0
             max_sequence = other_pick_type and other_pick_type.sequence or 0
             manu_type = picking_type_obj.create({
                 'name': _('Manufacturing'),

@@ -2,6 +2,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from collections import Counter
+import datetime
+import errno
 from os import utime
 import time
 
@@ -10,6 +12,21 @@ from odoo.addons.base.ir.ir_qweb import AssetsBundle
 from odoo.modules.module import get_resource_path
 from odoo.tests import HttpCase
 from odoo.tests.common import TransactionCase
+
+
+def _touch(filepath, asset, t=None):
+    try:
+        utime(filepath, (t, t) if t else None)
+    except OSError as e:
+        if e.errno in [errno.EPERM, errno.EACCES, errno.EROFS]:
+            # Permission denied when touching the asset file, possibly read-only filesystem.
+            # We alter the asset last modified time to simulate a change in the file
+            now = datetime.datetime.now()
+            asset.last_modified = now
+            for sheet in asset.stylesheets:
+                sheet.last_modified = now
+        else:
+            raise
 
 
 class TestJavascriptAssetsBundle(TransactionCase):
@@ -21,7 +38,7 @@ class TestJavascriptAssetsBundle(TransactionCase):
     def _get_asset(self, xmlid, env=None):
         env = (env or self.env)
         files, remains = env['ir.qweb']._get_asset_content(xmlid, env.context)
-        return AssetsBundle(xmlid, files, remains, env=env)
+        return AssetsBundle(xmlid, files, env=env)
 
     def _any_ira_for_bundle(self, type):
         """ Returns all ir.attachments associated to a bundle, regardless of the verion.
@@ -82,9 +99,9 @@ class TestJavascriptAssetsBundle(TransactionCase):
         version0 = bundle0.version
 
         path = get_resource_path('test_assetsbundle', 'static', 'src', 'js', 'test_jsfile1.js')
-        utime(path, None)  # touch
-
         bundle1 = self._get_asset(self.jsbundle_xmlid)
+        _touch(path, bundle1)
+
         bundle1.js()
         last_modified1 = bundle1.last_modified
         version1 = bundle1.version
@@ -101,7 +118,6 @@ class TestJavascriptAssetsBundle(TransactionCase):
         bundle0 = self._get_asset(self.jsbundle_xmlid)
         bundle0.js()
         files0 = bundle0.files
-        remains0 = bundle0.remains
         version0 = bundle0.version
 
         self.assertEquals(len(self._any_ira_for_bundle('js')), 1)
@@ -124,11 +140,9 @@ class TestJavascriptAssetsBundle(TransactionCase):
         bundle1 = self._get_asset(self.jsbundle_xmlid, env=self.env(context={'check_view_ids': view.ids}))
         bundle1.js()
         files1 = bundle1.files
-        remains1 = bundle1.remains
         version1 = bundle1.version
 
         self.assertNotEquals(files0, files1)
-        self.assertEquals(remains0, remains1)
         self.assertNotEquals(version0, version1)
 
         # check if the previous attachment are correctly cleaned
@@ -210,9 +224,9 @@ class TestJavascriptAssetsBundle(TransactionCase):
         version0 = bundle0.version
 
         path = get_resource_path('test_assetsbundle', 'static', 'src', 'css', 'test_cssfile1.css')
-        utime(path, None)  # touch
-
         bundle1 = self._get_asset(self.cssbundle_xmlid, env=self.env(context={'max_css_rules': 1}))
+        _touch(path, bundle1)
+
         bundle1.css()
         last_modified1 = bundle1.last_modified
         version1 = bundle1.version
@@ -230,7 +244,6 @@ class TestJavascriptAssetsBundle(TransactionCase):
         bundle0 = self._get_asset(self.cssbundle_xmlid, env=self.env(context={'max_css_rules': 1}))
         bundle0.css()
         files0 = bundle0.files
-        remains0 = bundle0.remains
         version0 = bundle0.version
 
         self.assertEquals(len(self._any_ira_for_bundle('css')), 3)
@@ -253,11 +266,9 @@ class TestJavascriptAssetsBundle(TransactionCase):
         bundle1 = self._get_asset(self.cssbundle_xmlid, env=self.env(context={'check_view_ids': view.ids, 'max_css_rules': 1}))
         bundle1.css()
         files1 = bundle1.files
-        remains1 = bundle1.remains
         version1 = bundle1.version
 
         self.assertNotEquals(files0, files1)
-        self.assertEquals(remains0, remains1)
         self.assertNotEquals(version0, version1)
 
         # check if the previous attachment are correctly cleaned
@@ -300,6 +311,48 @@ class TestJavascriptAssetsBundle(TransactionCase):
         # the ir.attachment records should be deduplicated in the bundle's content
         content = bundle0.to_html()
         self.assertEqual(content.count('test_assetsbundle.bundle2.0.css'), 1)
+
+    def test_15_exteral_lib_assets(self):
+        html = self.env['ir.ui.view'].render_template('test_assetsbundle.template2')
+        attachments = self.env['ir.attachment'].search([('url', '=like', '/web/content/%-%/test_assetsbundle.bundle4.%')])
+        self.assertEquals(len(attachments), 2)
+        self.assertEqual(html.strip(), ("""<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="http://test.external.link/style1.css"/>
+        <link rel="stylesheet" href="http://test.external.link/style2.css"/>
+        <link type="text/css" rel="stylesheet" href="%(css)s"/>
+        <meta/>
+        <script type="text/javascript" src="http://test.external.link/javascript1.js"></script>
+        <script type="text/javascript" src="http://test.external.link/javascript2.js"></script>
+        <script type="text/javascript" src="%(js)s"></script>
+    </head>
+    <body>
+    </body>
+</html>""" % {"js": attachments[0].url, "css": attachments[1].url}).encode('utf8'))
+
+    def test_16_exteral_lib_assets_debug_mode(self):
+        html = self.env['ir.ui.view'].render_template('test_assetsbundle.template2', {"debug": "assets"})
+        attachments = self.env['ir.attachment'].search([('url', '=like', '/web/content/%-%/test_assetsbundle.bundle4.%')])
+        self.assertEquals(len(attachments), 0)
+        self.assertEqual(html.strip(), ("""<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="http://test.external.link/style1.css"/>
+        <link rel="stylesheet" href="http://test.external.link/style2.css"/>
+        <link type="text/css" rel="stylesheet" href="/test_assetsbundle/static/src/css/test_cssfile1.css"/>
+        <link type="text/css" rel="stylesheet" href="/test_assetsbundle/static/src/css/test_cssfile2.css"/>
+        <meta/>
+        <script type="text/javascript" src="http://test.external.link/javascript1.js"></script>
+        <script type="text/javascript" src="http://test.external.link/javascript2.js"></script>
+        <script type="text/javascript" src="/test_assetsbundle/static/src/js/test_jsfile1.js"></script>
+        <script type="text/javascript" src="/test_assetsbundle/static/src/js/test_jsfile2.js"></script>
+        <script type="text/javascript" src="/test_assetsbundle/static/src/js/test_jsfile3.js"></script>
+    </head>
+    <body>
+    </body>
+</html>""").encode('utf8'))
+
 
 
 class TestAssetsBundleInBrowser(HttpCase):
@@ -362,10 +415,12 @@ class TestAssetsBundleWithIRAMock(TransactionCase):
         self.env['ir.attachment']._patch_method('unlink', unlink)
         self.addCleanup(self.env['ir.attachment']._revert_method, 'unlink')
 
-    def _bundle(self, should_create, should_unlink):
-        self.counter.clear()
+    def _get_asset(self):
         files, remains = self.env['ir.qweb']._get_asset_content(self.lessbundle_xmlid, {})
-        asset = AssetsBundle(self.lessbundle_xmlid, files, remains, env=self.env)
+        return AssetsBundle(self.lessbundle_xmlid, files, remains, env=self.env)
+
+    def _bundle(self, asset, should_create, should_unlink):
+        self.counter.clear()
         asset.to_html(debug='assets')
         self.assertEquals(self.counter['create'], int(should_create))
         self.assertEquals(self.counter['unlink'], int(should_unlink))
@@ -375,16 +430,17 @@ class TestAssetsBundleWithIRAMock(TransactionCase):
         are correctly invalidated.
         """
         # Compile for the first time
-        self._bundle(True, False)
+        self._bundle(self._get_asset(), True, False)
 
         # Compile a second time, without changes
-        self._bundle(False, False)
+        self._bundle(self._get_asset(), False, False)
 
         # Touch the file and compile a third time
         path = get_resource_path('test_assetsbundle', 'static', 'src', 'less', 'test_lessfile1.less')
         t = time.time() + 5
-        utime(path, (t, t))   # touch
-        self._bundle(True, True)
+        asset = self._get_asset()
+        _touch(path, asset, t=t)
+        self._bundle(asset, True, True)
 
         # Because we are in the same transaction since the beginning of the test, the first asset
         # created and the second one have the same write_date, but the file's last modified date
@@ -394,4 +450,4 @@ class TestAssetsBundleWithIRAMock(TransactionCase):
         self.cr.execute("update ir_attachment set write_date=clock_timestamp() + interval '10 seconds' where id = (select max(id) from ir_attachment)")
 
         # Compile a fourth time, without changes
-        self._bundle(False, False)
+        self._bundle(self._get_asset(), False, False)

@@ -50,7 +50,11 @@ class AccountBankStatementImport(models.TransientModel):
         # Create the bank statements
         statement_ids, notifications = self._create_bank_statements(stmts_vals)
         # Now that the import worked out, set it as the bank_statements_source of the journal
-        journal.bank_statements_source = 'file_import'
+        if journal.bank_statements_source != 'file_import':
+            # Use sudo() because only 'account.group_account_manager'
+            # has write access on 'account.journal', but 'account.group_account_user'
+            # must be able to import bank statement files
+            journal.sudo().bank_statements_source = 'file_import'
         # Finally dispatch to reconciliation interface
         action = self.env.ref('account.action_bank_reconcile_bank_statements')
         return {
@@ -195,7 +199,10 @@ class AccountBankStatementImport(models.TransientModel):
                             bank_account_id = partner_bank.id
                             partner_id = partner_bank.partner_id.id
                         else:
-                            bank_account_id = self.env['res.partner.bank'].create({'acc_number': line_vals['account_number']}).id
+                            bank_account_id = self.env['res.partner.bank'].create({
+                                'acc_number': line_vals['account_number'],
+                                'partner_id': False,
+                            }).id
                     line_vals['partner_id'] = partner_id
                     line_vals['bank_account_id'] = bank_account_id
 
@@ -215,15 +222,11 @@ class AccountBankStatementImport(models.TransientModel):
                 if 'unique_import_id' not in line_vals \
                    or not line_vals['unique_import_id'] \
                    or not bool(BankStatementLine.sudo().search([('unique_import_id', '=', line_vals['unique_import_id'])], limit=1)):
-                    if line_vals['amount'] != 0:
-                        # Some banks, like ING, create a line for free charges.
-                        # We just skip those lines as there's a 'non-zero' constraint
-                        # on the amount of account.bank.statement.line
-                        filtered_st_lines.append(line_vals)
+                    filtered_st_lines.append(line_vals)
                 else:
                     ignored_statement_lines_import_ids.append(line_vals['unique_import_id'])
                     if 'balance_start' in st_vals:
-                        st_vals['balance_start'] += line_vals['amount']
+                        st_vals['balance_start'] += float(line_vals['amount'])
 
             if len(filtered_st_lines) > 0:
                 # Remove values that won't be used to create records
