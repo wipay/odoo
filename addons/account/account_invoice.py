@@ -1091,7 +1091,8 @@ class account_invoice(osv.osv):
             self.write(cr, uid, [inv.id], {'move_id': move_id,'period_id':period_id, 'move_name':new_move_name}, context=ctx)
             # Pass invoice in context in method post: used if you want to get the same
             # account move reference when creating the same invoice after a cancelled one:
-            move_obj.post(cr, uid, [move_id], context=ctx)
+            if journal.entry_posted:
+                move_obj.post(cr, uid, [move_id], context=ctx)
         self._log_event(cr, uid, ids)
         return True
 
@@ -1128,11 +1129,13 @@ class account_invoice(osv.osv):
 
         for obj_inv in self.browse(cr, uid, ids, context=context):
             invtype = obj_inv.type
-            number = obj_inv.number
+            number = obj_inv.internal_number
             move_id = obj_inv.move_id and obj_inv.move_id.id or False
             reference = obj_inv.reference or ''
 
-            self.write(cr, uid, ids, {'internal_number': number})
+            self.write(cr, uid, ids, {'number': number,
+                                      'internal_number': number})
+
 
             if invtype in ('in_invoice', 'in_refund'):
                 if not reference:
