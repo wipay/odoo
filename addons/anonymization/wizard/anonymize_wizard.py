@@ -28,7 +28,10 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
         help="This is the file created by the anonymization process. It should have the '.pickle' extention.")
     state = fields.Selection(compute='_compute_state', string='Status', selection=WIZARD_ANONYMIZATION_STATES)
     msg = fields.Text('Message')
-
+    pickle = fields.Boolean(string='Save pickle',
+                            default=False,
+                            help='This flag disable creation of pickle.dump which is used in reverse anonymization to save the origin values.'
+                            )
     @api.multi
     def _compute_summary(self):
         for anonymize_wizard in self:
@@ -164,7 +167,9 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
             # get the current value
             self.env.cr.execute('select id, "%s" from "%s"' % (field_name, table_name))
             for record in self.env.cr.dictfetchall():
-                data.append({"model_id": model_name, "field_id": field_name, "id": record['id'], "value": record[field_name]})
+                # "if" Added by TRESCLOUD
+                if not pickle:
+                    data.append({"model_id": model_name, "field_id": field_name, "id": record['id'], "value": record[field_name]})
 
                 # anonymize the value:
                 anonymized_value = None
@@ -205,7 +210,10 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
 
         # save pickle:
         fn = open(abs_filepath, 'w')
-        pickle.dump(data, fn, protocol=-1)
+        
+        # "if" Added by TRESCLOUD
+        if not pickle:
+            pickle.dump(data, fn, protocol=-1)
 
         # update the anonymization fields:
         ano_fields.write({'state': 'anonymized'})
@@ -326,3 +334,12 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
             'context': {'step': 'just_desanonymized'},
             'target': 'new'
         }
+    # Added by TRESCLOUD        
+    @api.onchange('pickle')
+    def on_change_pickle(self):
+        if self.pickle:
+            return {'warning': {
+                            'title': _('Warning'),
+                            'message': _(
+                                "If you select SAVE PICKLE remember that "
+                                "you will can not reverse the anonymization.")}}
