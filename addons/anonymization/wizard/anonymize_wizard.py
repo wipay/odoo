@@ -167,8 +167,8 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
             # get the current value
             self.env.cr.execute('select id, "%s" from "%s"' % (field_name, table_name))
             for record in self.env.cr.dictfetchall():
-                # "if" Added by TRESCLOUD
-                if not pickle:
+                # HOOK Added by TRESCLOUD
+                if self.is_pickle():
                     data.append({"model_id": model_name, "field_id": field_name, "id": record['id'], "value": record[field_name]})
 
                 # anonymize the value:
@@ -211,8 +211,8 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
         # save pickle:
         fn = open(abs_filepath, 'w')
         
-        # "if" Added by TRESCLOUD
-        if not pickle:
+        # HOOK Added by TRESCLOUD
+        if self.is_pickle():
             pickle.dump(data, fn, protocol=-1)
 
         # update the anonymization fields:
@@ -334,12 +334,7 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
             'context': {'step': 'just_desanonymized'},
             'target': 'new'
         }
-    # Added by TRESCLOUD        
-    @api.onchange('pickle')
-    def on_change_pickle(self):
-        if self.pickle:
-            return {'warning': {
-                            'title': _('Warning'),
-                            'message': _(
-                                "If you select SAVE PICKLE remember that "
-                                "you will can not reverse the anonymization.")}}
+    # Added by TRESCLOUD
+    @api.multi
+    def is_pickle(self):
+        return True
