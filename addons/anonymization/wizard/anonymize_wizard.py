@@ -28,10 +28,7 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
         help="This is the file created by the anonymization process. It should have the '.pickle' extention.")
     state = fields.Selection(compute='_compute_state', string='Status', selection=WIZARD_ANONYMIZATION_STATES)
     msg = fields.Text('Message')
-    pickle = fields.Boolean(string='Save pickle',
-                            default=False,
-                            help='This flag disable creation of pickle.dump which is used in reverse anonymization to save the origin values.'
-                            )
+
     @api.multi
     def _compute_summary(self):
         for anonymize_wizard in self:
