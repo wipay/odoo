@@ -703,6 +703,14 @@ class AccountInvoice(models.Model):
         return move_lines
 
     @api.multi
+    def _finish_invoice_creation(self):
+        '''
+        Procesamientos finales luego de crear una factura, util para extender la funcionalidad
+        desde otros metodos, como la creacion de facturas desde ventas
+        '''
+        pass
+    
+    @api.multi
     def compute_invoice_totals(self, company_currency, invoice_move_lines):
         total = 0
         total_currency = 0
@@ -831,6 +839,17 @@ class AccountInvoice(models.Model):
                 line.append((0, 0, val))
         return line
 
+    def _get_totlines(self,total,date_invoice):
+        '''
+        Hook agregado por trescloud, en plazos de pago personalizados se redefine para no usar compute()
+        sino tomar los valores de la tabla de plazos de pago personalizdos
+        '''
+        totlines = self.with_context(ctx).payment_term_id.with_context(currency_id=self.company_currency_id.id,
+                                                                       active_model='account.invoice',
+                                                                       active_id=self.id).compute(total,
+                                                                       self.date_invoice)
+
+
     #Este metodo es agregado por TresCloud
     def _payable_receivable_moves_get(self, total, total_currency, iml, ctx):
         """"
@@ -848,10 +867,7 @@ class AccountInvoice(models.Model):
         """
         diff_currency = self.currency_id != self.company_currency_id
         if self.payment_term_id:
-            totlines = self.with_context(ctx).payment_term_id.with_context(currency_id=self.company_currency_id.id,
-                                                                           active_model='account.invoice',
-                                                                           active_id=self.id).compute(total,
-                                                                           self.date_invoice)
+            totlines = self.with_context(ctx)._get_totlines(total,date_invoice) #hook agregado por trescloud
             res_amount_currency = total_currency
             ctx['date'] = self.date_invoice
             count = 0
