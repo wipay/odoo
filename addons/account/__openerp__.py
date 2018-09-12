@@ -125,10 +125,10 @@ for a particular financial year and for preparation of vouchers there is a modul
         'res_config_view.xml',
         'account_pre_install.yml'
     ],
-    'js': [
-        'static/src/js/account_move_reconciliation.js',
-        'static/src/js/account_move_line_quickadd.js',
-    ],
+    #'js': [
+    #    'static/src/js/account_move_reconciliation.js',
+    #    'static/src/js/account_move_line_quickadd.js',
+    #],
     'qweb' : [
         "static/src/xml/account_move_reconciliation.xml",
         "static/src/xml/account_move_line_quickadd.xml",
