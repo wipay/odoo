@@ -627,7 +627,7 @@ class Database(http.Controller):
 
     def _render_template(self, **d):
         d.setdefault('manage',True)
-        d['insecure'] = odoo.tools.config['admin_passwd'] == 'admin'
+        d['insecure'] = odoo.tools.config.verify_admin_password('admin')
         d['list_db'] = odoo.tools.config['list_db']
         d['langs'] = odoo.service.db.exp_list_lang()
         d['countries'] = odoo.service.db.exp_list_countries()
@@ -706,6 +706,8 @@ class Database(http.Controller):
     @http.route('/web/database/restore', type='http', auth="none", methods=['POST'], csrf=False)
     def restore(self, master_pwd, backup_file, name, copy=False):
         try:
+            data_file = None
+            db.check_super(master_pwd)
             with tempfile.NamedTemporaryFile(delete=False) as data_file:
                 backup_file.save(data_file)
             db.restore_db(name, data_file.name, str2bool(copy))
@@ -714,7 +716,8 @@ class Database(http.Controller):
             error = "Database restore error: %s" % (str(e) or repr(e))
             return self._render_template(error=error)
         finally:
-            os.unlink(data_file.name)
+            if data_file:
+                os.unlink(data_file.name)
 
     @http.route('/web/database/change_password', type='http', auth="none", methods=['POST'], csrf=False)
     def change_password(self, master_pwd, master_pwd_new):

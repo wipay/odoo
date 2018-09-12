@@ -267,6 +267,9 @@ class AccountMove(models.Model):
         date = date or fields.Date.today()
         reversed_moves = self.env['account.move']
         for ac_move in self:
+            #unreconcile all lines reversed
+            aml = ac_move.line_ids.filtered(lambda x: x.account_id.reconcile or x.account_id.internal_type == 'liquidity')
+            aml.remove_move_reconcile()
             reversed_move = ac_move._reverse_move(date=date,
                                                   journal_id=journal_id)
             reversed_moves |= reversed_move
@@ -305,7 +308,7 @@ class AccountMoveLine(models.Model):
             for unreconciled lines, and something in-between for partially reconciled lines.
         """
         for line in self:
-            if not line.account_id.reconcile:
+            if not line.account_id.reconcile and line.account_id.internal_type != 'liquidity':
                 line.reconciled = False
                 line.amount_residual = 0
                 line.amount_residual_currency = 0
@@ -433,7 +436,7 @@ class AccountMoveLine(models.Model):
         help="This field is used for payable and receivable journal entries. You can put the limit date for the payment of this line.")
     date = fields.Date(related='move_id.date', string='Date', index=True, store=True, copy=False)  # related is required
     analytic_line_ids = fields.One2many('account.analytic.line', 'move_id', string='Analytic lines', oldname="analytic_lines")
-    tax_ids = fields.Many2many('account.tax', string='Taxes')
+    tax_ids = fields.Many2many('account.tax', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
     tax_line_id = fields.Many2one('account.tax', string='Originator tax', ondelete='restrict')
     analytic_account_id = fields.Many2one('account.analytic.account', string='Analytic Account')
     analytic_tag_ids = fields.Many2many('account.analytic.tag', string='Analytic tags')
@@ -622,6 +625,21 @@ class AccountMoveLine(models.Model):
             :param excluded_ids: list of ids of move lines that should not be fetched
             :param str: search string
         """
+        epsilon = 0.0001
+
+        def _domain_range_amount(field, amount, signed=False):
+            def build_for_amount(amount):
+                return expression.AND([
+                    [(field, '>=', amount - epsilon)],
+                    [(field, '<=', amount + epsilon)]
+                ])
+
+            unsigned_domain = build_for_amount(amount)
+            if not signed:
+                return unsigned_domain
+
+            return expression.OR([unsigned_domain, build_for_amount(-amount)])
+
         context = (self._context or {})
         if excluded_ids is None:
             excluded_ids = []
@@ -638,14 +656,20 @@ class AccountMoveLine(models.Model):
             ]
             try:
                 amount = float(str)
-                amount_domain = [
-                    '|', ('amount_residual', '=', amount),
-                    '|', ('amount_residual_currency', '=', amount),
-                    '|', ('amount_residual', '=', -amount),
-                    '|', ('amount_residual_currency', '=', -amount),
-                    '&', ('account_id.internal_type', '=', 'liquidity'),
-                    '|', '|', ('debit', '=', amount), ('credit', '=', amount), ('amount_currency', '=', amount),
-                ]
+                residual_domain = expression.OR([
+                    _domain_range_amount(field, amount, True)
+                    for field in ('amount_residual', 'amount_residual_currency')
+                ])
+
+                liquidity_domain = expression.AND([
+                    [('account_id.internal_type', '=', 'liquidity')],
+                    expression.OR([
+                        _domain_range_amount(field, amount)
+                        for field in ('debit', 'credit', 'amount_currency')
+                    ])
+                ])
+
+                amount_domain = expression.OR([residual_domain, liquidity_domain])
                 str_domain = expression.OR([str_domain, amount_domain])
             except:
                 pass
@@ -1598,10 +1622,6 @@ class AccountPartialReconcile(models.Model):
         res = True
         if self._context.get('full_rec_lookup', True):
             for rec in self:
-                #exclude partial reconciliations related to an exchange rate entry, because the unlink of the full reconciliation will already do it
-                if self.env['account.full.reconcile'].search([('exchange_partial_rec_id', '=', rec.id)]):
-                    to_unlink = to_unlink - rec
-                #without the deleted partial reconciliations, the full reconciliation won't be full anymore
                 if rec.full_reconcile_id:
                     full_to_unlink |= rec.full_reconcile_id
         if to_unlink:
@@ -1629,25 +1649,13 @@ class AccountFullReconcile(models.Model):
             for example).
         """
         for rec in self:
-            if not rec.exchange_move_id or not rec.exchange_partial_rec_id:
+            if not rec.exchange_move_id:
                 continue
             #reverse the exchange rate entry
-            reversed_move_id = rec.exchange_move_id.reverse_moves()[0]
-            reversed_move = self.env['account.move'].browse(reversed_move_id)
-            #search the original line and its newly created reversal
-            for aml in reversed_move.line_ids:
-                if aml.account_id.reconcile:
-                    break
-            if aml:
-                precision = aml.currency_id and aml.currency_id.rounding or aml.company_id.currency_id.rounding
-                if aml.debit or float_compare(aml.amount_currency, 0, precision_rounding=precision) == 1:
-                    pair_to_rec = aml | rec.exchange_partial_rec_id.credit_move_id
-                else:
-                    pair_to_rec = aml | rec.exchange_partial_rec_id.debit_move_id
-                #remove the partial reconciliation of the exchange rate entry as well
-                rec.exchange_partial_rec_id.with_context(full_rec_lookup=False).unlink()
-                #reconcile together the original exchange rate line and its reversal
-                pair_to_rec.reconcile()
+            # reconciliation of the exchange move and its reversal is handled in reverse_moves
+            exchange_move = rec.exchange_move_id
+            rec.exchange_move_id = False
+            exchange_move.reverse_moves()
         return super(AccountFullReconcile, self).unlink()
 
     # Do not forwardport in master as of 2017-07-20

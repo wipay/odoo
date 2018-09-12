@@ -4,6 +4,7 @@
 # 
 # Translators:
 # Martin Trigaux, 2016
+# Maria Boyadjieva <marabo2000@gmail.com>, 2016
 # kalatchev, 2016
 # Anton Vassilev, 2016
 # Kaloyan Naumov <kaloyan@lumnus.net>, 2016
@@ -36,7 +37,7 @@ msgstr "Активен"
 #. module: resource
 #: model:ir.actions.act_window,name:resource.resource_calendar_closing_days
 msgid "Closing Days"
-msgstr "Почивни Дни"
+msgstr "Дни на затваряне"
 
 #. module: resource
 #: model:ir.model.fields,field_description:resource.field_resource_resource_code
@@ -50,7 +51,7 @@ msgstr "Код"
 #: model:ir.ui.view,arch_db:resource.view_resource_calendar_leaves_search
 #: model:ir.ui.view,arch_db:resource.view_resource_resource_search
 msgid "Company"
-msgstr "Фирма"
+msgstr "Компания"
 
 #. module: resource
 #: model:ir.model.fields,field_description:resource.field_resource_calendar_attendance_create_uid
@@ -76,7 +77,7 @@ msgstr "Ден от седмицата"
 #. module: resource
 #: model:ir.model.fields,help:resource.field_resource_resource_calendar_id
 msgid "Define the schedule of resource"
-msgstr "Определяне на график за ползване на ресурса"
+msgstr "Опредете програмата за ползване на ресурса"
 
 #. module: resource
 #: model:ir.actions.act_window,help:resource.action_resource_calendar_form
@@ -84,8 +85,8 @@ msgid ""
 "Define working hours and time table that could be scheduled to your project "
 "members"
 msgstr ""
-"Дефинирайте работно време и график, по който да разпределите членовете на "
-"проекта."
+"Определете работно време и разписание, които да бъдат планирани според "
+"членовете на проекта Ви."
 
 #. module: resource
 #: model:ir.model.fields,field_description:resource.field_resource_calendar_attendance_display_name
@@ -93,7 +94,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:resource.field_resource_calendar_leaves_display_name
 #: model:ir.model.fields,field_description:resource.field_resource_resource_display_name
 msgid "Display Name"
-msgstr "Име за показване"
+msgstr "Покажете име"
 
 #. module: resource
 #: model:ir.ui.view,arch_db:resource.resource_calendar_leave_form
@@ -116,8 +117,8 @@ msgstr "Крайна дата"
 #, python-format
 msgid "Error! leave start-date must be lower then leave end-date."
 msgstr ""
-"Грешка! Началната дата трябва да е по малка от крайната дата при периода на "
-"изработка"
+"Грешка! Началната дата на отпуската трябва да е по-малка от крайната дата на"
+" отпуската"
 
 #. module: resource
 #: selection:resource.calendar.attendance,dayofweek:0
@@ -146,7 +147,7 @@ msgstr "Човек"
 #: model:ir.model.fields,field_description:resource.field_resource_calendar_leaves_id
 #: model:ir.model.fields,field_description:resource.field_resource_resource_id
 msgid "ID"
-msgstr "ID"
+msgstr "ИН"
 
 #. module: resource
 #: model:ir.model.fields,help:resource.field_resource_calendar_leaves_resource_id
@@ -154,8 +155,8 @@ msgid ""
 "If empty, this is a generic holiday for the company. If a resource is set, "
 "the holiday/leave is only for this resource"
 msgstr ""
-"Ако е празно, това е почивен ден за цялата фирма. Ако е избран ресурс. "
-"почивният ден/отпуската се отнасят само за нея"
+"Ако е празно, това е универсален празник за цялата компания. Ако е избран "
+"ресурс. почивният ден/отпуската се отнасят само за нея"
 
 #. module: resource
 #: model:ir.model.fields,help:resource.field_resource_resource_active
@@ -177,7 +178,7 @@ msgstr "Неактивен"
 #: model:ir.model.fields,field_description:resource.field_resource_calendar_leaves___last_update
 #: model:ir.model.fields,field_description:resource.field_resource_resource___last_update
 msgid "Last Modified on"
-msgstr "Последно променено на"
+msgstr "Последно коригирано на"
 
 #. module: resource
 #: model:ir.model.fields,field_description:resource.field_resource_calendar_attendance_write_uid
@@ -185,7 +186,7 @@ msgstr "Последно променено на"
 #: model:ir.model.fields,field_description:resource.field_resource_calendar_write_uid
 #: model:ir.model.fields,field_description:resource.field_resource_resource_write_uid
 msgid "Last Updated by"
-msgstr "Последно обновено от"
+msgstr "Последно актуализирано от"
 
 #. module: resource
 #: model:ir.model.fields,field_description:resource.field_resource_calendar_attendance_write_date
@@ -193,7 +194,7 @@ msgstr "Последно обновено от"
 #: model:ir.model.fields,field_description:resource.field_resource_calendar_write_date
 #: model:ir.model.fields,field_description:resource.field_resource_resource_write_date
 msgid "Last Updated on"
-msgstr "Последно обновено на"
+msgstr "Последно актуализирано на"
 
 #. module: resource
 #: model:ir.model,name:resource.model_resource_calendar_leaves
@@ -350,7 +351,7 @@ msgstr "Неделя"
 #: code:addons/resource/models/resource.py:714
 #, python-format
 msgid "The efficiency factor cannot be equal to 0."
-msgstr ""
+msgstr "Факторът на ефикасност не може да бъде 0."
 
 #. module: resource
 #: model:ir.model.fields,help:resource.field_resource_resource_time_efficiency
@@ -360,10 +361,11 @@ msgid ""
 "show a load of 100% for this phase by default, but if we put a efficiency of"
 " 200%, then his load will only be 50%."
 msgstr ""
-"Това поле показва ефикасността на ресурса при извършване на задачи. Например"
-" ресурсът е разпределен на фаза от 5 дни с 5 задачи зачислени на нея. е "
-"покаже натоварване 100% за тази фаза, но е сложи ефикасност 200%, когато "
-"натоварването му е само 50%."
+"Това поле показва ефикасността на източника при извършване на задачи. "
+"Например източник, поставен самостоятелно във фаза от 5 дни с 5 разпределени"
+" към него задачи, ще покаже по подразбиране натоварване от 100% за тази "
+"фаза, но ние залагаме ефикасност 200% и тогава натоварването му ще бъде само"
+" 50%."
 
 #. module: resource
 #: selection:resource.calendar.attendance,dayofweek:0
