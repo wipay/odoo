@@ -1435,7 +1435,8 @@ class account_invoice_line(osv.osv):
                     context.update({'document_date': line.invoice_id.date_invoice, 'force_vat': force_vat})
                 else:
                     if line.invoice_id.invoice_rectification_id:
-                        force_vat = line.invoice_id.invoice_rectification_id.force_vat
+                        if module_ids:
+                            force_vat = line.invoice_id.invoice_rectification_id.force_vat
                         context.update({'document_date': line.invoice_id.invoice_rectification_id.date_invoice, 'force_vat': force_vat})
                     else:
                         context.update({'document_date': line.invoice_id.date_invoice, 'force_vat': force_vat})
