@@ -230,7 +230,7 @@ class StockMove(models.Model):
             # product_obj = self.pool.get('product.product')
             if any(q.qty <= 0 for q in move.quant_ids) or move.product_qty == 0:
                 # if there is a negative quant, the standard price shouldn't be updated
-                return
+                continue
             # Note: here we can't store a quant.cost directly as we may have moved out 2 units
             # (1 unit to 5€ and 1 unit to 7€) and in case of a product return of 1 unit, we can't
             # know which of the 2 costs has to be used (5€ or 7€?). So at that time, thanks to the
@@ -313,8 +313,11 @@ class StockMove(models.Model):
             # in case of a customer return in anglo saxon mode, for products in average costing method, the stock valuation
             # is made using the original average price to negate the delivery effect.
             if self.location_id.usage == 'customer' and self.origin_returned_move_id:
-                debit_value = self.origin_returned_move_id.price_unit * qty
-                credit_value = debit_value
+                #TRESCLOUD: Acorde a nuestros calculos en contabilidad anglosajona asì como la
+                #devolucion en compras es al costo promedio vigente, lo mismo debe pasar con la de ventas
+                #caso contrario no se netea la cuenta de bienes recibidos no facturados.
+                #debit_value = self.origin_returned_move_id.price_unit * qty
+                credit_value = self.origin_returned_move_id.price_unit * qty
 
             #se deja la seccion comentada para habitilcion en el futuro
 #             #TRESCLOUD - devolucion en manufactura, caso materia prima
