@@ -83,8 +83,8 @@ class mrp_production(osv.osv):
         return res
 
     _columns = {
-        'sale_name': fields.function(_ref_calc, multi='sale_name', type='char', string='Sale Name', help='Indicate the name of sales order.'),
-        'sale_ref': fields.function(_ref_calc, multi='sale_name', type='char', string='Sale Reference', help='Indicate the Customer Reference from sales order.'),
+        'sale_name': fields.function(_ref_calc, multi='sale_name', type='char', string='Sale Name', store=True, help='Indicate the name of sales order.'),
+        'sale_ref': fields.function(_ref_calc, multi='sale_name', type='char', string='Sale Reference', store=True, help='Indicate the Customer Reference from sales order.'),
     }
 
 
