@@ -867,7 +867,9 @@ class AccountInvoice(models.Model):
         """
         diff_currency = self.currency_id != self.company_currency_id
         if self.payment_term_id:
+
             totlines = self.with_context(ctx)._get_totlines(total,date_invoice) #hook agregado por trescloud
+
             res_amount_currency = total_currency
             ctx['date'] = self.date_invoice
             count = 0
