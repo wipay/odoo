@@ -850,7 +850,7 @@ class AccountInvoice(models.Model):
         totlines = payment_term.with_context(currency_id=self.company_currency_id.id,
                                                                        active_model='account.invoice',
                                                                        active_id=self.id).compute(total,
-                                                                       self.date_invoice)
+                                                                       date_invoice)
         return totlines
 
 
