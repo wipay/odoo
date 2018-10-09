@@ -26,6 +26,7 @@ from dateutil.relativedelta import relativedelta
 from openerp.osv import fields, osv
 import openerp.addons.decimal_precision as dp
 from tools.translate import _
+from openerp import pooler
 # TRESCLOUD, requerido para obtener el ultimo dia del mes
 import calendar
 import logging
@@ -446,15 +447,21 @@ class account_asset_asset(osv.osv):
             #Anulamos y eliminamos los apuntes contables existentes para que se vuelvan a generar
             count = 0
             len_depreciation_ids = len(depreciation_ids)
-            for depreciation in depreciation_obj.browse(cr, uid, depreciation_ids, context=context):
-                if depreciation.move_id:
-                    count += 1
-                    progress = u'Eliminando asiento contable de línea de depreciación de activo ' + str(count) + u' de ' + str(len_depreciation_ids) + u' con id = ' + str(depreciation.id)
-                    _logger.info(progress)
-                    account_move_obj.button_cancel(cr, uid, [depreciation.move_id.id], context=context)
-                    account_move_obj.unlink(cr, uid, [depreciation.move_id.id], context=context)
-                    cr.commit()
-                    time.sleep(0.2)#Esperamos 200 milisegundos para realizar la siguiente transacción
+            cr1 = pooler.get_db(cr.dbname).cursor()
+            try:
+                for depreciation in depreciation_obj.browse(cr1, uid, depreciation_ids, context=context):
+                    if depreciation.move_id:
+                        count += 1
+                        progress = u'Eliminando asiento contable de línea de depreciación de activo ' + str(count) + u' de ' + str(len_depreciation_ids) + u' con id = ' + str(depreciation.id)
+                        _logger.info(progress)
+                        account_move_obj.button_cancel(cr, uid, [depreciation.move_id.id], context=context)
+                        account_move_obj.unlink(cr, uid, [depreciation.move_id.id], context=context)
+            except Exception as e:
+                cr1.rollback()
+                raise
+            finally:
+                cr1.close()
+                    #time.sleep(0.2)#Esperamos 200 milisegundos para realizar la siguiente transacción
         return depreciation_obj.create_move(cr, uid, depreciation_ids, context=context)
 
     def create(self, cr, uid, vals, context=None):
@@ -513,65 +520,75 @@ class account_asset_depreciation_line(osv.osv):
         asset_ids = []
         count = 0
         len_ids = len(ids)
-        for line in self.browse(cr, uid, ids, context=context):
-            count += 1
-            progress = u'Generando asiento contable de línea de depreciación de activo ' + str(count) + u' de ' + str(len_ids) + u' con id = ' + str(line.id)
-            _logger.info(progress)
-            depreciation_date = context.get('depreciation_date') or line.depreciation_date or time.strftime('%Y-%m-%d')
-            ctx = dict(context, account_period_prefer_normal=True)
-            period_ids = period_obj.find(cr, uid, depreciation_date, context=ctx)
-            company_currency = line.asset_id.company_id.currency_id.id
-            current_currency = line.asset_id.currency_id.id
-            context.update({'date': depreciation_date})
-            amount = currency_obj.compute(cr, uid, current_currency, company_currency, line.amount, round=False, context=context)
-            sign = (line.asset_id.category_id.journal_id.type == 'purchase' and 1) or -1
-            asset_name = "/"
-            reference = line.asset_id.name
-            move_vals = {
-                'name': asset_name,
-                'date': depreciation_date,
-                'ref': reference,
-                'period_id': period_ids and period_ids[0] or False,
-                'journal_id': line.asset_id.category_id.journal_id.id,
-            }
-            move_id = move_obj.create(cr, uid, move_vals, context=context)
-            journal_id = line.asset_id.category_id.journal_id.id
-            partner_id = line.asset_id.partner_id.id
-            move_line_obj.create(cr, uid, {
-                'name': asset_name,
-                'ref': reference,
-                'move_id': move_id,
-                'account_id': line.asset_id.category_id.account_depreciation_id.id,
-                'debit': 0.0,
-                'credit': amount,
-                'period_id': period_ids and period_ids[0] or False,
-                'journal_id': journal_id,
-                'partner_id': partner_id,
-                'currency_id': company_currency != current_currency and  current_currency or False,
-                'amount_currency': company_currency != current_currency and - sign * line.amount or 0.0,
-                'date': depreciation_date,
-            })
-            move_line_obj.create(cr, uid, {
-                'name': asset_name,
-                'ref': reference,
-                'move_id': move_id,
-                'account_id': line.asset_id.category_id.account_expense_depreciation_id.id,
-                'credit': 0.0,
-                'debit': amount,
-                'period_id': period_ids and period_ids[0] or False,
-                'journal_id': journal_id,
-                'partner_id': partner_id,
-                'currency_id': company_currency != current_currency and  current_currency or False,
-                'amount_currency': company_currency != current_currency and sign * line.amount or 0.0,
-                'analytic_account_id': line.asset_id.category_id.account_analytic_id.id,
-                'date': depreciation_date,
-                'asset_id': line.asset_id.id
-            })
-            self.write(cr, uid, line.id, {'move_id': move_id}, context=context)
-            created_move_ids.append(move_id)
-            asset_ids.append(line.asset_id.id)
-            cr.commit()
-            time.sleep(0.2)#Esperamos 200 milisegundos para realizar la siguiente transacción
+        cr1 = pooler.get_db(cr.dbname).cursor()
+        try:
+            for line in self.browse(cr1, uid, ids, context=context):
+                count += 1
+                progress = u'Generando asiento contable de línea de depreciación de activo ' + str(count) + u' de ' + str(len_ids) + u' con id = ' + str(line.id)
+                _logger.info(progress)
+                depreciation_date = context.get('depreciation_date') or line.depreciation_date or time.strftime('%Y-%m-%d')
+                ctx = dict(context, account_period_prefer_normal=True)
+                period_ids = period_obj.find(cr, uid, depreciation_date, context=ctx)
+                company_currency = line.asset_id.company_id.currency_id.id
+                current_currency = line.asset_id.currency_id.id
+                context.update({'date': depreciation_date})
+                amount = currency_obj.compute(cr, uid, current_currency, company_currency, line.amount, round=False, context=context)
+                sign = (line.asset_id.category_id.journal_id.type == 'purchase' and 1) or -1
+                asset_name = "/"
+                reference = line.asset_id.name
+                move_vals = {
+                    'name': asset_name,
+                    'date': depreciation_date,
+                    'ref': reference,
+                    'period_id': period_ids and period_ids[0] or False,
+                    'journal_id': line.asset_id.category_id.journal_id.id,
+                }
+                move_id = move_obj.create(cr, uid, move_vals, context=context)
+                journal_id = line.asset_id.category_id.journal_id.id
+                partner_id = line.asset_id.partner_id.id
+                move_line_obj.create(cr, uid, {
+                    'name': asset_name,
+                    'ref': reference,
+                    'move_id': move_id,
+                    'account_id': line.asset_id.category_id.account_depreciation_id.id,
+                    'debit': 0.0,
+                    'credit': amount,
+                    'period_id': period_ids and period_ids[0] or False,
+                    'journal_id': journal_id,
+                    'partner_id': partner_id,
+                    'currency_id': company_currency != current_currency and  current_currency or False,
+                    'amount_currency': company_currency != current_currency and - sign * line.amount or 0.0,
+                    'date': depreciation_date,
+                    #===================================================================
+                    # CODIGO MODIFICADO POR TRESCLOUD
+                    #===================================================================
+                    'asset_id': line.asset_id.id
+                })
+                move_line_obj.create(cr, uid, {
+                    'name': asset_name,
+                    'ref': reference,
+                    'move_id': move_id,
+                    'account_id': line.asset_id.category_id.account_expense_depreciation_id.id,
+                    'credit': 0.0,
+                    'debit': amount,
+                    'period_id': period_ids and period_ids[0] or False,
+                    'journal_id': journal_id,
+                    'partner_id': partner_id,
+                    'currency_id': company_currency != current_currency and  current_currency or False,
+                    'amount_currency': company_currency != current_currency and sign * line.amount or 0.0,
+                    'analytic_account_id': line.asset_id.category_id.account_analytic_id.id,
+                    'date': depreciation_date,
+                    'asset_id': line.asset_id.id
+                })
+                self.write(cr, uid, line.id, {'move_id': move_id}, context=context)
+                created_move_ids.append(move_id)
+                asset_ids.append(line.asset_id.id)
+        except Exception as e:
+            cr1.rollback()
+            raise
+        finally:
+            cr1.close()
+        #time.sleep(0.2)#Esperamos 200 milisegundos para realizar la siguiente transacción
         # we re-evaluate the assets to determine whether we can close them
         for asset in asset_obj.browse(cr, uid, list(set(asset_ids)), context=context):
             if currency_obj.is_zero(cr, uid, asset.currency_id, asset.value_residual):
