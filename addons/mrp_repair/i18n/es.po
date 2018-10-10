@@ -707,11 +707,6 @@ msgid "Repaired Lot"
 msgstr "Lote reparado"
 
 #. module: mrp_repair
-#: model:ir.ui.menu,name:mrp_repair.menu_repair_order
-msgid "Repairs"
-msgstr "Reparaciones"
-
-#. module: mrp_repair
 #: model:ir.ui.view,arch_db:mrp_repair.view_repair_order_form
 #: model:ir.ui.view,arch_db:mrp_repair.view_repair_order_tree
 msgid "Repairs order"
@@ -922,3 +917,15 @@ msgstr ""
 #: model:res.groups,name:mrp_repair.group_repair_manager
 msgid "Repair Manager"
 msgstr "Responsable de reparaciones"
+
+#. module: mrp_repair
+#: model:ir.module.category,name:mrp_repair.module_mrp_repair_category
+#: model:ir.ui.menu,name:mrp_repair.menu_repair_order
+msgid "Repairs"
+msgstr "Reparaciones"
+
+#. module: mrp_repair
+#: model:ir.module.category,description:mrp_repair.module_mrp_repair_category
+msgid "Helps you manage your repairs."
+msgstr "Ayuda a gestionar las reparaciones."
+
