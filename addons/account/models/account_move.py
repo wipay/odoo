@@ -1269,7 +1269,8 @@ class AccountMoveLine(models.Model):
         move_ids = set()
         for line in self:
             err_msg = _('Move name (id): %s (%s)') % (line.move_id.name, str(line.move_id.id))
-            if line.move_id.state != 'draft':
+            #siguiente linea fue modificado por Trescloud
+            if line._check_state_line():
                 raise UserError(_('You cannot do this modification on a posted journal entry, you can just change some non legal fields. You must revert the journal entry to cancel it.\n%s.') % err_msg)
             if line.reconciled and not (line.debit == 0 and line.credit == 0):
                 raise UserError(_('You cannot do this modification on a reconciled entry. You can just change some non legal fields or you must unreconcile first.\n%s.') % err_msg)
@@ -1277,7 +1278,15 @@ class AccountMoveLine(models.Model):
                 move_ids.add(line.move_id.id)
         self.env['account.move'].browse(list(move_ids))._check_lock_date()
         return True
-
+    
+    #siguiente metodo fue agregado por Trescloud
+    @api.model
+    def _check_state_line(self):
+        '''
+        Hook sera modificado por un metodo superior
+        '''
+        return self.move_id.state != 'draft'
+    
     ####################################################
     # Misc / utility methods
     ####################################################
