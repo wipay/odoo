@@ -917,3 +917,8 @@ msgid ""
 msgstr ""
 "¡Tiene que seleccionar una tarifa en el formulario de reparación!\n"
 " Por favor, indique una antes de elegir un producto."
+
+#. module: mrp_repair
+#: model:res.groups,name:mrp_repair.group_repair_manager
+msgid "Repair Manager"
+msgstr "Responsable de reparaciones"
