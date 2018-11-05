@@ -127,7 +127,12 @@ class AccountInvoice(models.Model):
         '''
         Hook sera utilizado en un modulo superior
         '''
-        return float_compare(valuation_price_unit,i_line.price_unit,precision_digits=self.company_id.currency_id.decimal_places) != 0 and line['price_unit'] == i_line.price_unit and acc
+        prec = self.company_id.currency_id.decimal_places
+        #TRESCLOUD agregmaos el factor i_line.quantity para que se realice el 
+        #asiento DCP cuando en el caso de que la diferencia de precios sea muy pequeña
+        #si la cantidad comprada es muy grande.
+        result = float_compare(i_line.quantity*valuation_price_unit,i_line.quantity*i_line.price_unit,precision_digits=prec) != 0 and line['price_unit'] == i_line.price_unit and acc
+        return result
         
     @api.model
     def _anglo_saxon_purchase_move_lines(self, i_line, res):
