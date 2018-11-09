@@ -33,7 +33,6 @@ class StockProductionLot(models.Model):
                     #La siguiente line fue modificado por Trescloud
                     date = self.get_date_for_calculation(field) + datetime.timedelta(days=duration)
                     res[field] = fields.Datetime.to_string(date)
-                    #res[field] = self.get_date_product_time(duration)
         return res
     
     #Metodo agregado por Trescloud
