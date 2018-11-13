@@ -26,10 +26,10 @@
                                     <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                         <div class="row">
                                             <div class="col-xs-12 text-muted">
-                                                <strong><span><t t-esc="record.category_id.value or ''"/></span></strong>
+                                                <strong><span t-if="record.category_id"><t t-esc="record.category_id.value or ''"/></span></strong>
                                             </div>
                                             <div class="col-xs-12 text-muted">
-                                                <strong><span><t t-esc="record.fixed_location_id.value or ''"/></span></strong>
+                                                <strong><span t-if="record.fixed_location_id"><t t-esc="record.fixed_location_id.value or ''"/></span></strong>
                                             </div>
                                         </div>
                                     </div>
