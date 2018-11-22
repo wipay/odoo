@@ -131,21 +131,21 @@
                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                 <div class="row">
                                     <div class="col-xs-6">
-                                        <strong><span><t t-esc="record.code.value"/></span></strong>
+                                        <strong><span t-if="record.code"><t t-esc="record.code.value"/></span></strong>
                                     </div>
                                     <div class="col-xs-6 pull-right text-right">
-                                        <strong><span><t t-esc="record.name.value"/></span></strong>
+                                        <strong><span t-if="record.name"><t t-esc="record.name.value"/></span></strong>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12 text-muted">
-                                         <span><t t-esc='record.user_type_id.string'/>: <t t-esc="record.user_type_id.value"/></span>
+                                         <span t-if="record.user_type_id"><t t-esc='record.user_type_id.string'/>: <t t-esc="record.user_type_id.value"/></span>
                                     </div>
                                     <div class="col-xs-12 text-muted">
-                                         <span><t t-esc='record.currency_id.string'/>: <t t-esc="record.currency_id.value"/></span>
+                                         <span t-if="record.currency_id"><t t-esc='record.currency_id.string'/>: <t t-esc="record.currency_id.value"/></span>
                                     </div>
                                     <div class="col-xs-12 text-muted">
-                                         <span><t t-esc='record.company_id.string'/>: <t t-esc="record.company_id.value"/></span>
+                                         <span t-if="record.company_id"><t t-esc='record.company_id.string'/>: <t t-esc="record.company_id.value"/></span>
                                     </div>
                                 </div>
                             </div>
@@ -298,15 +298,15 @@
                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                 <div class="row">
                                     <div class="col-xs-6">
-                                        <strong><span><t t-esc="record.type.value"/></span></strong>
+                                        <strong><span t-if="record.type"><t t-esc="record.type.value"/></span></strong>
                                     </div>
                                     <div class="col-xs-6 pull-right text-right">
-                                        <strong><span><t t-esc="record.name.value"/></span></strong>
+                                        <strong><span t-if="record.name"><t t-esc="record.name.value"/></span></strong>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12 text-muted">
-                                         <span><t t-esc='record.company_id.string'/>: <t t-esc="record.company_id.value"/></span>
+                                         <span t-if="record.company_id"><t t-esc='record.company_id.string'/>: <t t-esc="record.company_id.value"/></span>
                                     </div>
                                 </div>
                             </div>
@@ -960,10 +960,10 @@
                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                 <div class="row">
                                     <div class="col-xs-6">
-                                        <strong><span><t t-esc="record.type.value"/></span></strong>
+                                        <strong><span t-if="record.type"><t t-esc="record.type.value"/></span></strong>
                                     </div>
                                     <div class="col-xs-6 pull-right text-right">
-                                        <strong><span><t t-esc="record.name.value"/></span></strong>
+                                        <strong><span t-if="record.name"><t t-esc="record.name.value"/></span></strong>
                                     </div>
                                 </div>
                             </div>
