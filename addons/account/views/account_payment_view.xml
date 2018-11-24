@@ -141,7 +141,7 @@
                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                 <div class="row">
                                     <div class="col-xs-6">
-                                        <strong><span><t t-esc="record.partner_id.value"/></span></strong>
+                                        <strong><span t-if="record.partner_id"><t t-esc="record.partner_id.value"/></span></strong>
                                     </div>
                                     <div class="col-xs-6 pull-right text-right">
                                         <strong><field name="amount" widget="monetary"/></strong>

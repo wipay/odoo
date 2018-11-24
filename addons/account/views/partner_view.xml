@@ -56,10 +56,10 @@
                                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                                 <div class="row">
                                                     <div class="col-xs-12 text-muted">
-                                                        <strong><span><t t-esc="record.tax_src_id.value or ''"/></span></strong>
+                                                        <strong><span t-if="record.tax_src_id"><t t-esc="record.tax_src_id.value or ''"/></span></strong>
                                                     </div>
                                                     <div class="col-xs-12 text-muted">
-                                                        <strong><span><t t-esc="record.tax_dest_id.value or ''"/></span></strong>
+                                                        <strong><span t-if="record.tax_dest_id"><t t-esc="record.tax_dest_id.value or ''"/></span></strong>
                                                     </div>
                                                 </div>
                                             </div>
@@ -90,10 +90,10 @@
                                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                                 <div class="row">
                                                     <div class="col-xs-12 text-muted">
-                                                        <strong><span><t t-esc="record.account_src_id.value or ''"/></span></strong>
+                                                        <strong><span t-if="record.account_src_id"><t t-esc="record.account_src_id.value or ''"/></span></strong>
                                                     </div>
                                                     <div class="col-xs-12 text-muted">
-                                                        <strong><span><t t-esc="record.account_dest_id.value or ''"/></span></strong>
+                                                        <strong><span t-if="record.account_dest_id"><t t-esc="record.account_dest_id.value or ''"/></span></strong>
                                                     </div>
                                                 </div>
                                             </div>

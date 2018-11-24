@@ -49,7 +49,7 @@
                     <xpath expr="//page[@name='registrations']" position="replace">
                         <page string="Tickets">
                             <group>
-                                <group>
+                                <group name="left">
                                     <field name="auto_confirm" invisible="1"/>
                                     <field name="seats_min"/>
                                     <field name="seats_availability" widget='radio'/>

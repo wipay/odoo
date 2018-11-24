@@ -5263,3 +5263,8 @@ msgstr "utiliza l'API de Odoo para importar a través de scripts"
 #: model:ir.ui.view,arch_db:crm.crm_planner
 msgid "with your work above"
 msgstr "con su trabajo anterior"
+
+#. module: crm
+#: model:res.groups,name:crm.group_claim_manager
+msgid "Claim Manager"
+msgstr "Responsable de reclamaciones"
