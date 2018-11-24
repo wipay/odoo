@@ -572,11 +572,9 @@ class Picking(models.Model):
                 'location_dest_id': mapping.location_dst_id,
                 'product_uom_id': uom.id,
                 'pack_lot_ids': [
-                    (0, 0, {
-                        'lot_id': lot,
-                        'qty': 0.0,
-                        'qty_todo': mapping.product.uom_id._compute_quantity(lots_grouped[mapping][lot], uom)
-                    }) for lot in lots_grouped.get(mapping, {}).keys()],
+                    #la siguiente line fue modificada por trescloud
+                    (0, 0, self._get_dict_lot_mapping(lot, mapping, lots_grouped, uom))
+                        for lot in lots_grouped.get(mapping, {}).keys()],
             }
             product_id_to_vals.setdefault(mapping.product.id, list()).append(val_dict)
 
@@ -584,7 +582,19 @@ class Picking(models.Model):
             values = product_id_to_vals.pop(move.product_id.id, [])
             pack_operation_values += values
         return pack_operation_values
-
+    
+    #siguiente metodo fue agregado por Trescloud
+    @api.model
+    def _get_dict_lot_mapping(self, lot, mapping, lots_grouped, uom):
+        '''
+        Hook sera modificado en un modulo superior
+        '''
+        return {
+            'lot_id': lot,
+            'qty': 0.0,
+            'qty_todo': mapping.product.uom_id._compute_quantity(lots_grouped[mapping][lot], uom)
+        }
+        
     @api.multi
     def do_prepare_partial(self):
         # TDE CLEANME: oh dear ...
