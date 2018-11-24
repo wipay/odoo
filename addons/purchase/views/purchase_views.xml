@@ -269,15 +269,15 @@
                                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                                 <div class="row">
                                                     <div class="col-xs-12">
-                                                        <strong><span><t t-esc="record.product_id.value or 'None'"/></span></strong>
+                                                        <strong><span t-if="record.product_id"><t t-esc="record.product_id.value or 'None'"/></span></strong>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-xs-8 text-muted">
-                                                        <span><t t-esc="record.product_qty.value"/> <t t-esc="record.product_uom.value"/></span>
+                                                        <span t-if="record.product_qty"><t t-esc="record.product_qty.value"/> <t t-esc="record.product_uom.value"/></span>
                                                     </div>
                                                     <div class="col-xs-4 text-muted">
-                                                        <span class="text-right"><t t-esc="record.price_subtotal.value"/></span>
+                                                        <span t-if="record.price_subtotal" class="text-right"><t t-esc="record.price_subtotal.value"/></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -375,7 +375,7 @@
                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                 <div class="row">
                                     <div class="col-xs-6">
-                                        <strong><span><t t-esc="record.partner_id.value"/></span></strong>
+                                        <strong><span t-if="record.partner_id"><t t-esc="record.partner_id.value"/></span></strong>
                                     </div>
                                     <div class="col-xs-6 pull-right text-right">
                                         <strong><field name="amount_total" widget="monetary"/></strong>
@@ -383,7 +383,14 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-6">
-                                        <span><t t-esc="record.name.value"/> <t t-esc="record.date_order.value and record.date_order.value.split(' ')[0] or False"/></span>
+                                        <span>
+                                            <t t-if="record.name">
+                                                <t t-esc="record.name.value"/>
+                                            </t>
+                                            <t t-if="record.date_order">
+                                                <t t-esc="record.date_order.value and record.date_order.value.split(' ')[0] or False"/>
+                                            </t>
+                                        </span>
                                     </div>
                                     <div class="col-xs-6">
                                         <span class="pull-right text-right">
