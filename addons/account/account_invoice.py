@@ -1428,9 +1428,11 @@ class account_invoice_line(osv.osv):
         res = {}
         tax_obj = self.pool.get('account.tax')
         cur_obj = self.pool.get('res.currency')
+        module_ids = self.pool.get('ir.module.module').search(cr, uid, [('name','=','vat_tax_fourteen_percent'), 
+                                                                                ('state','=','installed')], 
+                                                                                context=context)
         for line in self.browse(cr, uid, ids):
             if line.invoice_id:
-                module_ids = self.pool.get('ir.module.module').search(cr, uid, [('name','=','vat_tax_fourteen_percent'), ('state','=','installed')], context=context)
                 force_vat = 'automatic'
                 if module_ids:
                     force_vat = line.invoice_id.force_vat
@@ -1438,7 +1440,8 @@ class account_invoice_line(osv.osv):
                     context.update({'document_date': line.invoice_id.date_invoice, 'force_vat': force_vat})
                 else:
                     if line.invoice_id.invoice_rectification_id:
-                        force_vat = line.invoice_id.invoice_rectification_id.force_vat
+                        if module_ids:
+                            force_vat = line.invoice_id.invoice_rectification_id.force_vat
                         context.update({'document_date': line.invoice_id.invoice_rectification_id.date_invoice, 'force_vat': force_vat})
                     else:
                         context.update({'document_date': line.invoice_id.date_invoice, 'force_vat': force_vat})
