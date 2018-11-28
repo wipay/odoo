@@ -66,16 +66,38 @@ class ir_sequence(openerp.osv.osv.osv):
                 # get number from postgres sequence. Cannot use
                 # currval, because that might give an error when
                 # not having used nextval before.
-                statement = (
+                cr.execute("select version()")
+                version = cr.fetchone()
+                if '9' in version[0][:16]:
+                    statement = (
                     "SELECT last_value, increment_by, is_called"
                     " FROM ir_sequence_%03d"
                     % element.id)
-                cr.execute(statement)
-                (last_value, increment_by, is_called) = cr.fetchone()
-                if is_called:
-                    res[element.id] = last_value + increment_by
-                else:
-                    res[element.id] = last_value
+                    cr.execute(statement)
+                    (last_value, increment_by, is_called) = cr.fetchone()
+                    if is_called:
+                        res[element.id] = last_value + increment_by
+                    else:
+                        res[element.id] = last_value
+                elif '10' in version[0][:16]:
+                    statement = (
+                        """SELECT last_value, increment_by
+                        FROM pg_sequences where sequencename='ir_sequence_%03d'
+                        """%(element.id,))
+                    cr.execute(statement)
+                    last_value, increment_by = cr.fetchone()
+                    statement = (
+                        """
+                        SELECT is_called
+                        FROM ir_sequence_%03d
+                        """
+                        % (element.id,))
+                    cr.execute(statement)
+                    is_called, = cr.fetchone()
+                    if is_called:
+                        res[element.id] = last_value or 0 + increment_by
+                    else:
+                        res[element.id] = last_value or 0
         return res
 
     def _set_number_next_actual(self, cr, uid, id, name, value, args=None, context=None):
