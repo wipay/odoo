@@ -343,17 +343,17 @@
                                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                                 <div class="row">
                                                     <div class="col-xs-12">
-                                                        <strong><span><t t-esc="record.package_id.value"/></span></strong>
+                                                        <strong><span t-if="record.package_id"><t t-esc="record.package_id.value"/></span></strong>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-xs-12 text-muted">
-                                                        <span><t t-esc="record.from_loc.value"/> to <t t-esc="record.to_loc.value"/></span>
+                                                        <span t-if="record.from_loc"><t t-esc="record.from_loc.value"/> to <t t-esc="record.to_loc.value"/></span>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-xs-12 text-muted">
-                                                         <span><t t-esc='record.qty_done.string'/>: <t t-esc="record.qty_done.value"/></span>
+                                                         <span t-if="record.qty_done"><t t-esc='record.qty_done.string'/>: <t t-esc="record.qty_done.value"/></span>
                                                     </div>
                                                 </div>
                                             </div>

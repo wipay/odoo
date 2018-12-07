@@ -298,6 +298,10 @@ class AccountMoveLine(models.Model):
         if not cr.fetchone():
             cr.execute('CREATE INDEX account_move_line_partner_id_ref_idx ON account_move_line (partner_id, ref)')
 
+    @api.multi
+    def amount_residual2(self):
+        return self._amount_residual()
+
     @api.depends('debit', 'credit', 'amount_currency', 'currency_id', 'matched_debit_ids', 'matched_credit_ids', 'matched_debit_ids.amount', 'matched_credit_ids.amount', 'move_id.state')
     def _amount_residual(self):
         """ Computes the residual amount of a move line from a reconciliable account in the company currency and the line's currency.
@@ -327,7 +331,14 @@ class AccountMoveLine(models.Model):
 
                 amount += sign_partial_line * partial_line.amount
                 #getting the date of the matched item to compute the amount_residual in currency
-                if line.currency_id:
+                
+                #MODIFICADO POR TRESCLOUD, esquivamos la conciliacion cuando el asiento es de ganancia/perdidas por diferencia de cambio
+                #es como si el currency_id fuera False, sin embargo hacere la modificacion en el programa y alterar la data esta mas largo
+                #Util en AD pues el asiento de provision por diferencia de cambio se concilia contra CxC y CxP
+                prec = line.currency_id and line.currency_id.rounding
+                if line.currency_id and not float_is_zero(line.amount_currency,precision_rounding=prec):
+                #FIN MODIFICIACION
+                
                     if partial_line.currency_id and partial_line.currency_id == line.currency_id:
                         amount_residual_currency += sign_partial_line * partial_line.amount_currency
                     else:

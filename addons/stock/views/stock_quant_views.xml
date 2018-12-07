@@ -79,22 +79,22 @@
                                     <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                         <div class="row">
                                             <div class="col-xs-12">
-                                                <strong><span><t t-esc="record.picking_id.value"/></span></strong>
+                                                <strong><span t-if="record.picking_id"><t t-esc="record.picking_id.value"/></span></strong>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-xs-12 text-muted">
-                                                <span><t t-esc="record.location_id.value"/> to <t t-esc="record.location_dest_id.value"/></span>
+                                                <span t-if="record.location_id"><t t-esc="record.location_id.value"/> to <t t-esc="record.location_dest_id.value"/></span>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-xs-12 text-muted">
-                                                 <span><t t-esc='record.date.string'/>: <t t-esc="record.date.value"/></span>
+                                                 <span t-if="record.date"><t t-esc='record.date.string'/>: <t t-esc="record.date.value"/></span>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-xs-12 text-muted">
-                                                 <span><t t-esc='record.product_uom_qty.string'/>: <t t-esc="record.product_uom_qty.value"/></span>
+                                                 <span t-if="record.product_uom_qty"><t t-esc='record.product_uom_qty.string'/>: <t t-esc="record.product_uom_qty.value"/></span>
                                             </div>
                                         </div>
                                     </div>
@@ -254,22 +254,22 @@
                                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                                 <div class="row">
                                                     <div class="col-xs-12">
-                                                        <strong><span><t t-esc="record.product_id.value"/></span></strong>
+                                                        <strong><span t-if="record.product_id"><t t-esc="record.product_id.value"/></span></strong>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-xs-12 text-muted">
-                                                         <span><t t-esc='record.location_id.string'/>: <t t-esc="record.location_id.value"/></span>
+                                                         <span t-if="record.location_id"><t t-esc='record.location_id.string'/>: <t t-esc="record.location_id.value"/></span>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-xs-12 text-muted">
-                                                         <span><t t-esc='record.in_date.string'/>: <t t-esc="record.in_date.value"/></span>
+                                                         <span t-if="record.in_date"><t t-esc='record.in_date.string'/>: <t t-esc="record.in_date.value"/></span>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-xs-12 text-muted">
-                                                         <span><t t-esc='record.qty.string'/>: <t t-esc="record.qty.value"/></span>
+                                                         <span t-if="record.qty"><t t-esc='record.qty.string'/>: <t t-esc="record.qty.value"/></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -295,17 +295,17 @@
                                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                                 <div class="row">
                                                     <div class="col-xs-12">
-                                                        <strong><span><t t-esc="record.display_name.value"/></span></strong>
+                                                        <strong><span t-if="record.display_name"><t t-esc="record.display_name.value"/></span></strong>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-xs-12 text-muted">
-                                                         <span><t t-esc='record.packaging_id.string'/>: <t t-esc="record.packaging_id.value"/></span>
+                                                         <span t-if="record.packaging_id"><t t-esc='record.packaging_id.string'/>: <t t-esc="record.packaging_id.value"/></span>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-xs-12 text-muted">
-                                                         <span><t t-esc='record.location_id.string'/>: <t t-esc="record.location_id.value"/></span>
+                                                         <span t-if="record.location_id"><t t-esc='record.location_id.string'/>: <t t-esc="record.location_id.value"/></span>
                                                     </div>
                                                 </div>
                                             </div>
