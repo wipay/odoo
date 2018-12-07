@@ -1129,13 +1129,18 @@ class account_invoice(osv.osv):
 
         for obj_inv in self.browse(cr, uid, ids, context=context):
             invtype = obj_inv.type
-            number = obj_inv.internal_number
+            #Este codigo fue modificado por trescloud para el control contable, trajo problemas en la validacion
+            #de anticipos y por tal motivo ponemos el internal_number dentro de un if
+            #El codigo original era:
+            #number = obj_inv.number
+            #self.write(cr, uid, ids, {'number': number})
+            number = obj_inv.number
+            if obj_inv.internal_number:
+                number = obj_inv.internal_number
             move_id = obj_inv.move_id and obj_inv.move_id.id or False
             reference = obj_inv.reference or ''
 
-            self.write(cr, uid, ids, {'number': number,
-                                      'internal_number': number})
-
+            self.write(cr, uid, ids, {'number': number, 'internal_number': number})
 
             if invtype in ('in_invoice', 'in_refund'):
                 if not reference:
