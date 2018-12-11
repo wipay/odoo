@@ -447,21 +447,15 @@ class account_asset_asset(osv.osv):
             #Anulamos y eliminamos los apuntes contables existentes para que se vuelvan a generar
             count = 0
             len_depreciation_ids = len(depreciation_ids)
-            cr1 = pooler.get_db(cr.dbname).cursor()
-            try:
-                for depreciation in depreciation_obj.browse(cr1, uid, depreciation_ids, context=context):
-                    if depreciation.move_id:
-                        count += 1
-                        progress = u'Eliminando asiento contable de línea de depreciación de activo ' + str(count) + u' de ' + str(len_depreciation_ids) + u' con id = ' + str(depreciation.id)
-                        _logger.info(progress)
-                        account_move_obj.button_cancel(cr, uid, [depreciation.move_id.id], context=context)
-                        account_move_obj.unlink(cr, uid, [depreciation.move_id.id], context=context)
-            except Exception as e:
-                cr1.rollback()
-                raise
-            finally:
-                cr1.close()
-                    #time.sleep(0.2)#Esperamos 200 milisegundos para realizar la siguiente transacción
+            for depreciation in depreciation_obj.browse(cr, uid, depreciation_ids, context=context):
+                if depreciation.move_id:
+                    count += 1
+                    progress = u'Eliminando asiento contable de línea de depreciación de activo ' + str(count) + u' de ' + str(len_depreciation_ids) + u' con id = ' + str(depreciation.id)
+                    _logger.info(progress)
+                    account_move_obj.button_cancel(cr, uid, [depreciation.move_id.id], context=context)
+                    account_move_obj.unlink(cr, uid, [depreciation.move_id.id], context=context)
+                    cr.commit()
+                    time.sleep(0.2)#Esperamos 200 milisegundos para realizar la siguiente transacción
         return depreciation_obj.create_move(cr, uid, depreciation_ids, context=context)
 
     def create(self, cr, uid, vals, context=None):
