@@ -572,11 +572,9 @@ class Picking(models.Model):
                 'location_dest_id': mapping.location_dst_id,
                 'product_uom_id': uom.id,
                 'pack_lot_ids': [
-                    (0, 0, {
-                        'lot_id': lot,
-                        'qty': 0.0,
-                        'qty_todo': mapping.product.uom_id._compute_quantity(lots_grouped[mapping][lot], uom)
-                    }) for lot in lots_grouped.get(mapping, {}).keys()],
+                    #la siguiente line fue modificada por trescloud
+                    (0, 0, self._get_dict_lot_mapping(lot, mapping, lots_grouped, uom))
+                        for lot in lots_grouped.get(mapping, {}).keys()],
             }
             product_id_to_vals.setdefault(mapping.product.id, list()).append(val_dict)
 
@@ -584,7 +582,19 @@ class Picking(models.Model):
             values = product_id_to_vals.pop(move.product_id.id, [])
             pack_operation_values += values
         return pack_operation_values
-
+    
+    #siguiente metodo fue agregado por Trescloud
+    @api.model
+    def _get_dict_lot_mapping(self, lot, mapping, lots_grouped, uom):
+        '''
+        Hook sera modificado en un modulo superior
+        '''
+        return {
+            'lot_id': lot,
+            'qty': 0.0,
+            'qty_todo': mapping.product.uom_id._compute_quantity(lots_grouped[mapping][lot], uom)
+        }
+        
     @api.multi
     def do_prepare_partial(self):
         # TDE CLEANME: oh dear ...
@@ -910,12 +920,23 @@ class Picking(models.Model):
 
             picking._create_backorder()
         return True
-
+    
+    #Siguiente metodo fue agregado por Trescloud
+    def _get_values_create_lotes(self, pack_op_lot):
+        '''
+        Hook sera utilizado en un metodo superior.
+        '''
+        return {
+            'name': pack_op_lot.lot_name,
+            'product_id': pack_op_lot.operation_id.product_id.id
+        }
+        
     def _create_lots_for_picking(self):
         Lot = self.env['stock.production.lot']
         for pack_op_lot in self.mapped('pack_operation_ids').mapped('pack_lot_ids'):
             if not pack_op_lot.lot_id:
-                lot = Lot.create({'name': pack_op_lot.lot_name, 'product_id': pack_op_lot.operation_id.product_id.id})
+                #Siguiente line fue modificado por Trescloud
+                lot = Lot.create(self._get_values_create_lotes(pack_op_lot))
                 pack_op_lot.write({'lot_id': lot.id})
         # TDE FIXME: this should not be done here
         self.mapped('pack_operation_ids').mapped('pack_lot_ids').filtered(lambda op_lot: op_lot.qty == 0.0).unlink()

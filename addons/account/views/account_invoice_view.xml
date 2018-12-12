@@ -117,20 +117,20 @@
                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                 <div class="row">
                                     <div class="col-xs-12">
-                                        <strong><span><t t-esc="record.name.value"/></span></strong>
+                                        <strong><span t-if="record.name"><t t-esc="record.name.value"/></span></strong>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12">
-                                        <strong><span><t t-esc="record.account_id.value"/></span></strong>
+                                        <strong><span t-if="record.account_id"><t t-esc="record.account_id.value"/></span></strong>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12 text-muted">
-                                         <span><t t-esc='record.base.string'/>: <t t-esc="record.base.value"/></span>
+                                         <span t-if="record.base"><t t-esc='record.base.string'/>: <t t-esc="record.base.value"/></span>
                                     </div>
                                     <div class="col-xs-12 text-muted">
-                                         <span><t t-esc='record.amount.string'/>: <t t-esc="record.amount.value"/></span>
+                                         <span t-if="record.amount"><t t-esc='record.amount.string'/>: <t t-esc="record.amount.value"/></span>
                                     </div>
                                 </div>
                             </div>
@@ -329,15 +329,15 @@
                                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                                 <div class="row">
                                                     <div class="col-xs-12">
-                                                        <strong><span><t t-esc="record.product_id.value or 'None'"/></span></strong>
+                                                        <strong><span t-if="record.product_id"><t t-esc="record.product_id.value or 'None'"/></span></strong>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-xs-8 text-muted">
-                                                        <span><t t-esc="record.quantity.value"/> <t t-esc="record.uom_id.value"/></span>
+                                                        <span t-if="record.quantity"><t t-esc="record.quantity.value"/> <t t-esc="record.uom_id.value"/></span>
                                                     </div>
                                                     <div class="col-xs-4 text-muted">
-                                                        <span class="text-right"><t t-esc="record.price_subtotal.value"/></span>
+                                                        <span t-if="record.price_subtotal" class="text-right"><t t-esc="record.price_subtotal.value"/></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -371,10 +371,10 @@
                                                         <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                                             <div class="row">
                                                                 <div class="col-xs-8 text-muted">
-                                                                    <strong><span><t t-esc="record.tax_id.value or ''"/></span></strong>
+                                                                    <strong><span t-if="record.tax_id"><t t-esc="record.tax_id.value or ''"/></span></strong>
                                                                 </div>
                                                                 <div class="col-xs-4 text-muted">
-                                                                    <span class="text-right"><t t-esc="record.amount.value or ''"/></span>
+                                                                    <span t-if="record.amount" class="text-right"><t t-esc="record.amount.value or ''"/></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -581,10 +581,10 @@
                                             <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                                                 <div class="row">
                                                     <div class="col-xs-8 text-muted">
-                                                        <strong><span><t t-esc="record.tax_id.value or ''"/></span></strong>
+                                                        <strong><span t-if="record.tax_id"><t t-esc="record.tax_id.value or ''"/></span></strong>
                                                     </div>
                                                     <div class="col-xs-4 text-muted">
-                                                        <span class="text-right"><t t-esc="record.amount.value or ''"/></span>
+                                                        <span t-if="record.amount" class="text-right"><t t-esc="record.amount.value or ''"/></span>
                                                     </div>
                                                 </div>
                                             </div>
