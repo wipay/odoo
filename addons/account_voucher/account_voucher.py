@@ -773,15 +773,16 @@ class account_voucher(osv.osv):
         account_type = []
         if context.get('account_id'):
             account_type = [self.pool['account.account'].browse(cr, uid, context['account_id'], context=context).type]
+        #Pagos a proveedores(deben aparecer las cxc y la cxp)
         if ttype == 'payment':
             if not account_type:
-                account_type = ['payable']
+                account_type = ['receivable', 'payable']
             total_debit = price or 0.0
+        #Cobros a clientes(solo deben aparecer las cuentas por cobrar)
         else:
             total_credit = price or 0.0
             if not account_type:
-                account_type = ['receivable', 'payable']
-
+                account_type = ['receivable']
         if not context.get('move_line_ids', False):
             #El siguiente codigo fue modificado por TRESCLOUD
             ids = move_line_pool.search(
