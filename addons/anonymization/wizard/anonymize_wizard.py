@@ -165,7 +165,7 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
             self.env.cr.execute('select id, "%s" from "%s"' % (field_name, table_name))
             for record in self.env.cr.dictfetchall():
                 # HOOK Added by TRESCLOUD
-                if self.is_pickle():
+                if self.fill_pickle():
                     data.append({"model_id": model_name, "field_id": field_name, "id": record['id'], "value": record[field_name]})
 
                 # anonymize the value:
@@ -209,7 +209,7 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
         fn = open(abs_filepath, 'w')
         
         # HOOK Added by TRESCLOUD
-        if self.is_pickle():
+        if self.fill_pickle():
             pickle.dump(data, fn, protocol=-1)
 
         # update the anonymization fields:
@@ -331,7 +331,8 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
             'context': {'step': 'just_desanonymized'},
             'target': 'new'
         }
+
     # Added by TRESCLOUD
     @api.multi
-    def is_pickle(self):
+    def fill_pickle(self):
         return True
