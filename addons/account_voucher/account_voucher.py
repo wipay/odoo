@@ -776,7 +776,7 @@ class account_voucher(osv.osv):
         #Pagos a proveedores(deben aparecer las cxc y la cxp)
         if ttype == 'payment':
             if not account_type:
-                account_type = ['receivable', 'payable']
+                account_type = self.get_account_type_for_payment_supplier(cr, uid, ids, context=context)
             total_debit = price or 0.0
         #Cobros a clientes(solo deben aparecer las cuentas por cobrar)
         else:
@@ -893,6 +893,13 @@ class account_voucher(osv.osv):
             default['value']['writeoff_amount'] = self._compute_writeoff_amount(cr, uid, default['value']['line_dr_ids'], default['value']['line_cr_ids'], price, ttype)
         return default
     
+    #El siguiente metodo fue agregado por TRESCLOUD
+    def get_account_type_for_payment_supplier(self, cr, uid, ids, context=None):
+        '''
+        Este metodo estable el tipo de cuentas para pagos a proveedores
+        '''
+        return ['payable']
+            
     #El siguiente metodo fue agregado por TRESCLOUD
     def get_domain_voucher_line(self, cr, uid, ids, account_type, partner_id, context=None):
         '''
