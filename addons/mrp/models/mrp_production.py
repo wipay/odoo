@@ -528,23 +528,31 @@ class MrpProduction(models.Model):
         return True
     
     #Metodo agregado por Trescloud 
-    def _get_moves_to_finish(self, moves_to_finish):
+    def mark_to_done_finish(self, moves_to_finish):
         '''
         Hook para modificar el proceso de manofactura.
         '''
         moves_to_finish.action_done()
+    
+    #Metodo agregado por Trescloud 
+    def mark_to_done_raws (self, moves_to_do):
+        '''
+        Hook para modificar el proceso de manofactura.
+        '''
+        moves_to_do.action_done()
         
     @api.multi
     def post_inventory(self):
         for order in self:
             moves_not_to_do = order.move_raw_ids.filtered(lambda x: x.state == 'done')
             moves_to_do = order.move_raw_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
-            moves_to_do.action_done()
+            #Siguiente line fue modificado por trescloud
+            self.mark_to_done_raws(moves_to_do)
             moves_to_do = order.move_raw_ids.filtered(lambda x: x.state == 'done') - moves_not_to_do
             order._cal_price(moves_to_do)
             moves_to_finish = order.move_finished_ids.filtered(lambda x: x.state not in ('done','cancel'))
             #Siguiente line fue modificado por trescloud
-            self._get_moves_to_finish(moves_to_finish)
+            self.mark_to_done_finish(moves_to_finish)
             
             for move in moves_to_finish:
                 #Group quants by lots
