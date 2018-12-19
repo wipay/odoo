@@ -687,7 +687,8 @@ class PosOrder(models.Model):
                     return_picking.message_post(body=message)
 
             for line in order.lines.filtered(lambda l: l.product_id.type in ['product', 'consu'] and not float_is_zero(l.qty, precision_rounding=l.product_id.uom_id.rounding)):
-                moves |= Move.create({
+                # Inicio del codigo modificado por TRESCLOUD
+                move_line_values = {
                     'name': line.name,
                     'product_uom': line.product_id.uom_id.id,
                     'picking_id': order_picking.id if line.qty >= 0 else return_picking.id,
@@ -697,7 +698,10 @@ class PosOrder(models.Model):
                     'state': 'draft',
                     'location_id': location_id if line.qty >= 0 else destination_id,
                     'location_dest_id': destination_id if line.qty >= 0 else return_pick_type != picking_type and return_pick_type.default_location_dest_id.id or location_id,
-                })
+                }
+                move_line_values.update(line._get_move_line_values())
+                moves |= Move.create(move_line_values)
+                # Fin del codigo modificado por TRESCLOUD
 
             # prefer associating the regular order picking, not the return
             order.write({'picking_id': order_picking.id or return_picking.id})
@@ -818,6 +822,16 @@ class PosOrder(models.Model):
         self.env['account.bank.statement.line'].with_context(context).create(args)
         return args.get('statement_id', False)
 
+    # Inicio de codigo agregado por TRESCLOUD
+    @api.multi
+    def _get_refund_order_values(self):
+        """
+        Hook to add or modify values to refund order
+        """
+        self.ensure_one()
+        return {}
+    # Fin del codigo agregado por TRESCLOUD
+
     @api.multi
     def refund(self):
         """Create a copy of order  for refund order"""
@@ -826,13 +840,17 @@ class PosOrder(models.Model):
         if not current_session:
             raise UserError(_('To return product(s), you need to open a session that will be used to register the refund.'))
         for order in self:
-            clone = order.copy({
+            # Inicio del codigo modificado por TRESCLOUD
+            refund_order_values = {
                 # ot used, name forced by create
                 'name': order.name + _(' REFUND'),
                 'session_id': current_session.id,
                 'date_order': fields.Datetime.now(),
                 'pos_reference': order.pos_reference,
-            })
+            }
+            refund_order_values.update(order._get_refund_order_values())
+            clone = order.copy(refund_order_values)
+            # Fin del codigo modificado por TRESCLOUD
             PosOrder += clone
 
         for clone in PosOrder:
@@ -945,6 +963,17 @@ class PosOrderLine(models.Model):
     def _get_tax_ids_after_fiscal_position(self):
         for line in self:
             line.tax_ids_after_fiscal_position = line.order_id.fiscal_position_id.map_tax(line.tax_ids, line.product_id, line.order_id.partner_id)
+
+    # Inicio del codigo agregado por TRESCLOUD
+    @api.multi
+    def _get_move_line_values(self):
+        """
+        Hook to update or add new fields when
+        create move lines from por order lines
+        """
+        self.ensure_one()
+        return {}
+    # Fin del codigo agregado por TRESCLOUD
 
 
 class PosOrderLineLot(models.Model):
