@@ -546,7 +546,7 @@ class MrpProduction(models.Model):
         for order in self:
             moves_not_to_do = order.move_raw_ids.filtered(lambda x: x.state == 'done')
             moves_to_do = order.move_raw_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
-            #moves_to_do.action_done()
+            #Siguiente line fue modificado por trescloud
             self.mark_to_done_raws(moves_to_do)
             moves_to_do = order.move_raw_ids.filtered(lambda x: x.state == 'done') - moves_not_to_do
             order._cal_price(moves_to_do)
