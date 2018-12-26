@@ -870,12 +870,22 @@ class UsersView(models.Model):
             values1['groups_id'] = zip(repeat(3), rem) + zip(repeat(4), add)
 
         return values1
-
+    
+    #siguiente metodo agregado por trescloud
+    @api.model
+    def append_groups_default(self, values):
+        '''
+        Hook sera modificado en un metodo superior.
+        '''
+        return values
+        
     @api.model
     def default_get(self, fields):
         group_fields, fields = partition(is_reified_group, fields)
         fields1 = (fields + ['groups_id']) if group_fields else fields
         values = super(UsersView, self).default_get(fields1)
+        #Siguiente linea fue modificado por Trescloud
+        values = self.append_groups_default(values)
         self._add_reified_groups(group_fields, values)
         return values
 
