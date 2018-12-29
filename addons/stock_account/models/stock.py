@@ -309,7 +309,7 @@ class StockMove(models.Model):
             # account books the real purchase price, while the stock account books the average price. The difference is
             # booked in the dedicated price difference account.
             if self.location_dest_id.usage == 'supplier' and self.origin_returned_move_id and self.origin_returned_move_id.purchase_line_id:
-                debit_value = self.origin_returned_move_id.price_unit * qty
+                debit_value = self.company_id.currency_id.round(self.origin_returned_move_id.price_unit * qty)
             # in case of a customer return in anglo saxon mode, for products in average costing method, the stock valuation
             # is made using the original average price to negate the delivery effect.
             if self.location_id.usage == 'customer' and self.origin_returned_move_id:
@@ -317,7 +317,7 @@ class StockMove(models.Model):
                 #devolucion en compras es al costo promedio vigente, lo mismo debe pasar con la de ventas
                 #caso contrario no se netea la cuenta de bienes recibidos no facturados.
                 #debit_value = self.origin_returned_move_id.price_unit * qty
-                credit_value = self.origin_returned_move_id.price_unit * qty
+                credit_value = self.company_id.currency_id.round(self.origin_returned_move_id.price_unit * qty)
 
             #se deja la seccion comentada para habitilcion en el futuro
 #             #TRESCLOUD - devolucion en manufactura, caso materia prima
