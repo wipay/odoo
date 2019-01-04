@@ -2146,7 +2146,7 @@ msgstr "Abril"
 #. module: account
 #: model:ir.ui.view,arch_db:account.invoice_supplier_form
 msgid "Ask Refund"
-msgstr "Pedir reembolso"
+msgstr "Crear nota de crédito"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_config_settings_module_account_asset
@@ -8116,7 +8116,7 @@ msgstr "Secuencia de asiento rectificativo"
 #: model:ir.actions.act_window,name:account.action_account_invoice_refund
 #: model:ir.ui.view,arch_db:account.invoice_form
 msgid "Refund Invoice"
-msgstr "Emitir nota de crédito"
+msgstr "Crear nota de crédito"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_invoice_refund_filter_refund
