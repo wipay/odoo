@@ -35,7 +35,15 @@ class ChangeProductionQty(models.TransientModel):
             production_move = production._generate_finished_moves()
             production_move = production.move_finished_ids.filtered(lambda x : x.state not in ('done', 'cancel') and production.product_id.id == x.product_id.id)
             production_move.write({'product_uom_qty': qty})
-
+    
+    #Siguiente metodo fue apregado por trescloud
+    def _action_assign_product(self, moves):
+        '''
+        Hook para modificado la invocacion del metodo 
+        @param moves: stock move de las materias primas.
+        '''
+        moves.action_assign()
+    
     @api.multi
     def change_prod_qty(self):
         precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
@@ -58,7 +66,8 @@ class ChangeProductionQty(models.TransientModel):
             self._update_product_to_produce(production, production.product_qty - qty_produced)
             moves = production.move_raw_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
             moves.do_unreserve()
-            moves.action_assign()
+            #siguiente linea fue modificado por Trescloud.
+            self._action_assign_product(moves)
             for wo in production.workorder_ids:
                 operation = wo.operation_id
                 if operation_bom_qty.get(operation.id):
