@@ -305,12 +305,12 @@ class Pricelist(models.Model):
 
         if not pl:
             if p.country_id.code:
-                pls = self.env['product.pricelist'].search([('country_group_ids.country_ids.code', '=', p.country_id.code)], limit=1)
+                pls = self.env['product.pricelist'].search([('country_group_ids.country_ids.code', '=', p.country_id.code)], order='id', limit=1)
                 pl = pls and pls[0].id
 
         if not pl:
             # search pl where no country
-            pls = self.env['product.pricelist'].search([('country_group_ids', '=', False)], limit=1)
+            pls = self.env['product.pricelist'].search([('country_group_ids', '=', False)], order='id', limit=1)
             pl = pls and pls[0].id
 
         if not pl:
@@ -318,7 +318,7 @@ class Pricelist(models.Model):
             pl = prop and prop[0].id
 
         if not pl:
-            pls = self.env['product.pricelist'].search([], limit=1)
+            pls = self.env['product.pricelist'].search([], order='id', limit=1)
             pl = pls and pls[0].id
 
         return pl

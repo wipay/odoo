@@ -526,17 +526,33 @@ class MrpProduction(models.Model):
     def _cal_price(self, consumed_moves):
         self.ensure_one()
         return True
-
+    
+    #Metodo agregado por Trescloud 
+    def mark_to_done_finish(self, moves_to_finish):
+        '''
+        Hook para modificar el proceso de manofactura.
+        '''
+        moves_to_finish.action_done()
+    
+    #Metodo agregado por Trescloud 
+    def mark_to_done_raws (self, moves_to_do):
+        '''
+        Hook para modificar el proceso de manofactura.
+        '''
+        moves_to_do.action_done()
+        
     @api.multi
     def post_inventory(self):
         for order in self:
             moves_not_to_do = order.move_raw_ids.filtered(lambda x: x.state == 'done')
             moves_to_do = order.move_raw_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
-            moves_to_do.action_done()
+            #Siguiente line fue modificado por trescloud
+            self.mark_to_done_raws(moves_to_do)
             moves_to_do = order.move_raw_ids.filtered(lambda x: x.state == 'done') - moves_not_to_do
             order._cal_price(moves_to_do)
             moves_to_finish = order.move_finished_ids.filtered(lambda x: x.state not in ('done','cancel'))
-            moves_to_finish.action_done()
+            #Siguiente line fue modificado por trescloud
+            self.mark_to_done_finish(moves_to_finish)
             
             for move in moves_to_finish:
                 #Group quants by lots
@@ -562,7 +578,14 @@ class MrpProduction(models.Model):
                     move.quant_ids.sudo().write({'consumed_quant_ids': [(6, 0, [x.id for x in quants])]})
             order.action_assign()
         return True
-
+    
+    @api.multi
+    def get_move_to_cancel(self):
+        '''
+        Hook, metodo sera modificado en un modulo ssuperior.
+        '''
+        return (self.move_raw_ids | self.move_finished_ids)
+        
     @api.multi
     def button_mark_done(self):
         self.ensure_one()
@@ -570,7 +593,8 @@ class MrpProduction(models.Model):
             if wo.time_ids.filtered(lambda x: (not x.date_end) and (x.loss_type in ('productive', 'performance'))):
                 raise UserError(_('Work order %s is still running') % wo.name)
         self.post_inventory()
-        moves_to_cancel = (self.move_raw_ids | self.move_finished_ids).filtered(lambda x: x.state not in ('done', 'cancel'))
+        #la siguiente linea fue modificado por trescloud
+        moves_to_cancel = (self.get_move_to_cancel()).filtered(lambda x: x.state not in ('done', 'cancel'))
         moves_to_cancel.action_cancel()
         self.write({'state': 'done', 'date_finished': fields.Datetime.now()})
         self.env["procurement.order"].search([('production_id', 'in', self.ids)]).check()
