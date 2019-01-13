@@ -40,7 +40,9 @@ $(document).ready(function () {
     .find("input[name='acquirer']:checked").click();
 
     // When clicking on payment button: create the tx using json then continue to the acquirer
-    $payment.on("click", 'button[type="submit"], button[name="submit"]', function (ev) {
+    // INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+    $payment.on("click.website_sale", 'button[type="submit"], button[name="submit"]', function (ev) {
+    // FIN DEL CODIGO MODIFICADO POR TRESCLOUD
       ev.preventDefault();
       ev.stopPropagation();
       var $form = $(ev.currentTarget).parents('form');
