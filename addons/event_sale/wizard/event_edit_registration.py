@@ -36,7 +36,7 @@ class RegistrationEditor(models.TransientModel):
         res['event_registration_ids'] = attendee_list
         res = self._convert_to_write(res)
         return res
-    
+    #Metodo agregado por trescloud
     def _get_dict_attendee(self, reg, so_line):
         '''
         Hook metodo para agregar datos.
