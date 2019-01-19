@@ -80,6 +80,27 @@ class AccountInvoiceLine(models.Model):
                 asset.validate()
         return True
 
+    # INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+    @api.multi
+    def _prepare_asset_vals(self):
+        """
+        Hooks para futuras modificaciones y dar la posibilidad de modificar
+        los valores de los campos al crear el activo
+        """
+        self.ensure_one()
+        return {
+            'name': self.name,
+            'code': self.invoice_id.number or False,
+            'category_id': self.asset_category_id.id,
+            'value': self.price_subtotal_signed,
+            'partner_id': self.invoice_id.partner_id.id,
+            'company_id': self.invoice_id.company_id.id,
+            'currency_id': self.invoice_id.company_currency_id.id,
+            'date': self.invoice_id.date_invoice,
+            'invoice_id': self.invoice_id.id,
+        }
+    # FIN DEL CODIGO AGREGADO POR TRESCLOUD
+
     @api.onchange('asset_category_id')
     def onchange_asset_category_id(self):
         if self.invoice_id.type == 'out_invoice' and self.asset_category_id:
