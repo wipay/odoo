@@ -591,6 +591,25 @@ class PosOrder(models.Model):
     def action_pos_order_done(self):
         return self._create_account_move_line()
 
+    # INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+    @api.model
+    def get_to_invoice_from_ui(self, order_ui_vals):
+        """
+        Takes order values from ui and returns to_invoice parameter.
+        May be used as hook if we want change default behaviour
+        """
+        return order_ui_vals['to_invoice']
+
+    @api.model
+    def allow_execute_invoice_methods(self, order_ui_vals):
+        """
+        Takes order values from ui and returns true if invoice
+        methods code block will be executed.
+        May be used as hook if we want change default behaviour
+        """
+        return True
+    # FIN DEL CODIGO AGREGADO POR TRESCLOUD
+
     @api.model
     def create_from_ui(self, orders):
         # Keep only new orders
@@ -602,7 +621,9 @@ class PosOrder(models.Model):
         order_ids = []
 
         for tmp_order in orders_to_save:
-            to_invoice = tmp_order['to_invoice']
+            # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+            to_invoice = self.get_to_invoice_from_ui(tmp_order)
+            # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
             order = tmp_order['data']
             if to_invoice:
                 self._match_payment_to_invoice(order)
@@ -616,8 +637,9 @@ class PosOrder(models.Model):
                 raise
             except Exception as e:
                 _logger.error('Could not fully process the POS Order: %s', tools.ustr(e))
-
-            if to_invoice:
+            # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+            if to_invoice and self.allow_execute_invoice_methods(tmp_order):
+            # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
                 pos_order.action_pos_order_invoice()
                 pos_order.invoice_id.sudo().action_invoice_open()
                 pos_order.account_move = pos_order.invoice_id.move_id
