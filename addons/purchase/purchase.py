@@ -367,7 +367,11 @@ class purchase_order(osv.osv):
                 if not po.invoice_ids:
                     context.update({'active_ids' :  [line.id for line in po.order_line]})
                     wizard_obj.makeInvoices(cr, uid, [], context=context)
-        
+        #=======================================================================
+        # ESTE CODIGO HA SIDO MODIFICADO POR TRESCLOUD PARA TENER COMPLETO EL 
+        # FUNCIONAMIENTO DEL BOTON VER FACTURAS EN LAS ORDENES DE COMPRA
+        # SE USO LA LOGICA DEL METODO QUE EL BOTON VER ALBARANES INVOCA
+        #=======================================================================
         action_model, action_id = tuple(mod_obj.get_object_reference(cr, uid, 'account', 
                                                                      'action_invoice_tree2'))
         action = self.pool.get(action_model).read(cr, uid, action_id, context=context)
