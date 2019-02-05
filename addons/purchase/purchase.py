@@ -367,24 +367,36 @@ class purchase_order(osv.osv):
                 if not po.invoice_ids:
                     context.update({'active_ids' :  [line.id for line in po.order_line]})
                     wizard_obj.makeInvoices(cr, uid, [], context=context)
-
+        
+        action_model, action_id = tuple(mod_obj.get_object_reference(cr, uid, 'account', 
+                                                                     'action_invoice_tree2'))
+        action = self.pool.get(action_model).read(cr, uid, action_id, context=context)
+        ctx = eval(action.get('context', '{}'))
+        ctx.update({
+            'type':'in_invoice', 
+            'journal_type': 'purchase',
+        })
         for po in self.browse(cr, uid, ids, context=context):
             inv_ids+= [invoice.id for invoice in po.invoice_ids]
-        res = mod_obj.get_object_reference(cr, uid, 'account', 'invoice_supplier_form')
-        res_id = res and res[1] or False
-
-        return {
-            'name': _('Supplier Invoices'),
-            'view_type': 'form',
-            'view_mode': 'form',
-            'view_id': [res_id],
-            'res_model': 'account.invoice',
-            'context': "{'type':'in_invoice', 'journal_type': 'purchase'}",
-            'type': 'ir.actions.act_window',
-            'nodestroy': True,
-            'target': 'current',
-            'res_id': inv_ids and inv_ids[0] or False,
-        }
+        action.update({
+            'context': unicode(ctx),
+            'inv_ids': inv_ids,
+            })
+        if inv_ids: 
+            if len(inv_ids) == 1:
+                form_view_ids = [view_id for view_id, view in action['views'] if view == 'form']
+                view_id = form_view_ids and form_view_ids[0] or False
+                action.update({
+                    'views': [],
+                    'view_mode': 'form',
+                    'view_id': view_id,
+                    'res_id': inv_ids[0]
+                })
+            else:
+                action.update({
+                    'domain': "[('id','in', ["+','.join(map(str,action['inv_ids']))+"])]",
+                })
+        return action
 
     def view_picking(self, cr, uid, ids, context=None):
         '''
