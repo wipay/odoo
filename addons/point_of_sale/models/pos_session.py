@@ -272,13 +272,26 @@ class PosSession(models.Model):
             'params': {'menu_id': self.env.ref('point_of_sale.menu_point_root').id},
         }
 
+    # INCIO DEL CODIGO AGREGADO POR TRESCLOUD
+    @api.multi
+    def avoid_user_session_check_at_open_frontend(self):
+        """
+        Hook to manage validation at open frontend that claims that only
+        owner user can open a session.
+        """
+        return True
+    # FIN DEL CODIGO AGREGADO POR TRESCLOUD
+
     @api.multi
     def open_frontend_cb(self):
         if not self.ids:
             return {}
-        for session in self.filtered(lambda s: s.user_id.id != self.env.uid):
-            raise UserError(_("You cannot use the session of another users. This session is owned by %s. "
-                              "Please first close this one to use this point of sale.") % session.user_id.name)
+        # INCIO DEL CODIGO AGREGADO POR TRESCLOUD
+        if self.avoid_user_session_check_at_open_frontend():
+        # FIN DEL CODIGO AGREGADO POR TRESCLOUD
+            for session in self.filtered(lambda s: s.user_id.id != self.env.uid):
+                raise UserError(_("You cannot use the session of another users. This session is owned by %s. "
+                                  "Please first close this one to use this point of sale.") % session.user_id.name)
         return {
             'type': 'ir.actions.act_url',
             'target': 'self',
