@@ -110,17 +110,28 @@ class Product(models.Model):
     def _product_available(self, field_names=None, arg=False):
         """ Compatibility method """
         return self._compute_quantities_dict(self._context.get('lot_id'), self._context.get('owner_id'), self._context.get('package_id'), self._context.get('from_date'), self._context.get('to_date'))
-
+    
+    #Metodo agregado por Trescloud
+    def domain_exclude_moves(self):
+        '''
+        Hook metodo sera moficado en un metodo superior
+        '''
+        return []
+    
     @api.multi
     def _compute_quantities_dict(self, lot_id, owner_id, package_id, from_date=False, to_date=False):
         domain_quant_loc, domain_move_in_loc, domain_move_out_loc = self._get_domain_locations()
+        #Siguiente linea agregada por trescloud
+        ctx = self._context.copy()
+        domain_exclude = self.with_context(ctx).domain_exclude_moves()
         domain_quant = [('product_id', 'in', self.ids)] + domain_quant_loc
+
         dates_in_the_past = False
         if to_date and to_date < fields.Datetime.now(): #Only to_date as to_date will correspond to qty_available
             dates_in_the_past = True
-
-        domain_move_in = [('product_id', 'in', self.ids)] + domain_move_in_loc
-        domain_move_out = [('product_id', 'in', self.ids)] + domain_move_out_loc
+        #siguientes dos lineas fueron modificadas por trescloud
+        domain_move_in = [('product_id', 'in', self.ids)] + domain_move_in_loc + domain_exclude
+        domain_move_out = [('product_id', 'in', self.ids)] + domain_move_out_loc + domain_exclude
         if lot_id:
             domain_quant += [('lot_id', '=', lot_id)]
         if owner_id:
