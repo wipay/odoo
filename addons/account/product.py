@@ -30,6 +30,7 @@ class product_category(osv.osv):
             relation='account.account',
             string="Income Account",
             view_load=True,
+            track_visibility='onchange',
             help="This account will be used for invoices to value sales."),
         'property_account_expense_categ': fields.property(
             'account.account',  
@@ -37,6 +38,7 @@ class product_category(osv.osv):
             relation='account.account',
             string="Expense Account",
             view_load=True,
+            track_visibility='onchange',
             help="This account will be used for invoices to value expenses."),
     }
 product_category()

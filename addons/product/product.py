@@ -247,11 +247,12 @@ class product_category(osv.osv):
         return dict(res)
 
     _name = "product.category"
+    _inherit = 'mail.thread'
     _description = "Product Category"
     _columns = {
-        'name': fields.char('Name', size=64, required=True, translate=True, select=True),
+        'name': fields.char('Name', size=64, required=True, translate=True, select=True, track_visibility='onchange'),
         'complete_name': fields.function(_name_get_fnc, type="char", string='Name'),
-        'parent_id': fields.many2one('product.category','Parent Category', select=True, ondelete='cascade'),
+        'parent_id': fields.many2one('product.category','Parent Category', select=True, ondelete='cascade', track_visibility='onchange'),
         'child_id': fields.one2many('product.category', 'parent_id', string='Child Categories'),
         'sequence': fields.integer('Sequence', select=True, help="Gives the sequence order when displaying a list of product categories."),
         'type': fields.selection([('view','View'), ('normal','Normal')], 'Category Type', help="A category of the view type is a virtual category that can be used as the parent of another category to create a hierarchical structure."),
