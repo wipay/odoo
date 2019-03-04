@@ -377,3 +377,8 @@ msgstr ""
 "Debería crear una estructura de cuentas analíticas dependiendo de sus "
 "necesidades de análisis de costes e ingresos. En Odoo, las cuentas "
 "analíticas se usan también para gestionar los contratos de clientes."
+
+#. module: project
+#: model:ir.model.fields,field_description:project.field_project_task_effective_hours
+msgid "Hours Spent"
+msgstr "Horas dedicadas"
