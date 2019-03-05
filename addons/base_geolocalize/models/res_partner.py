@@ -6,12 +6,17 @@ import urllib2
 from odoo import api, fields, models, tools, _
 from odoo.exceptions import UserError
 
-
-def geo_find(addr):
+# INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+def geo_find(addr, google_maps_api_key=False):
+# FIN DEL CODIGO MODIFICADO POR TRESCLOUD
     if not addr:
         return None
     url = 'https://maps.googleapis.com/maps/api/geocode/json?sensor=false&address='
     url += urllib2.quote(addr.encode('utf8'))
+    # INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+    if google_maps_api_key:
+        url += '&key=%s' % google_maps_api_key
+    # FIN DEL CODIGO AGREGADO POR TRESCLOUD
 
     try:
         result = json.load(urllib2.urlopen(url))
@@ -48,19 +53,29 @@ class ResPartner(models.Model):
 
     @api.multi
     def geo_localize(self):
+        # INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+        google_maps_api_key = self.env[
+            'ir.config_parameter'
+        ].sudo().get_param('google_maps_api_key')
+        # FIN DEL CODIGO AGREGADO POR TRESCLOUD
         # We need country names in English below
         for partner in self.with_context(lang='en_US'):
+            # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
             result = geo_find(geo_query_address(street=partner.street,
                                                 zip=partner.zip,
                                                 city=partner.city,
                                                 state=partner.state_id.name,
-                                                country=partner.country_id.name))
+                                                country=partner.country_id.name),
+                              google_maps_api_key)
+            # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
             if result is None:
+                # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
                 result = geo_find(geo_query_address(
                     city=partner.city,
                     state=partner.state_id.name,
                     country=partner.country_id.name
-                ))
+                ), google_maps_api_key)
+                # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
 
             if result:
                 partner.write({
