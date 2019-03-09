@@ -656,6 +656,25 @@ class PosOrder(models.Model):
                 return False
         return True
 
+    # INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+    @api.model
+    def _prepare_picking_vals(self, order, address, picking_type, location_id,
+                              destination_id):
+        picking_vals = {
+            'origin': order.name,
+            'partner_id': address.get('delivery', False),
+            'date_done': order.date_order,
+            'picking_type_id': picking_type.id,
+            'company_id': order.company_id.id,
+            'move_type': 'direct',
+            'note': order.note or "",
+            'location_id': location_id,
+            'location_dest_id': destination_id,
+        }
+        return picking_vals
+
+    # FIN DEL CODIGO AGREGADO POR TRESCLOUD
+
     def create_picking(self):
         """Create a picking for each order and validate it."""
         Picking = self.env['stock.picking']
@@ -682,17 +701,11 @@ class PosOrder(models.Model):
 
             if picking_type:
                 message = _("This transfer has been created from the point of sale session: <a href=# data-oe-model=pos.order data-oe-id=%d>%s</a>") % (order.id, order.name)
-                picking_vals = {
-                    'origin': order.name,
-                    'partner_id': address.get('delivery', False),
-                    'date_done': order.date_order,
-                    'picking_type_id': picking_type.id,
-                    'company_id': order.company_id.id,
-                    'move_type': 'direct',
-                    'note': order.note or "",
-                    'location_id': location_id,
-                    'location_dest_id': destination_id,
-                }
+                # INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+                picking_vals = self._prepare_picking_vals(
+                    order, address, picking_type, location_id, destination_id
+                )
+                # FIN DEL CODIGO AGREGADO POR TRESCLOUD
                 pos_qty = any([x.qty > 0 for x in order.lines if x.product_id.type in ['product', 'consu']])
                 if pos_qty:
                     order_picking = Picking.create(picking_vals.copy())
