@@ -1018,7 +1018,9 @@ var ClientListScreenWidget = ScreenWidget.extend({
 
         this.renderElement();
         this.details_visible = false;
-        this.old_client = this.pos.get_order().get_client();
+        //CODIGO MODIFICADO POR TRESCLOUD
+        this.old_client = this.get_active_partner();
+        //FIN DEL CODIGO MODIFICADO POR TRESCLOUD
 
         this.$('.back').click(function(){
             self.gui.back();
@@ -1068,6 +1070,11 @@ var ClientListScreenWidget = ScreenWidget.extend({
             self.clear_search();
         });
     },
+    //CODIGO AGREGADO POR TRESCLOUD
+    get_active_partner: function(){
+        return this.pos.get_order().get_client();
+    },
+    //FIN DEL CODIGO AGREGADO POR TRESCLOUD
     hide: function () {
         this._super();
         this.new_client = null;
