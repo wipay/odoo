@@ -194,6 +194,9 @@ class account_asset_asset(osv.osv):
             if asset.value_residual == 0.0:
                 continue
             posted_depreciation_line_ids = depreciation_lin_obj.search(cr, uid, [('asset_id', '=', asset.id), ('move_check', '=', True)],order='depreciation_date desc')
+            last_depreciation_date = False
+            if len(posted_depreciation_line_ids) > 0:
+                last_depreciation_date = datetime.strptime(depreciation_lin_obj.browse(cr, uid, posted_depreciation_line_ids[0], context=context).depreciation_date, '%Y-%m-%d')
             old_depreciation_line_ids = depreciation_lin_obj.search(cr, uid, [('asset_id', '=', asset.id), ('move_id', '=', False)])
             if old_depreciation_line_ids:
                 depreciation_lin_obj.unlink(cr, uid, old_depreciation_line_ids, context=context)
@@ -211,9 +214,11 @@ class account_asset_asset(osv.osv):
                 # depreciation_date = 1st January of purchase year
                 purchase_date = datetime.strptime(asset.purchase_date, '%Y-%m-%d')
                 #if we already have some previous validated entries, starting date isn't 1st January but last entry + method period
-                if (len(posted_depreciation_line_ids)>0):
-                    last_depreciation_date = datetime.strptime(depreciation_lin_obj.browse(cr,uid,posted_depreciation_line_ids[0],context=context).depreciation_date, '%Y-%m-%d')
-                    depreciation_date = (last_depreciation_date+relativedelta(months=+asset.method_period))
+                if len(posted_depreciation_line_ids) > 0:
+                    if posted_depreciation_line_ids[0] in old_depreciation_line_ids:
+                        depreciation_date = datetime(purchase_date.year, purchase_date.month, 1)
+                    else:
+                        depreciation_date = (last_depreciation_date + relativedelta(months =+ asset.method_period))
                 else:
                     # TRESCLOUD: La depreciacion se la realiza mensualmente y no anualmente
                     depreciation_date = datetime(purchase_date.year, purchase_date.month, 1)
