@@ -917,7 +917,9 @@ class WebsiteSale(http.Controller):
                 order.with_context(send_email=True).action_confirm()
         elif tx and tx.state == 'cancel':
             # cancel the quotation
-            order.action_cancel()
+            # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+            self.action_canceled_transaction(order)
+            # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
 
         # clean context and session, then redirect to the confirmation page
         request.website.sale_reset()
@@ -925,6 +927,11 @@ class WebsiteSale(http.Controller):
             return request.redirect('/shop')
 
         return request.redirect('/shop/confirmation')
+
+    # INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+    def action_canceled_transaction(self, order):
+        return order.action_cancel()
+    # FIN DEL CODIGO AGREGADO POR TRESCLOUD
 
 
     @http.route(['/shop/terms'], type='http', auth="public", website=True)
