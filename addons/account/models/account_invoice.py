@@ -204,6 +204,7 @@ class AccountInvoice(models.Model):
             ('in_invoice','Vendor Bill'),
             ('out_refund','Customer Refund'),
             ('in_refund','Vendor Refund'),
+            ('hr_advance','Adelantos Empleados'),
         ], readonly=True, index=True, change_default=True,
         default=lambda self: self._context.get('type', 'out_invoice'),
         track_visibility='always')
