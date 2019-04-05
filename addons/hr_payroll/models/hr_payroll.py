@@ -424,7 +424,22 @@ class HrPayslip(models.Model):
         Este metodo devuelve el tipo de entrada de la nómina, va ser implementado en ecua_hr
         '''
         return False
-
+    
+    #Metodo agregado por Trescloud
+    def _get_domain_rules_by_move(self, partner, payslip,  account, rule):
+        '''
+        Hook para modificar criterio de busqueda account_move_line.
+        @return: Domain
+        '''
+        return[
+            ('partner_id','=',partner.id), 
+            ('date_maturity','>=',payslip.date_from),
+            ('date_maturity','<=',payslip.date_to),
+            ('account_id','=',account.id),
+            ('debit','>',0.0), #escuchamos en el debe
+            ('full_reconcile_id','=',False),
+        ]
+            
     @api.model
     def get_payslip_lines(self, contract_ids, payslip_id):
         def _sum_salary_rule_category(localdict, category, amount):
@@ -511,14 +526,8 @@ class HrPayslip(models.Model):
                         raise UserError(u'La regla salarial %s es de tipo Neteo Saldo Contable, solo debe tener una cuenta acreedora configurada' % rule.name)
                     if rule.account_debit or rule.condition_acc:
                         raise UserError(u'La regla salarial %s es de tipo Neteo Saldo Contable, solo debe tener una cuenta acreedora configurada' % rule.name)
-                    move_ids = aml_obj.search([
-                        ('partner_id','=',partner.id), 
-                        ('date_maturity','>=',payslip.date_from),
-                        ('date_maturity','<=',payslip.date_to),
-                        ('account_id','=',account.id),
-                        ('debit','>',0.0), #escuchamos en el debe
-                        ('full_reconcile_id','=',False),
-                    ])
+                    #siguiente linea fue modificada por Trescloud
+                    move_ids = aml_obj.search(self._get_domain_rules_by_move(partner, payslip,  account, rule))
                 if move_ids:
                     for move in move_ids:
                         rules_by_move.append((rule,move))
