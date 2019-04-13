@@ -201,7 +201,9 @@ class account_asset_asset(osv.osv):
             if old_depreciation_line_ids:
                 depreciation_lin_obj.unlink(cr, uid, old_depreciation_line_ids, context=context)
             amount_to_depr = residual_amount = asset.value_residual
-            module_ids = self.pool.get('ir.module.module').search(cr, uid, [('name','=','asset'), ('state','=','installed')], context=context)
+            module_ids = self.pool.get('ir.module.module').search(cr, uid, [('name','=','asset'), 
+                                                                            ('state','=','installed')], 
+                                                                            context=context)
             if module_ids:
                 amount_to_depr = residual_amount = asset.value_residual
             if asset.prorata:
@@ -219,6 +221,8 @@ class account_asset_asset(osv.osv):
                         depreciation_date = datetime(purchase_date.year, purchase_date.month, 1)
                     else:
                         depreciation_date = (last_depreciation_date + relativedelta(months =+ asset.method_period))
+                        if context.get('accounting_date'):
+                            depreciation_date = datetime.strptime(context.get('accounting_date'), '%Y-%m-%d')
                 else:
                     # TRESCLOUD: La depreciacion se la realiza mensualmente y no anualmente
                     depreciation_date = datetime(purchase_date.year, purchase_date.month, 1)
