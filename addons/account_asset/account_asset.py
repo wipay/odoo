@@ -226,6 +226,8 @@ class account_asset_asset(osv.osv):
                 else:
                     # TRESCLOUD: La depreciacion se la realiza mensualmente y no anualmente
                     depreciation_date = datetime(purchase_date.year, purchase_date.month, 1)
+                    if context.get('operation') == 'derecognise_asset' and context.get('accounting_date'):
+                        depreciation_date = datetime.strptime(context.get('accounting_date'), '%Y-%m-%d')
             day = depreciation_date.day
             month = depreciation_date.month
             year = depreciation_date.year
