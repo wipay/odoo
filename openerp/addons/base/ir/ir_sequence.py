@@ -21,6 +21,7 @@
 
 import logging
 import time
+import re
 
 import openerp
 from openerp.osv import osv
@@ -66,9 +67,9 @@ class ir_sequence(openerp.osv.osv.osv):
                 # get number from postgres sequence. Cannot use
                 # currval, because that might give an error when
                 # not having used nextval before.
-                cr.execute("select version()")
+                cr.execute("SELECT current_setting('server_version_num')")
                 version = cr.fetchone()
-                if '9' in version[0][:16]:
+                if re.match('^\s*9', version[0]):
                     statement = (
                     "SELECT last_value, increment_by, is_called"
                     " FROM ir_sequence_%03d"
@@ -79,21 +80,21 @@ class ir_sequence(openerp.osv.osv.osv):
                         res[element.id] = last_value + increment_by
                     else:
                         res[element.id] = last_value
-                elif '10' in version[0][:16]:
+                else:
                     statement = (
-                        """SELECT last_value, increment_by
+                        """SELECT increment_by
                         FROM pg_sequences where sequencename='ir_sequence_%03d'
                         """%(element.id,))
                     cr.execute(statement)
-                    last_value, increment_by = cr.fetchone()
+                    increment_by = cr.fetchone()
                     statement = (
                         """
-                        SELECT is_called
+                        SELECT last_value, is_called
                         FROM ir_sequence_%03d
                         """
                         % (element.id,))
                     cr.execute(statement)
-                    is_called, = cr.fetchone()
+                    last_value, is_called, = cr.fetchone()
                     if is_called:
                         res[element.id] = last_value or 0 + increment_by
                     else:
