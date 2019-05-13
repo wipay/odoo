@@ -407,7 +407,19 @@ class Quant(models.Model):
             company_id=self.env.context.get('company_id', False),
             domain=domain,
             preferred_domain_list=preferred_domain_list)
-
+    
+    #Metodo agregado por Trescloud.
+    @api.model
+    def _quants_reservation_valided_location(self, pack_operation, move):
+        '''
+        Hook sera manejado en un metodo superior.
+        '''
+        location = pack_operation.location_id if pack_operation else move.location_id
+        # don't look for quants in location that are of type production, supplier or inventory.
+        if location.usage in ['inventory', 'production', 'supplier']:
+            return True
+        return False
+    
     def quants_get_reservation(self, qty, move, pack_operation_id=False, lot_id=False, company_id=False, domain=None, preferred_domain_list=None):
         ''' This function tries to find quants for the given domain and move/ops, by trying to first limit
             the choice on the quants that match the first item of preferred_domain_list as well. But if the qty requested is not reached
@@ -418,12 +430,9 @@ class Quant(models.Model):
         reservations = [(None, qty)]
 
         pack_operation = self.env['stock.pack.operation'].browse(pack_operation_id)
-        location = pack_operation.location_id if pack_operation else move.location_id
-
-        # don't look for quants in location that are of type production, supplier or inventory.
-        if location.usage in ['inventory', 'production', 'supplier']:
+        #La siguiente funcion fue agregada por Trescloud.
+        if self._quants_reservation_valided_location(pack_operation, move):
             return reservations
-            # return self._Reservation(reserved_quants, qty, qty, move, None)
 
         restrict_lot_id = lot_id if pack_operation else move.restrict_lot_id.id or lot_id
         removal_strategy = move.get_removal_strategy()
