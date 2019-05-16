@@ -920,6 +920,18 @@ class AccountBankStatementLine(models.Model):
                         partner_type = 'customer'
 
                 payment_methods = (total>0) and self.journal_id.inbound_payment_method_ids or self.journal_id.outbound_payment_method_ids
+                
+                #CORRECCION DE TRESCLOUD
+                #En nuestra localizacion la mayoria de veces no queremos que la caja de "efectivo" se use para pagos
+                #a proveedores, por lo que no configuramos un outbound_payment_method_ids que es un campo obligatorio
+                #en este caso seleccionamos la opcion manual (aunque no este marcada en el diario)
+                if not payment_methods and not (total>0):
+                    #si es un egreso y no he configurado forma de pago
+                    payment_methods = self.env.ref('account.account_payment_method_manual_out')
+                if not payment_methods:
+                    raise UserError(_('No appropriate payment method enabled on journal %s') % self.journal_id.name)                     
+                #FIN DE LA CORRECCIÓN
+                
                 currency = self.journal_id.currency_id or self.company_id.currency_id
                 payment = self.env['account.payment'].create({
                     'payment_method_id': payment_methods and payment_methods[0].id or False,
