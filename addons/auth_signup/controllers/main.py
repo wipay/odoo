@@ -94,9 +94,16 @@ class AuthSignupHome(Home):
                 qcontext['invalid_token'] = True
         return qcontext
 
+    # INICIO DE CODIGO AGREGADO POR TRESCLOUD
+    def get_user_fields_keys(self):
+        return ['login', 'name', 'password']
+    # FIN DE CODIGO AGREGADO POR TRESCLOUD
+
     def do_signup(self, qcontext):
         """ Shared helper that creates a res.partner out of a token """
-        values = { key: qcontext.get(key) for key in ('login', 'name', 'password') }
+        # INICIO DE CODIGO MODIFICADO POR TRESCLOUD
+        values = { key: qcontext.get(key) for key in self.get_user_fields_keys() }
+        # FIN DE CODIGO MODIFICADO POR TRESCLOUD
         assert values.values(), "The form was not properly filled in."
         assert values.get('password') == qcontext.get('confirm_password'), "Passwords do not match; please retype them."
         supported_langs = [lang['code'] for lang in request.env['res.lang'].sudo().search_read([], ['code'])]
