@@ -10,3 +10,4 @@ shapely==1.6.4 #para ubicar puntos en mapas en comercio electronico
 monthdelta==0.9.1 #para terminos de pago
 odoorpc==0.7.0 # Necesario para la sincronizacion de productos con el conector
 oca.decorators==0.0.1 # Necesario para el modulo pos_pricelist
+component==0.0.1 # lo solicita el modulo connector_odoo
