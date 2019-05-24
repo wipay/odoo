@@ -1025,6 +1025,16 @@ class ReportSaleDetails(models.AbstractModel):
 
     _name = 'report.point_of_sale.report_saledetails'
 
+    # INCIO DEL CODIGO AGREGADO POR TRESCLOUD
+    @api.model
+    def _get_orders_report_domain(self, date_start, date_stop, configs):
+        return [
+            ('date_order', '>=', date_start),
+            ('date_order', '<=', date_stop),
+            ('state', 'in', ['paid','invoiced','done']),
+            ('config_id', 'in', configs.ids)
+        ]
+    # FIN DEL CODIGO AGREGADO POR TRESCLOUD
 
     @api.model
     def get_sale_details(self, date_start=False, date_stop=False, configs=False):
@@ -1056,13 +1066,11 @@ class ReportSaleDetails(models.AbstractModel):
 
         date_start = fields.Datetime.to_string(date_start)
         date_stop = fields.Datetime.to_string(date_stop)
-
-        orders = self.env['pos.order'].search([
-            ('date_order', '>=', date_start),
-            ('date_order', '<=', date_stop),
-            ('state', 'in', ['paid','invoiced','done']),
-            ('config_id', 'in', configs.ids)])
-
+        # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+        orders = self.env['pos.order'].search(
+            self._get_orders_report_domain(date_start, date_stop, configs)
+        )
+        # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
         user_currency = self.env.user.company_id.currency_id
 
         total = 0.0

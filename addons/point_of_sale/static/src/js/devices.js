@@ -436,10 +436,22 @@ var ProxyDevice  = core.Class.extend(core.mixins.PropertiesMixin,{
         }
         send_printing_job();
     },
+    // INCIO DEL CODIGO AGREGADO POR TRESCLOUD
+    get_sale_details_parameters: function(){
+        return [[], {}]
+    },
+    get_sale_details_model: function(){
+        return new Model('report.point_of_sale.report_saledetails');
+    },
+    // FIN DEL CODIGO AGREGADO POR TRESCLOUD
 
     print_sale_details: function() { 
         var self = this;
-        new Model('report.point_of_sale.report_saledetails').call('get_sale_details').then(function(result){
+        // INCIO DEL CODIGO AGREGADO POR TRESCLOUD
+        var parameters = this.get_sale_details_parameters();
+        var sale_details_model = self.get_sale_details_model();
+        sale_details_model.call('get_sale_details', parameters[0], parameters[1]).then(function(result){
+        // FIN DEL CODIGO AGREGADO POR TRESCLOUD
             var env = {
                 widget: new PosBaseWidget(self),
                 company: self.pos.company,
