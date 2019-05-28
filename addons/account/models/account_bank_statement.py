@@ -928,6 +928,9 @@ class AccountBankStatementLine(models.Model):
                 if not payment_methods and not (total>0):
                     #si es un egreso y no he configurado forma de pago
                     payment_methods = self.env.ref('account.account_payment_method_manual_out')
+                if not payment_methods and (total>=0):
+                    #si es un ingreso y no he configurado forma de pago
+                    payment_methods = self.env.ref('account.account_payment_method_manual_in')
                 if not payment_methods:
                     raise UserError(_('No appropriate payment method enabled on journal %s') % self.journal_id.name)                     
                 #FIN DE LA CORRECCIÓN
