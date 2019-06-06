@@ -373,19 +373,38 @@ class ProductProduct(models.Model):
         return super(ProductProduct, self).search(args, offset=offset, limit=limit, order=order, count=count)
     
     #El siguiente metodo fue agregado por Trescloud
+    def get_dict_name_product(self, product, name, default_code):
+        '''
+        Hook se utilizara en un metodo superior, para agregar un codigo extra.
+        '''
+        return {
+              'id': product.id,
+              'name': name,
+              'default_code': default_code,
+            }
+
+    #El siguiente metodo fue agregado por Trescloud
     def get_name(self, code, name):
         '''
             Hook se utilizara en un metodo superior, para intercambiar el orden de los valores del name_get.
         '''
-        return '[%s] %s' % (code,name)
+        return '[%s] %s' % (code, name)
     
+    #El siguiente metodo fue agregado por Trescloud
+    def get_defaul_code_name(self, d):
+        '''
+            Hook se utilizara en un metodo superior, para cambiar el codigo.
+        '''
+        return self._context.get('display_default_code', True) and d.get('default_code', False) or False
+        
     @api.multi
     def name_get(self):
         # TDE: this could be cleaned a bit I think
 
         def _name_get(d):
             name = d.get('name', '')
-            code = self._context.get('display_default_code', True) and d.get('default_code', False) or False
+            #la siguiente linea fue modificada por Trescloud,
+            code = self.get_defaul_code_name(d)
             if code:
                 #la siguiente linea fue modificada por Trescloud, para realizar un hook y alterar el name_get.
                 name = self.get_name(code, name) 
@@ -419,20 +438,18 @@ class ProductProduct(models.Model):
                     seller_variant = s.product_name and (
                         variant and "%s (%s)" % (s.product_name, variant) or s.product_name
                         ) or False
-                    mydict = {
-                              'id': product.id,
-                              'name': seller_variant or name,
-                              'default_code': s.product_code or product.default_code,
-                              }
+                    #siguiente line fue modificada por trescloud
+                    mydict = self.get_dict_name_product(
+                        product,
+                        seller_variant or name,
+                        s.product_code or product.default_code
+                        ) 
                     temp = _name_get(mydict)
                     if temp not in result:
                         result.append(temp)
             else:
-                mydict = {
-                          'id': product.id,
-                          'name': name,
-                          'default_code': product.default_code,
-                          }
+                #siguiente line fue modificada por trescloud
+                mydict = self.get_dict_name_product(product, name, product.default_code)
                 result.append(_name_get(mydict))
         return result
 
