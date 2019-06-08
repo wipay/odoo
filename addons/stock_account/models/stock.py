@@ -342,28 +342,9 @@ class StockMove(models.Model):
 
             
         partner_id = (self.picking_id.partner_id and self.env['res.partner']._find_accounting_partner(self.picking_id.partner_id).id) or False
-        debit_line_vals = {
-            'name': self.name,
-            'product_id': self.product_id.id,
-            'quantity': qty,
-            'product_uom_id': self.product_id.uom_id.id,
-            'ref': self.picking_id.name,
-            'partner_id': partner_id,
-            'debit': debit_value if debit_value > 0 else 0,
-            'credit': -debit_value if debit_value < 0 else 0,
-            'account_id': debit_account_id,
-        }
-        credit_line_vals = {
-            'name': self.name,
-            'product_id': self.product_id.id,
-            'quantity': qty,
-            'product_uom_id': self.product_id.uom_id.id,
-            'ref': self.picking_id.name,
-            'partner_id': partner_id,
-            'credit': credit_value if credit_value > 0 else 0,
-            'debit': -credit_value if credit_value < 0 else 0,
-            'account_id': credit_account_id,
-        }
+        #El siguiente codigo fue modificado por Trescloud
+        debit_line_vals = self.get_debit_line_vals(qty, partner_id, debit_value, debit_account_id)
+        credit_line_vals = self.get_credit_line_vals(qty, partner_id, credit_value, credit_account_id)
         res = [(0, 0, debit_line_vals), (0, 0, credit_line_vals)]
         if credit_value != debit_value:
             # for supplier returns of product in average costing method, in anglo saxon mode
@@ -386,3 +367,37 @@ class StockMove(models.Model):
             }
             res.append((0, 0, price_diff_line))
         return res
+    
+    @api.model
+    def get_debit_line_vals(self, qty, partner_id, debit_value, debit_account_id):
+        '''
+        Metodo hook para modificar las lineas del debe en modulos de trescloud
+        '''
+        return {
+            'name': self.name,
+            'product_id': self.product_id.id,
+            'quantity': qty,
+            'product_uom_id': self.product_id.uom_id.id,
+            'ref': self.picking_id.name,
+            'partner_id': partner_id,
+            'debit': debit_value if debit_value > 0 else 0,
+            'credit': -debit_value if debit_value < 0 else 0,
+            'account_id': debit_account_id,
+        }
+        
+    @api.model
+    def get_credit_line_vals(self, qty, partner_id, credit_value, credit_account_id):
+        '''
+        Metodo hook para modificar las lineas del haber en modulos de trescloud
+        '''
+        return {
+            'name': self.name,
+            'product_id': self.product_id.id,
+            'quantity': qty,
+            'product_uom_id': self.product_id.uom_id.id,
+            'ref': self.picking_id.name,
+            'partner_id': partner_id,
+            'credit': credit_value if credit_value > 0 else 0,
+            'debit': -credit_value if credit_value < 0 else 0,
+            'account_id': credit_account_id,
+        }
