@@ -28,6 +28,10 @@ class AccountInvoice(models.Model):
         self.env['account.asset.asset'].sudo().search([('invoice_id', 'in', self.ids)]).write({'active': False})
         return res
 
+    @api.model
+    def _bypass_asset_create(self):
+        return False
+
     @api.multi
     def action_move_create(self):
         result = super(AccountInvoice, self).action_move_create()
@@ -38,7 +42,8 @@ class AccountInvoice(models.Model):
             # This has to be cleaned from the context before creating the asset,
             # otherwise it tries to create the asset with the type of the invoice.
             context.pop('default_type', None)
-            inv.invoice_line_ids.with_context(context).asset_create()
+            if not _bypass_asset_create():
+                inv.invoice_line_ids.with_context(context).asset_create()
         return result
 
 
