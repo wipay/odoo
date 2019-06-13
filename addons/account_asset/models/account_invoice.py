@@ -30,6 +30,11 @@ class AccountInvoice(models.Model):
 
     @api.model
     def _bypass_asset_create(self):
+        """
+        By pass para impedir si se desea la creacion de activos al confirmar
+        la factura
+        :return:
+        """
         return False
 
     @api.multi
