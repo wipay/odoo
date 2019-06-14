@@ -28,6 +28,16 @@ class AccountInvoice(models.Model):
         self.env['account.asset.asset'].sudo().search([('invoice_id', 'in', self.ids)]).write({'active': False})
         return res
 
+    # INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+    @api.model
+    def _bypass_asset_create(self):
+        """
+        Bypass para impedir si se desea la creacion de activos al confirmar
+        la factura
+        """
+        return False
+    # FIN DEL CODIGO AGREGADO POR TRESCLOUD
+
     @api.multi
     def action_move_create(self):
         result = super(AccountInvoice, self).action_move_create()
@@ -38,7 +48,10 @@ class AccountInvoice(models.Model):
             # This has to be cleaned from the context before creating the asset,
             # otherwise it tries to create the asset with the type of the invoice.
             context.pop('default_type', None)
-            inv.invoice_line_ids.with_context(context).asset_create()
+            # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+            if not self._bypass_asset_create():
+                # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
+                inv.invoice_line_ids.with_context(context).asset_create()
         return result
 
 
