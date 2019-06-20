@@ -502,7 +502,9 @@ var Chrome = PosBaseWidget.extend({
 
     build_chrome: function() { 
         var self = this;
+        /*  INICIO DEL CODIGO COMENTADO POR TRESCLOUD
         FastClick.attach(document.body);
+            FIN DEL CODIGO COMENTADO POR TRESCLOUD */
 
         if ($.browser.chrome) {
             var chrome_version = $.browser.version.split('.')[0];
