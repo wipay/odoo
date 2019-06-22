@@ -437,6 +437,7 @@ class HrPayslip(models.Model):
             ('date_maturity','<=',payslip.date_to),
             ('account_id','=',account.id),
             ('debit','>',0.0), #escuchamos en el debe
+            ('reconciled','=',False),
             ('full_reconcile_id','=',False),
         ]
             
