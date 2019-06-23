@@ -438,7 +438,6 @@ class HrPayslip(models.Model):
             ('account_id','=',account.id),
             ('debit','>',0.0), #escuchamos en el debe
             ('reconciled','=',False),
-            ('full_reconcile_id','=',False),
         ]
             
     @api.model
