@@ -87,6 +87,12 @@ class LandedCost(models.Model):
         if not self._check_sum():
             raise UserError(_('Cost and adjustments lines do not match. You should maybe recompute the landed costs.'))
     
+    def _landed_cost_move_id(self, move, move_vals):
+        '''
+        Hook, para actualizar el asiento contable.
+        '''
+        return move.create(move_vals)
+        
     @api.multi
     def button_validate(self):
         #siguiente metodo fue agregado por Trescloud
@@ -144,8 +150,7 @@ class LandedCost(models.Model):
                     if quant.location_id.usage != 'internal':
                         qty_out += quant.qty
                 move_vals['line_ids'] += line._create_accounting_entries(move, qty_out)
-
-            move = move.create(move_vals)
+            move = cost._landed_cost_move_id(move, move_vals)
             cost.write({'state': 'done', 'account_move_id': move.id})
             move.post()
         return True
