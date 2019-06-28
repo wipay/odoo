@@ -74,16 +74,29 @@ class LandedCost(models.Model):
             raise UserError(
                 _('Validated landed costs cannot be cancelled, but you could create negative landed costs to reverse them'))
         return self.write({'state': 'cancel'})
-
-    @api.multi
-    def button_validate(self):
+    
+    #metodo agregado por Trescloud
+    def _validat_landed_cost(self):
+        '''
+        Hook, para agregar otro tipo de validacion
+        '''
         if any(cost.state != 'draft' for cost in self):
             raise UserError(_('Only draft landed costs can be validated'))
         if any(not cost.valuation_adjustment_lines for cost in self):
             raise UserError(_('No valuation adjustments lines. You should maybe recompute the landed costs.'))
         if not self._check_sum():
             raise UserError(_('Cost and adjustments lines do not match. You should maybe recompute the landed costs.'))
-
+    
+    def _landed_cost_move_id(self, move, move_vals):
+        '''
+        Hook, para actualizar el asiento contable.
+        '''
+        return move.create(move_vals)
+        
+    @api.multi
+    def button_validate(self):
+        #siguiente metodo fue agregado por Trescloud
+        self._validate_landed_cost()
         for cost in self:
             move = self.env['account.move']
             move_vals = {
@@ -137,8 +150,7 @@ class LandedCost(models.Model):
                     if quant.location_id.usage != 'internal':
                         qty_out += quant.qty
                 move_vals['line_ids'] += line._create_accounting_entries(move, qty_out)
-
-            move = move.create(move_vals)
+            move = cost._landed_cost_move_id(move, move_vals)
             cost.write({'state': 'done', 'account_move_id': move.id})
             move.post()
         return True
