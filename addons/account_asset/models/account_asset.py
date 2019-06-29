@@ -158,6 +158,8 @@ class AccountAssetAsset(models.Model):
             if self.method == 'linear':
                 amount = amount_to_depr / (undone_dotation_number - len(posted_depreciation_line_ids))
                 if self.prorata:
+                    #TRESCLOUD: movemos el computo del amount al else
+                    #amount = amount_to_depr / self.method_number
                     if sequence == 1:
                         if self.method_period % 12 != 0:
                             date = datetime.strptime(self.date, '%Y-%m-%d')
@@ -167,6 +169,7 @@ class AccountAssetAsset(models.Model):
                         else:
                             days = (self.company_id.compute_fiscalyear_dates(depreciation_date)['date_to'] - depreciation_date).days + 1
                             amount = (amount_to_depr / self.method_number) / total_days * days
+                    #TRESCLOUD correcion
                     else: #desde la segunda depreciacion
                         #para mantener los valores calculados el recalculo debe hacerse
                         #reversando la primera depreciacion
@@ -204,13 +207,6 @@ class AccountAssetAsset(models.Model):
         self.ensure_one()
 
         posted_depreciation_line_ids = self.depreciation_line_ids.filtered(lambda x: x.move_check).sorted(key=lambda l: l.depreciation_date)
-        
-        #modificacion realizada por trescloud pues en nuestra localizacion tenemos tipos de depreciaciones
-        #la idea es no afectar el computo de la fecha con operaciones avanzadas distintas a depreciaciones regulares 
-        if 'type_operation' in posted_depreciation_line_ids._fields:
-            posted_depreciation_line_ids = posted_depreciation_line_ids.filtered(lambda x: x.type_operation in ['deprecation','loss_retirement','sale_retirement','derecognise_asset'])
-        #fin modificacion trescloud
-        
         unposted_depreciation_line_ids = self.depreciation_line_ids.filtered(lambda x: not x.move_check)
 
         # Remove old unposted depreciation lines. We cannot use unlink() with One2many field
