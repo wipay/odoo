@@ -86,7 +86,7 @@ class ir_sequence(openerp.osv.osv.osv):
                         FROM pg_sequences where sequencename='ir_sequence_%03d'
                         """%(element.id,))
                     cr.execute(statement)
-                    increment_by = cr.fetchone()
+                    increment_by = cr.fetchone()[0]
                     statement = (
                         """
                         SELECT last_value, is_called
@@ -96,9 +96,9 @@ class ir_sequence(openerp.osv.osv.osv):
                     cr.execute(statement)
                     last_value, is_called, = cr.fetchone()
                     if is_called:
-                        res[element.id] = last_value or 0 + increment_by
+                        res[element.id] = (last_value or 0) + increment_by
                     else:
-                        res[element.id] = last_value or 0
+                        res[element.id] = (last_value or 0)
         return res
 
     def _set_number_next_actual(self, cr, uid, id, name, value, args=None, context=None):
