@@ -169,7 +169,14 @@ class AccountAccount(models.Model):
         default = dict(default or {})
         default.setdefault('code', _("%s (copy)") % (self.code or ''))
         return super(AccountAccount, self).copy(default)
-
+    
+    #Siguiente metodo fue agregado por trescloud
+    def _get_domain_move_line(self):
+        '''
+        Hook sera modificado en un modulo superior.
+        '''
+        return [('account_id', 'in', self.ids)]
+    
     @api.multi
     def write(self, vals):
         # Dont allow changing the company_id when account_move_line already exist
@@ -184,7 +191,9 @@ class AccountAccount(models.Model):
 
         # Modificado por TresCloud para permitir cambio de campo internal type para cuentas de tipo a cobrar y a pagar.
         if vals.get('reconcile') and not self._context.get('change_internal_type'):
-                move_lines = self.env['account.move.line'].search([('account_id', 'in', self.ids)], limit=1)
+                #linea modificado por trescloud para bypassear la restriccion en ciertos escenarios.
+                domain = self._get_domain_move_line()
+                move_lines = self.env['account.move.line'].search(domain, limit=1)
                 if len(move_lines):
                     raise UserError(_('You cannot change the value of the reconciliation on this account as it already has some moves'))
         return super(AccountAccount, self).write(vals)
