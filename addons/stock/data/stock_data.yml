@@ -1,6 +1,7 @@
 -
   !python {model: res.partner, id: base.main_partner}: |
     main_warehouse = self.env['stock.warehouse'].browse(ref('warehouse0'))
+    # eliminamos este caso porque reemplaza la configuracion manual que se realiza en los clientes
 -
   !python {model: ir.model.data, id: False}: |
     main_warehouse = self.env['stock.warehouse'].browse(ref('warehouse0'))
