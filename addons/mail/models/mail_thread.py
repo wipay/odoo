@@ -21,7 +21,7 @@ from email.utils import formataddr
 from lxml import etree
 from werkzeug import url_encode
 
-from odoo import _, api, exceptions, fields, models, tools
+from odoo import _, api, exceptions, fields, models, tools, SUPERUSER_ID
 from odoo.tools.safe_eval import safe_eval
 
 
@@ -2154,7 +2154,12 @@ class MailThread(models.AbstractModel):
             self.message_subscribe(channel_ids=[cid], subtype_ids=subtypes, force=(subtypes != None))
 
         # remove the current user from the needaction partner to avoid to notify the author of the message
-        user_pids = [user_pid for user_pid in user_pids if user_pid != self.env.user.partner_id.id]
+        # INCIO DEL CODIGO MODIFICADO POR TRESCLOUD
+        # HACK PARA EVITAR EL ENVIO DE CORREOS A LOS CREADORES DE LOS MODELOS MARCADOS
+        # PARA EL AUTOSUBSCRIBE. REVISAR https://github.com/odoo/odoo/issues/35612
+        user_pids = [user_pid for user_pid in user_pids if user_pid != self.env.user.partner_id.id
+                     and self.env.user.id != SUPERUSER_ID]
+        # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
         self._message_auto_subscribe_notify(user_pids)
 
         return True
