@@ -83,8 +83,18 @@ class AccountAnalyticAccount(models.Model):
         partners = self.env['res.partner'].search([('name', operator, name)], limit=limit)
         if partners:
             domain = ['|'] + domain + [('partner_id', 'in', partners.ids)]
+        #Metodo modificado por TRESCLOUD
+        if self.add_domain_company_division(name, operator, domain):
+            domain = self.add_domain_company_division(name, operator, domain)
         recs = self.search(domain + args, limit=limit)
         return recs.name_get()
+    
+    @api.model
+    def add_domain_company_division(self, name, operator, domain):
+        '''
+        Hook para agregar un nuevo criterio de filtrado
+        '''        
+        return False
 
 
 class AccountAnalyticLine(models.Model):
