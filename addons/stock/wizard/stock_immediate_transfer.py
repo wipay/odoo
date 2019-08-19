@@ -22,6 +22,8 @@ class StockImmediateTransfer(models.TransientModel):
     def process(self):
         self.ensure_one()
         # If still in draft => confirm and assign
+        if self.pick_id.state == 'done':
+            raise UserError(_('The pick is already validated'))
         if self.pick_id.state == 'draft':
             self.pick_id.action_confirm()
             if self.pick_id.state != 'assigned':
