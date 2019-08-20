@@ -274,7 +274,7 @@ class Module(models.Model):
 
     _sql_constraints = [
         ('name_uniq', 'UNIQUE (name)', 'The name of the module must be unique!'),
-        ('check_demo', 'CHECK (demo=True)', 'Los datos demo no estan permitidos')
+        ('check_demo', 'CHECK (demo=false)', 'la opcion demo no debe ser habilitada')
     ]
 
     @api.multi
