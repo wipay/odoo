@@ -795,17 +795,6 @@ class Module(models.Model):
             for module in self.sudo().search([('state', '=', 'installed')])
         }
     
-    #siguiente metodo fue agregado por trescloud
-    @api.multi
-    @api.constrains('demo')
-    def _check_demo(self):
-        '''
-            Constraint para evitar actualiza o instalar modulos con datos demo
-        '''
-        for module in self:
-            if module.demo:
-                UserError(u'Error al actualizar o instalar modulo %s, no se puede instalar modulos con datos de pruebas.'%(module.name))
-
 DEP_STATES = STATES + [('unknown', 'Unknown')]
 
 class ModuleDependency(models.Model):
