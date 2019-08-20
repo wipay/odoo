@@ -271,9 +271,10 @@ class Module(models.Model):
     application = fields.Boolean('Application', readonly=True)
     icon = fields.Char('Icon URL')
     icon_image = fields.Binary(string='Icon', compute='_get_icon_image')
-
+    #agregamos constraint check_demo para evitar insertar datos demo.
     _sql_constraints = [
         ('name_uniq', 'UNIQUE (name)', 'The name of the module must be unique!'),
+        ('check_demo', 'CHECK (demo=false)', 'la opcion demo no debe ser habilitada')
     ]
 
     @api.multi
@@ -344,7 +345,13 @@ class Module(models.Model):
             # check dependencies and update module itself
             self.check_external_dependencies(module.name, newstate)
             if module.state in states_to_update:
-                module.write({'state': newstate, 'demo': module_demo})
+                #siguientes lineas fue agregado por trescloud para
+                #evitar que los modulos esten seteados el campo demo en True
+                if module_demo:
+                    #TODO: en vez de un mensaje de error, se deberia actualizar el campo demo a Falso siempre.
+                    raise UserError(u'Error al actualizar o instalar modulo %s, no se puede instalar modulos con datos de pruebas.'%(module.name))
+                else:
+                    module.write({'state': newstate, 'demo': module_demo})
 
         return demo
 
@@ -787,8 +794,7 @@ class Module(models.Model):
             module.name: module.id
             for module in self.sudo().search([('state', '=', 'installed')])
         }
-
-
+    
 DEP_STATES = STATES + [('unknown', 'Unknown')]
 
 class ModuleDependency(models.Model):

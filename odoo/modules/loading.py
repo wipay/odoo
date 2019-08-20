@@ -173,6 +173,10 @@ def load_module_graph(cr, graph, status=None, perform_checks=True,
             _load_data(cr, module_name, idref, mode, kind='data')
             has_demo = hasattr(package, 'demo') or (package.dbdemo and package.state != 'installed')
             if has_demo:
+                #siguientes lineas fue agregado por trescloud para evitar cargar datos demos
+                _logger.critical(u'Error al actualizar o instalar modulo %s, no se pueden instalar modulos con datos demo'%(module.name))
+                raise
+            if has_demo:
                 _load_data(cr, module_name, idref, mode, kind='demo')
                 cr.execute('update ir_module_module set demo=%s where id=%s', (True, module_id))
                 module.invalidate_cache(['demo'])
@@ -285,6 +289,8 @@ def load_modules(db, force_demo=False, status=None, update_module=False):
             tools.config['update']['all'] = 1
             if not tools.config['without_demo']:
                 tools.config["demo"]['all'] = 1
+        if tools.config['without_demo']:
+            raise _logger.critical('No es permitido el parametro without_demo')
 
         # This is a brand new registry, just created in
         # odoo.modules.registry.Registry.new().
