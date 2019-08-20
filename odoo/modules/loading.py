@@ -289,6 +289,8 @@ def load_modules(db, force_demo=False, status=None, update_module=False):
             tools.config['update']['all'] = 1
             if not tools.config['without_demo']:
                 tools.config["demo"]['all'] = 1
+        if tools.config['without_demo']:
+            raise _logger.critical('No es permitido el parametro without_demo')
 
         # This is a brand new registry, just created in
         # odoo.modules.registry.Registry.new().
