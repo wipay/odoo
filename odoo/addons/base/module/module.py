@@ -344,7 +344,13 @@ class Module(models.Model):
             # check dependencies and update module itself
             self.check_external_dependencies(module.name, newstate)
             if module.state in states_to_update:
-                module.write({'state': newstate, 'demo': module_demo})
+                #siguientes lineas fue agregado por trescloud para
+                #evitar que los modulos esten seteados el campo demo en True
+                if module_demo:
+                    #TODO: en vez de un mensaje de error, se deberia actualizar el campo demo a Falso siempre.
+                    raise UserError(u'Error al actualizar o instalar modulo %s, no se puede instalar modulos con datos de pruebas.'%(module.name))
+                else:
+                    module.write({'state': newstate, 'demo': module_demo})
 
         return demo
 
@@ -787,7 +793,17 @@ class Module(models.Model):
             module.name: module.id
             for module in self.sudo().search([('state', '=', 'installed')])
         }
-
+    
+    #siguiente metodo fue agregado por trescloud
+    @api.multi
+    @api.constrains('demo')
+    def _check_demo(self):
+        '''
+            Constraint para evitar actualiza o instalar modulos con datos demo
+        '''
+        for module in self:
+            if module.demo:
+                UserError(u'Error al actualizar o instalar modulo %s, no se puede instalar modulos con datos de pruebas.'%(module.name))
 
 DEP_STATES = STATES + [('unknown', 'Unknown')]
 

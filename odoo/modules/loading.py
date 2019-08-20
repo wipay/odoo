@@ -173,6 +173,10 @@ def load_module_graph(cr, graph, status=None, perform_checks=True,
             _load_data(cr, module_name, idref, mode, kind='data')
             has_demo = hasattr(package, 'demo') or (package.dbdemo and package.state != 'installed')
             if has_demo:
+                #siguientes lineas fue agregado por trescloud para evitar cargar datos demos
+                _logger.critical(u'Error al actualizar o instalar modulo %s, no se pueden instalar modulos con datos demo'%(module.name))
+                raise
+            if has_demo:
                 _load_data(cr, module_name, idref, mode, kind='demo')
                 cr.execute('update ir_module_module set demo=%s where id=%s', (True, module_id))
                 module.invalidate_cache(['demo'])
