@@ -271,7 +271,7 @@ class Module(models.Model):
     application = fields.Boolean('Application', readonly=True)
     icon = fields.Char('Icon URL')
     icon_image = fields.Binary(string='Icon', compute='_get_icon_image')
-
+    #agregamos constraint check_demo para evitar insertar datos demo.
     _sql_constraints = [
         ('name_uniq', 'UNIQUE (name)', 'The name of the module must be unique!'),
         ('check_demo', 'CHECK (demo=false)', 'la opcion demo no debe ser habilitada')
