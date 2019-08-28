@@ -12,3 +12,4 @@ odoorpc==0.7.0 # Necesario para la sincronizacion de productos con el conector
 oca.decorators==0.0.1 # Necesario para el modulo pos_pricelist
 component==0.0.1 # lo solicita el modulo connector_odoo
 cachetools>=2.0.1,<3.0.0 # lo solicita el modulo connector_odoo en el repositorio connector 
+jsonschema==3.0.1 #para validar esquemas de ws. 
