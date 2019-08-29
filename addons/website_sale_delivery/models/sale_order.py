@@ -96,7 +96,9 @@ class SaleOrder(models.Model):
     @api.model
     def _get_errors(self, order):
         errors = super(SaleOrder, self)._get_errors(order)
-        if not order._get_delivery_methods():
+        # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+        if not order.only_services and not order._get_delivery_methods():
+        # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
             errors.append(
                 (_('Sorry, we are unable to ship your order'),
                  _('No shipping method is available for your current order and shipping address. '
