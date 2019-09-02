@@ -211,6 +211,12 @@ class AccountMove(models.Model):
 
     @api.multi
     def assert_balanced(self):
+        #TRESCLOUD: Bypass para importación por CSV de balances iniciales
+        if self._context.get('bypass_assert_balanced',False):
+            #requiere modificar la accion de account.move.lines en la interfaz grafica
+            #de forma manual para que se active el bypass (ademas de ponerle
+            #que permita creación para importar lineas de asientos contables en el menu)
+            return True
         if not self.ids:
             return True
         prec = self.env['decimal.precision'].precision_get('Account')
