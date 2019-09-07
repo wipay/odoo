@@ -91,12 +91,14 @@ class CrossoveredBudgetLines(models.Model):
             date_from = self.env.context.get('wizard_date_from') or line.date_from
             if line.analytic_account_id.id:
                 self.env.cr.execute("""
-                    SELECT SUM(amount)
+                    SELECT
+                        SUM(amount)
                     FROM account_analytic_line
-                    WHERE account_id=%s
+                    WHERE cost_center_id=%s
+                        AND account_id=%s
                         AND (date between to_date(%s,'yyyy-mm-dd') AND to_date(%s,'yyyy-mm-dd'))
-                        AND general_account_id=ANY(%s)""",
-                (line.analytic_account_id.id, date_from, date_to, acc_ids,))
+                        AND general_account_id=ANY(%s)
+                """, (line.cost_center_id.id, line.analytic_account_id.id, date_from, date_to, acc_ids,))
                 result = self.env.cr.fetchone()[0] or 0.0
             line.practical_amount = result
 
