@@ -90,15 +90,27 @@ class CrossoveredBudgetLines(models.Model):
             date_to = self.env.context.get('wizard_date_to') or line.date_to
             date_from = self.env.context.get('wizard_date_from') or line.date_from
             if line.analytic_account_id.id:
-                self.env.cr.execute("""
-                    SELECT SUM(amount)
-                    FROM account_analytic_line
-                    WHERE account_id=%s
-                        AND (date between to_date(%s,'yyyy-mm-dd') AND to_date(%s,'yyyy-mm-dd'))
-                        AND general_account_id=ANY(%s)""",
-                (line.analytic_account_id.id, date_from, date_to, acc_ids,))
+                sql = self.get_query_for_budget(line, date_from, date_to, acc_ids)[0]
+                params = self.get_query_for_budget(line, date_from, date_to, acc_ids)[1]
+                self.env.cr.execute(sql, params)
                 result = self.env.cr.fetchone()[0] or 0.0
             line.practical_amount = result
+            
+    @api.model
+    def get_query_for_budget(self, line, date_from, date_to, acc_ids):
+        '''
+        Metodo hook va ser modificado en modulo especifico de cliente
+        '''
+        sql = '''
+            SELECT
+                SUM(amount)
+            FROM account_analytic_line
+            WHERE account_id=%s
+                AND (date between to_date(%s,'yyyy-mm-dd') AND to_date(%s,'yyyy-mm-dd'))
+                AND general_account_id=ANY(%s)
+        '''
+        params = (line.analytic_account_id.id, date_from, date_to, acc_ids,)
+        return sql, params
 
     @api.multi
     def _compute_theoritical_amount(self):
