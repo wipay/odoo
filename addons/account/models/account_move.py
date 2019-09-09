@@ -507,6 +507,16 @@ class AccountMoveLine(models.Model):
             'accounts': self.get_data_for_manual_reconciliation('account', account_ids),
         }
 
+    # INCIO DEL CODIGO AGREGADO POR TRESCLOUD
+    @api.model
+    def _get_extra_params_for_data_query(self):
+        """
+        Hook to add extra params in where clause to search move lines to
+        reconcile in 'get_data_for_manual_reconciliation'
+        """
+        return ''
+    # FIN DEL CODIGO AGREGADO POR TRESCLOUD
+
     @api.model
     def get_data_for_manual_reconciliation(self, res_type, res_ids=None, account_type=None):
         """ Returns the data required for the invoices & payments matching of partners/accounts (list of dicts).
@@ -565,6 +575,9 @@ class AccountMoveLine(models.Model):
                             {7}
                             AND l.amount_residual < 0
                         )
+                        -- INCIO DEL CODIGO MODIFICADO POR TRESCLOUD
+                        {extra_params}
+                        -- FIN DEL CODIGO MODIFICADO POR TRESCLOUD
                     GROUP BY {8} a.id, a.name, a.code, {res_alias}.last_time_entries_checked
                     ORDER BY {res_alias}.last_time_entries_checked
                 ) as s
@@ -579,7 +592,10 @@ class AccountMoveLine(models.Model):
                 self.env.user.company_id.id,
                 is_partner and 'AND l.partner_id = p.id' or ' ',
                 is_partner and 'l.partner_id, p.id,' or ' ',
-                res_alias=res_alias
+                res_alias=res_alias,
+                # INCIO DEL CODIGO MODIFICADO POR TRESCLOUD
+                extra_params=self._get_extra_params_for_data_query()
+                # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
             ))
         self.env.cr.execute(query, locals())
 
