@@ -2177,12 +2177,17 @@ var manualReconciliation = abstractReconciliation.extend({
                 },
             }
         }, this.create_form_fields);
+        // INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+        this.local_context = context.context;
+        // FIN DEL CODIGO AGREGADO POR TRESCLOUD
     },
 
     start: function() {
         var self = this;
         return $.when(this._super()).then(function(){
-            return self.model_aml.call("get_data_for_manual_reconciliation_widget", [self.partner_ids, self.account_ids]).then(function(data){
+            // INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+            return self.model_aml.call("get_data_for_manual_reconciliation_widget", [self.partner_ids, self.account_ids], {context: self.local_context}).then(function(data){
+            // FIN DEL CODIGO MODIFICADO POR TRESCLOUD
                 var data_customers_len = data.customers ? data.customers.length : 0;
                 var data_suppliers_len = data.suppliers ? data.suppliers.length : 0;
                 var data_accounts_len = data.accounts ? data.accounts.length : 0;
