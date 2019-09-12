@@ -47,6 +47,9 @@ var ShowPaymentLineWidget = form_common.AbstractField.extend({
                             'payment_id': info.content[v].payment_id,
                             'move_id': info.content[v].move_id,
                             'ref': info.content[v].ref,
+                            //Codigo agregado por Trescloud
+                            'originator_payment_id': info.content[v].originator_payment_id,
+                            //Fin de codigo agregado por Trescloud
                             }),
                     'html': true,
                     'placement': 'left',
@@ -89,5 +92,9 @@ var ShowPaymentLineWidget = form_common.AbstractField.extend({
 });
 
 core.form_widget_registry.add('payment', ShowPaymentLineWidget);
+
+//Codigo agregado por Trescloud
+return ShowPaymentLineWidget;
+//Fin del código agregado por Trescloud
 
 });

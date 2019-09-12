@@ -180,6 +180,9 @@ class AccountInvoice(models.Model):
                     'position': currency_id.position,
                     'date': payment.date,
                     'payment_id': payment.id,
+                    #Codigo agregado por Trescloud
+                    'originator_payment_id': payment.payment_id.id,
+                    #Fin del codigo agregado por Trescloud
                     'move_id': payment.move_id.id,
                     'ref': payment_ref,
                 })
