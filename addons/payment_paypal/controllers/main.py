@@ -112,4 +112,8 @@ class PaypalController(http.Controller):
         """ When the user cancels its Paypal payment: GET on this route """
         _logger.info('Beginning Paypal cancel with post data %s', pprint.pformat(post))  # debug
         return_url = self._get_return_url(**post)
-        return werkzeug.utils.redirect(return_url)
+        # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+        return werkzeug.utils.redirect(
+            return_url if return_url != '/' else '/shop/payment'
+        )
+        # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
