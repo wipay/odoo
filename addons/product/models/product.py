@@ -289,11 +289,17 @@ class ProductProduct(models.Model):
     @api.one
     def _set_image_value(self, value):
         image = tools.image_resize_image_big(value)
-        if self.product_tmpl_id.image:
+        ref = self.env.ref
+        # Verificamos si es que esta configurado variantes de producto en la configuracion de
+        # la empresa, esto se identifica de esta manera porque al marcar en la configuracion
+        # como "usa variantes", esto hace que se inserte en la herencia del usuario basico de odoo
+        # el permiso de productos: "group_product_variant"
+        if ref('product.group_product_variant') not in ref('base.group_user').implied_ids:
+            # CASO 1: Sin variantes de productos: solo verificamos
             self.image_variant = image
-        else:
             self.product_tmpl_id.image = image
-
+        else:
+            self.image_variant = image
     @api.one
     def _get_pricelist_items(self):
         self.pricelist_item_ids = self.env['product.pricelist.item'].search([
