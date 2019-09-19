@@ -39,6 +39,5 @@ def copy_amount_backup_to_amount_cost(env):
 def migrate(env, version):
     backup_column_amount(env)
     add_column_amount_cost(env)
-    copy_amount_backup_to_amount_cost(env)
-    
+    copy_amount_backup_to_amount_cost(env)    
       
