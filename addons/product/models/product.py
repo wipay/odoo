@@ -288,12 +288,34 @@ class ProductProduct(models.Model):
 
     @api.one
     def _set_image_value(self, value):
+        # Para el sitio web (ecommerce) produce este cambio los siguientes efectos:
+        # 1. Sin variantes de productos: Las imagenes son mostradas del producto template.
+        # es decir, nunca se pierde la imagen
+        # 2. Con Variantes de productos: Las imagenes toman los siguientes valores.
+        # 2.a Si es solo una variante, el sistema actua como si no tuviera variantes.
+        # 2.b Si hay mas de una, en el ecommerce se muestra la imagen del product.template
+        # en primera instancia, y luego en las variantes, se muestra la foto respectiva si
+        # han sido configuradas, caso contrario, se muestra la del product.template.
+        # Esto asegura consistencia en las imagenes
         image = tools.image_resize_image_big(value)
-        if self.product_tmpl_id.image:
-            self.image_variant = image
-        else:
+        ref = self.env.ref
+        # Verificamos si es que esta configurado variantes de producto en la configuracion de
+        # la empresa, esto se identifica de esta manera porque al marcar en la configuracion
+        # como "usa variantes", esto hace que se inserte en la herencia del usuario basico de odoo
+        # el permiso de productos: "group_product_variant"
+        if ref('product.group_product_variant') not in ref('base.group_user').implied_ids:
+            # CASO 1: Sin variantes de productos: solo verificamos
+            self.image_variant = False # Nunca se setea la imagen de la variante cuando no esta configurada la opcion
             self.product_tmpl_id.image = image
-
+        else:
+            self.image_variant = image
+            # Una sola variante una sola foto en todas partes
+            if len(self.product_tmpl_id.product_variant_ids) == 1:
+                self.image_variant = False # Nunca se setea la imagen de la variante cuando no esta configurada la opcion
+                self.product_tmpl_id.image = image
+            if not self.product_tmpl_id.image:
+                self.product_tmpl_id.image = image
+                
     @api.one
     def _get_pricelist_items(self):
         self.pricelist_item_ids = self.env['product.pricelist.item'].search([
