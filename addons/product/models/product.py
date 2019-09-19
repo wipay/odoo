@@ -296,10 +296,16 @@ class ProductProduct(models.Model):
         # el permiso de productos: "group_product_variant"
         if ref('product.group_product_variant') not in ref('base.group_user').implied_ids:
             # CASO 1: Sin variantes de productos: solo verificamos
-            self.image_variant = image
+            self.image_variant = False # Nunca se setea la imagen de la variante cuando no esta configurada la opcion
             self.product_tmpl_id.image = image
         else:
             self.image_variant = image
+            if not len(self.product_tmpl_id.product_variant_ids) == 1:
+                self.image_variant = False # Nunca se setea la imagen de la variante cuando no esta configurada la opcion
+                self.product_tmpl_id.image = image
+            if not self.product_tmpl_id.image:
+                self.product_tmpl_id.image = image
+                
     @api.one
     def _get_pricelist_items(self):
         self.pricelist_item_ids = self.env['product.pricelist.item'].search([
