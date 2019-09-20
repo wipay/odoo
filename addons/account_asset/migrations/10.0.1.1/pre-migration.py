@@ -27,17 +27,17 @@ def add_column_amount_cost(env):
 @openupgrade.logging()
 def copy_amount_backup_to_amount_cost(env):
     '''
-    Este metodo se encarga de copiar el campo amount_backup al campo amount cost, siempre y cuando no este instalado el modulo ecua_fixed_assets
+    Este metodo se encarga de copiar el campo openupgrade_legacy_10_0_amount al campo amount cost
     '''
-    module_ids = env['ir.module.module'].search([('name','=','ecua_fixed_assets'), ('state','=','installed')])
-    if not module_ids:
-        env.cr.execute('''
-            update account_asset_depreciation_line set amount_cost=openupgrade_legacy_10_0_amount
-        ''')  
+    env.cr.execute('''
+        update account_asset_depreciation_line set amount_cost=openupgrade_legacy_10_0_amount
+    ''')  
     
 @openupgrade.migrate(use_env=True)
 def migrate(env, version):
-    backup_column_amount(env)
-    add_column_amount_cost(env)
-    copy_amount_backup_to_amount_cost(env)    
+    module_ids = env['ir.module.module'].search([('name','=','ecua_fixed_assets'), ('state','=','installed')])
+    if not module_ids:
+        backup_column_amount(env)
+        add_column_amount_cost(env)
+        copy_amount_backup_to_amount_cost(env)    
       
