@@ -712,6 +712,30 @@ class AccountMoveLine(models.Model):
             target_currency = account.currency_id or account.company_id.currency_id
         return lines.prepare_move_lines_for_reconciliation_widget(target_currency=target_currency)
 
+    # INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+    @api.model
+    def get_ret_line_dict(self, line):
+        ret_line = {
+            'id': line.id,
+            'name': line.name != '/' and line.move_id.name + ': ' + line.name or line.move_id.name,
+            'ref': line.move_id.ref or '',
+            # For reconciliation between statement transactions and already registered payments (eg. checks)
+            # NB : we don't use the 'reconciled' field because the line we're selecting is not the one that gets reconciled
+            'already_paid': line.account_id.internal_type == 'liquidity',
+            'account_code': line.account_id.code,
+            'account_name': line.account_id.name,
+            'account_type': line.account_id.internal_type,
+            'date_maturity': line.date_maturity,
+            'date': line.date,
+            'journal_name': line.journal_id.name,
+            'partner_id': line.partner_id.id,
+            'partner_name': line.partner_id.name,
+            'currency_id': (
+                                       line.currency_id and line.amount_currency) and line.currency_id.id or False,
+        }
+        return ret_line
+    # FIN DEL CODIGO AGREGADO POR TRESCLOUD
+
     @api.multi
     def prepare_move_lines_for_reconciliation_widget(self, target_currency=False, target_date=False):
         """ Returns move lines formatted for the manual/bank reconciliation widget
@@ -728,23 +752,9 @@ class AccountMoveLine(models.Model):
 
         for line in self:
             company_currency = line.account_id.company_id.currency_id
-            ret_line = {
-                'id': line.id,
-                'name': line.name != '/' and line.move_id.name + ': ' + line.name or line.move_id.name,
-                'ref': line.move_id.ref or '',
-                # For reconciliation between statement transactions and already registered payments (eg. checks)
-                # NB : we don't use the 'reconciled' field because the line we're selecting is not the one that gets reconciled
-                'already_paid': line.account_id.internal_type == 'liquidity',
-                'account_code': line.account_id.code,
-                'account_name': line.account_id.name,
-                'account_type': line.account_id.internal_type,
-                'date_maturity': line.date_maturity,
-                'date': line.date,
-                'journal_name': line.journal_id.name,
-                'partner_id': line.partner_id.id,
-                'partner_name': line.partner_id.name,
-                'currency_id': (line.currency_id and line.amount_currency) and line.currency_id.id or False,
-            }
+            # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+            ret_line = self.get_ret_line_dict(line)
+            # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
 
             debit = line.debit
             credit = line.credit
