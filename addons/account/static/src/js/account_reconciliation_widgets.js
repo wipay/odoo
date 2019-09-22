@@ -2131,7 +2131,9 @@ var manualReconciliation = abstractReconciliation.extend({
         this.model_partner = new Model("res.partner");
         this.model_account = new Model("account.account");
         this.title = _t("Journal Items to Reconcile");
-        context.display_name = _t("Invoices & Payments Matching"); // Used by breadcrumb
+        // INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+        context.display_name = _t(context.context.display_name || "Invoices & Payments Matching"); // Used by breadcrumb
+        // FIN DEL CODIGO MODIFICADO POR TRESCLOUD
         this.max_move_lines_displayed = 20;
 
         this.mode = defaultIfUndef(context.context.mode, 'all');
