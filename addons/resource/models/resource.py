@@ -314,7 +314,10 @@ class ResourceCalendar(models.Model):
             end_dt = start_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
         else:
             work_limits.append((end_dt, end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)))
-        assert start_dt.date() == end_dt.date(), 'get_working_intervals_of_day is restricted to one day'
+        # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+        if not self.env.context.get('avoid_same_date_assertion', False):
+            assert start_dt.date() == end_dt.date(), 'get_working_intervals_of_day is restricted to one day'
+        # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
 
         intervals = []
         work_dt = start_dt.replace(hour=0, minute=0, second=0, microsecond=0)
