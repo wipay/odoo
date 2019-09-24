@@ -46,7 +46,7 @@ class StockMove(models.Model):
     def _create_picking_message_origin_link(self):
         '''
         Segun la agrupacion de las ordenes de ventas
-        escribimos en el log de picking el link del documento origen.
+        escribimos en el log del picking el link del documento origen.
         '''
         group = self._group_sale_order_by_picking()
         for item in group.values():
