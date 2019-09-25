@@ -27,17 +27,46 @@ class StockMove(models.Model):
             line.qty_delivered = line._get_delivered_qty()
         return result
 
+    #siguiente metodo agregado por Trescloud
+    def _group_sale_order_by_picking(self):
+        '''
+        Agrupamos las ordenes de venta por stock picking.
+        '''
+        group = {}
+        for move in self.filtered(lambda mv:mv.picking_id and mv.picking_id.group_id):
+            picking = move.picking_id
+            order = self.env['sale.order'].sudo().search([('procurement_group_id', '=', picking.group_id.id)])
+            values = group.get(move.picking_id, {'picking_id':False, 'order':self.env['sale.order'].sudo()})
+            values['order'] |= order
+            values.update({'picking_id':move.picking_id, 'order':values['order']})
+            group[move.picking_id] = values
+        return group
+    
+    #siguiente metodo agregado por Trescloud
+    def _create_picking_message_origin_link(self):
+        '''
+        Segun la agrupacion de las ordenes de ventas
+        escribimos en el log del picking el link del documento origen.
+        '''
+        group = self._group_sale_order_by_picking()
+        for item in group.values():
+            picking = item['picking_id']
+            orders = item['order']
+            for order in orders:
+                picking.message_post_with_view('mail.message_origin_link',
+                                    values={'self':picking, 'origin':order},
+                                    subtype_id=self.env.ref('mail.mt_note').id
+                                    )
+
     @api.multi
     def assign_picking(self):
         result = super(StockMove, self).assign_picking()
-        for move in self:
-            if move.picking_id and move.picking_id.group_id:
-                picking = move.picking_id
-                order = self.env['sale.order'].sudo().search([('procurement_group_id', '=', picking.group_id.id)])
-                picking.message_post_with_view(
-                    'mail.message_origin_link',
-                    values={'self': picking, 'origin': order},
-                    subtype_id=self.env.ref('mail.mt_note').id)
+        #siguientes lineas fue modificada por trescloud,
+        #para optimizar la creacion del message_origin_link
+        #de los pickings.
+        ctx = self._context.copy()
+        if not ctx.get('notCreateMsgOriginPicking', False):
+            self._create_picking_message_origin_link()
         return result
 
 
