@@ -94,6 +94,7 @@ var ShowPaymentLineWidget = form_common.AbstractField.extend({
 core.form_widget_registry.add('payment', ShowPaymentLineWidget);
 
 //Codigo agregado por Trescloud
+// Se devuleve el widget para poder referenciarlo desde afuera y heredarlo
 return ShowPaymentLineWidget;
 //Fin del código agregado por Trescloud
 
