@@ -51,6 +51,9 @@ class AuthSignupHome(Home):
 
         if 'error' not in qcontext and request.httprequest.method == 'POST':
             try:
+                # INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+                old_uid = request.uid
+                # FIN DEL CODIGO AGREGADO POR TRESCLOUD
                 if qcontext.get('token'):
                     self.do_signup(qcontext)
                     return super(AuthSignupHome, self).web_login(*args, **kw)
@@ -67,6 +70,10 @@ class AuthSignupHome(Home):
                 _logger.exception('error when resetting password')
             except Exception, e:
                 qcontext['error'] = e.message or e.name
+            # INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+            if not request.uid:
+                request.uid = old_uid
+            # FIN DEL CODIGO AGREGADO POR TRESCLOUD
 
         return request.render('auth_signup.reset_password', qcontext)
 
@@ -105,7 +112,7 @@ class AuthSignupHome(Home):
         values = { key: qcontext.get(key) for key in self.get_user_fields_keys() }
         # FIN DE CODIGO MODIFICADO POR TRESCLOUD
         assert values.values(), "The form was not properly filled in."
-        assert values.get('password') == qcontext.get('confirm_password'), "Passwords do not match; please retype them."
+        assert values.get('password') == qcontext.get('confirm_password'), _("Passwords do not match; please retype them.")
         supported_langs = [lang['code'] for lang in request.env['res.lang'].sudo().search_read([], ['code'])]
         if request.lang in supported_langs:
             values['lang'] = request.lang
