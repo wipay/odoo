@@ -208,7 +208,7 @@ class MailMail(models.Model):
             :return: True
         """
         IrMailServer = self.env['ir.mail_server']
-                     
+
         for mail_id in self.ids:
             start_email = timer()
             _logger.info(u'depuracion email: mail.mail, envio de correo ')  
