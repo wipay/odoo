@@ -208,9 +208,10 @@ class MailMail(models.Model):
             :return: True
         """
         IrMailServer = self.env['ir.mail_server']
-        start_email = timer()
-        _logger.info(u'depuracion email: mail.mail, envio de correo ')               
+                     
         for mail_id in self.ids:
+            start_email = timer()
+            _logger.info(u'depuracion email: mail.mail, envio de correo ')  
             try:
                 mail = self.browse(mail_id)
                 # TDE note: remove me when model_id field is present on mail.message - done here to avoid doing it multiple times in the sub method
@@ -284,6 +285,7 @@ class MailMail(models.Model):
                         start_process = timer()
                         _logger.info(u'depuracion email: mail.mail, invoicar send_email %s, titulo: %s'%(model_print, mail.subject)                                                                      )
                         res = IrMailServer.send_email(msg, mail_server_id=mail.mail_server_id.id)
+                        #Las siguientes lineas de Log fueron agregadas por Trescloud
                         end_process = timer()
                         delta_process = end_process - start_process
                         _logger.info(u'depuracion email: mail.mail, fin send_email  Tiempo (seg.) %s'%("%.3f" % delta_process))
