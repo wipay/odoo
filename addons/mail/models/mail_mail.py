@@ -13,6 +13,7 @@ from odoo import _, api, fields, models
 from odoo import tools
 from odoo.addons.base.ir.ir_mail_server import MailDeliveryException
 from odoo.tools.safe_eval import safe_eval
+from timeit import default_timer as timer
 
 _logger = logging.getLogger(__name__)
 
@@ -207,7 +208,8 @@ class MailMail(models.Model):
             :return: True
         """
         IrMailServer = self.env['ir.mail_server']
-
+        start_email = timer()
+        _logger.info(u'depuracion email: mail.mail, envio de correo ')               
         for mail_id in self.ids:
             try:
                 mail = self.browse(mail_id)
@@ -275,8 +277,18 @@ class MailMail(models.Model):
                         subtype_alternative='plain',
                         headers=headers)
                     try:
+                        model_print = mail.res_id and\
+                                    ('ID: %s Modelo: %s' % (mail.res_id, mail.model)) or\
+                                    ''
+                        #Las siguientes lineas de Log fueron agregadas por Trescloud
+                        start_process = timer()
+                        _logger.info(u'depuracion email: mail.mail, invoicar send_email %s, titulo: %s'%(model_print, mail.subject)                                                                      )
                         res = IrMailServer.send_email(msg, mail_server_id=mail.mail_server_id.id)
+                        end_process = timer()
+                        delta_process = end_process - start_process
+                        _logger.info(u'depuracion email: mail.mail, fin send_email  Tiempo (seg.) %s'%("%.3f" % delta_process))
                     except AssertionError as error:
+                        _logger.info(u'depuracion email: mail.mail, error envio de correo.')
                         if error.message == IrMailServer.NO_VALID_RECIPIENT:
                             # No valid recipient found for this particular
                             # mail item -> ignore error to avoid blocking
@@ -320,7 +332,10 @@ class MailMail(models.Model):
                         value = '. '.join(e.args)
                         raise MailDeliveryException(_("Mail Delivery Failed"), value)
                     raise
-
+            #La siguiente linea de Log fue agregada por Trescloud
+            end_email = timer()
+            delta_email = end_email - start_email
+            _logger.info(u'depuracion email: mail.mail, Fin envio de correo  Tiempo (seg.) %s'%("%.3f" % delta_email))
             if auto_commit is True:
                 self._cr.commit()
         return True

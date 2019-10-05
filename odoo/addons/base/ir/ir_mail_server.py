@@ -16,6 +16,7 @@ import threading
 from odoo import api, fields, models, tools, _
 from odoo.exceptions import except_orm, UserError
 from odoo.tools import html2text, ustr
+from timeit import default_timer as timer
 
 _logger = logging.getLogger(__name__)
 _test_logger = logging.getLogger('odoo.tests')
@@ -455,8 +456,15 @@ class IrMailServer(models.Model):
 
             smtp = None
             try:
+                #Las siguientes lineas de Log fueron agregadas por Trescloud
+                start_process = timer()
+                _logger.info(u'depuracion email: mail.server, servidor de correo ')
                 smtp = self.connect(smtp_server, smtp_port, smtp_user, smtp_password, smtp_encryption or False, smtp_debug)
                 smtp.sendmail(smtp_from, smtp_to_list, message.as_string())
+                #Las siguientes lineas de Log fueron agregadas por Trescloud
+                end_process = timer()
+                delta_process = end_process - start_process
+                _logger.info(u'depuracion email: mail.server, envio de correo en Tiempo (seg.) %s'%("%.3f" % delta_process))
             finally:
                 if smtp is not None:
                     smtp.quit()
@@ -464,6 +472,8 @@ class IrMailServer(models.Model):
             params = (ustr(smtp_server), e.__class__.__name__, ustr(e))
             msg = _("Mail delivery failed via SMTP server '%s'.\n%s: %s") % params
             _logger.info(msg)
+            #La siguiente linea de Log fue agregada por Trescloud
+            _logger.info(u'depuracion email: mail.server, error envio de correo.')
             raise MailDeliveryException(_("Mail Delivery Failed"), msg)
         return message_id
 
