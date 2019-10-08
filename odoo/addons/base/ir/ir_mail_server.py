@@ -474,7 +474,7 @@ class IrMailServer(models.Model):
                 #Las siguientes lineas de Log fueron agregadas por Trescloud
                 end_process = timer()
                 delta_process = end_process - start_process
-                debug_msg = u'depuracion email: mail.server, envio de correo en Tiempo (seg.) %s'%("%.3f" % delta_process)
+                debug_msg = u'depuracion email: mail.server, Fin servidor de correo Tiempo (seg.) %s'%("%.3f" % delta_process)
                 self.print_logger_email(smtp_debug, debug_msg) 
             finally:
                 if smtp is not None:
@@ -484,7 +484,7 @@ class IrMailServer(models.Model):
             msg = _("Mail delivery failed via SMTP server '%s'.\n%s: %s") % params
             _logger.info(msg)
             #La siguiente linea de Log fue agregada por Trescloud
-            debug_msg = u'depuracion email: mail.server, error envio de correo.'
+            debug_msg = u'depuracion email: mail.server, error servidor de correo.'
             self.print_logger_email(smtp_debug, debug_msg)
             raise MailDeliveryException(_("Mail Delivery Failed"), msg)
         return message_id

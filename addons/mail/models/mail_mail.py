@@ -229,7 +229,7 @@ class MailMail(models.Model):
                 mail = self.browse(mail_id)
                 #siguentes 3 lineas agregadas por Trescloud.
                 debug_mail = mail.mail_server_id and mail.mail_server_id.smtp_debug or False
-                debug_msg = u'depuracion email: mail.mail, envio de correo'
+                debug_msg = u'depuracion email: mail.mail, Proceso envio de correo'
                 self.print_logger_email(debug_mail, debug_msg)  
                 # TDE note: remove me when model_id field is present on mail.message - done here to avoid doing it multiple times in the sub method
                 if mail.model:
@@ -309,7 +309,7 @@ class MailMail(models.Model):
                         debug_msg = u'depuracion email: mail.mail, fin send_email  Tiempo (seg.) %s'%("%.3f" % delta_process)
                         self.print_logger_email(debug_mail, debug_msg)
                     except AssertionError as error:
-                        debug_msg = u'depuracion email: mail.mail, error envio de correo.'
+                        debug_msg = u'depuracion email: mail.mail, error send_email.'
                         self.print_logger_email(debug_mail, debug_msg)
                         if error.message == IrMailServer.NO_VALID_RECIPIENT:
                             # No valid recipient found for this particular
