@@ -191,6 +191,20 @@ class MailMail(models.Model):
         }
         return res
 
+    #siguiente metodo agregado por Tresclod
+    @api.model
+    def print_logger_email(self, debug_mail, msg):
+        '''
+        Imprime log del envio de mail.
+        '''
+        #verificamos que realmente el mail_server
+        #no este en debug.
+        if not debug_mail:
+            mail_server = self.env['ir.mail_server'].sudo().search([], order='sequence', limit=1)
+            debug_mail = mail_server and mail_server.smtp_debug or False
+        if debug_mail:
+            _logger.warning(u'%s'%(msg))
+
     @api.multi
     def send(self, auto_commit=False, raise_exception=False):
         """ Sends the selected emails immediately, ignoring their current
@@ -208,12 +222,14 @@ class MailMail(models.Model):
             :return: True
         """
         IrMailServer = self.env['ir.mail_server']
-
+        debug_mail = False
         for mail_id in self.ids:
             start_email = timer()
-            _logger.info(u'depuracion email: mail.mail, envio de correo ')  
             try:
                 mail = self.browse(mail_id)
+                debug_mail = mail.mail_server_id and mail.mail_server_id.smtp_debug or False
+                debug_msg = u'depuracion email: mail.mail, envio de correo'
+                self.print_logger_email(debug_mail, debug_msg)  
                 # TDE note: remove me when model_id field is present on mail.message - done here to avoid doing it multiple times in the sub method
                 if mail.model:
                     model = self.env['ir.model'].sudo().search([('model', '=', mail.model)])[0]
@@ -283,14 +299,17 @@ class MailMail(models.Model):
                                     ''
                         #Las siguientes lineas de Log fueron agregadas por Trescloud
                         start_process = timer()
-                        _logger.info(u'depuracion email: mail.mail, invoicar send_email %s, titulo: %s'%(model_print, mail.subject)                                                                      )
+                        debug_msg = u'depuracion email: mail.mail, invoicar send_email %s, titulo: %s'%(model_print, mail.subject)
+                        self.print_logger_email(debug_mail, debug_msg)  
                         res = IrMailServer.send_email(msg, mail_server_id=mail.mail_server_id.id)
                         #Las siguientes lineas de Log fueron agregadas por Trescloud
                         end_process = timer()
                         delta_process = end_process - start_process
-                        _logger.info(u'depuracion email: mail.mail, fin send_email  Tiempo (seg.) %s'%("%.3f" % delta_process))
+                        debug_msg = u'depuracion email: mail.mail, fin send_email  Tiempo (seg.) %s'%("%.3f" % delta_process)
+                        self.print_logger_email(debug_mail, debug_msg)
                     except AssertionError as error:
-                        _logger.info(u'depuracion email: mail.mail, error envio de correo.')
+                        debug_msg = u'depuracion email: mail.mail, error envio de correo.'
+                        self.print_logger_email(debug_mail, debug_msg)
                         if error.message == IrMailServer.NO_VALID_RECIPIENT:
                             # No valid recipient found for this particular
                             # mail item -> ignore error to avoid blocking
@@ -337,7 +356,8 @@ class MailMail(models.Model):
             #La siguiente linea de Log fue agregada por Trescloud
             end_email = timer()
             delta_email = end_email - start_email
-            _logger.info(u'depuracion email: mail.mail, Fin envio de correo  Tiempo (seg.) %s'%("%.3f" % delta_email))
+            debug_msg = u'depuracion email: mail.mail, Fin envio de correo  Tiempo (seg.) %s'%("%.3f" % delta_email)
+            self.print_logger_email(debug_mail, debug_msg)
             if auto_commit is True:
                 self._cr.commit()
         return True

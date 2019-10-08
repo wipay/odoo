@@ -336,7 +336,16 @@ class IrMailServer(models.Model):
                 Encoders.encode_base64(part)
                 msg.attach(part)
         return msg
-
+    
+    #siguiente metodo agregado por Tresclod
+    @api.model
+    def print_logger_email(self, debug_mail, msg):
+        '''
+        Imprime log del envio de mail.
+        '''
+        if debug_mail:
+            _logger.warning(u'%s'%(msg))
+    
     @api.model
     def _get_default_bounce_address(self):
         '''Compute the default bounce address.
@@ -458,13 +467,15 @@ class IrMailServer(models.Model):
             try:
                 #Las siguientes lineas de Log fueron agregadas por Trescloud
                 start_process = timer()
-                _logger.info(u'depuracion email: mail.server, servidor de correo ')
+                debug_msg = u'depuracion email: mail.server, servidor de correo'
+                self.print_logger_email(smtp_debug, debug_msg) 
                 smtp = self.connect(smtp_server, smtp_port, smtp_user, smtp_password, smtp_encryption or False, smtp_debug)
                 smtp.sendmail(smtp_from, smtp_to_list, message.as_string())
                 #Las siguientes lineas de Log fueron agregadas por Trescloud
                 end_process = timer()
                 delta_process = end_process - start_process
-                _logger.info(u'depuracion email: mail.server, envio de correo en Tiempo (seg.) %s'%("%.3f" % delta_process))
+                debug_msg = u'depuracion email: mail.server, envio de correo en Tiempo (seg.) %s'%("%.3f" % delta_process)
+                self.print_logger_email(smtp_debug, debug_msg) 
             finally:
                 if smtp is not None:
                     smtp.quit()
@@ -473,7 +484,8 @@ class IrMailServer(models.Model):
             msg = _("Mail delivery failed via SMTP server '%s'.\n%s: %s") % params
             _logger.info(msg)
             #La siguiente linea de Log fue agregada por Trescloud
-            _logger.info(u'depuracion email: mail.server, error envio de correo.')
+            debug_msg = u'depuracion email: mail.server, error envio de correo.'
+            self.print_logger_email(smtp_debug, debug_msg)
             raise MailDeliveryException(_("Mail Delivery Failed"), msg)
         return message_id
 
