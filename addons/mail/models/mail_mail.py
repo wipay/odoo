@@ -227,6 +227,7 @@ class MailMail(models.Model):
             start_email = timer()
             try:
                 mail = self.browse(mail_id)
+                #siguentes 3 lineas agregadas por Trescloud.
                 debug_mail = mail.mail_server_id and mail.mail_server_id.smtp_debug or False
                 debug_msg = u'depuracion email: mail.mail, envio de correo'
                 self.print_logger_email(debug_mail, debug_msg)  
