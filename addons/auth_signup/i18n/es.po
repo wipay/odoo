@@ -416,3 +416,9 @@ msgstr "base.config.settings"
 #: model:ir.ui.view,arch_db:auth_signup.fields
 msgid "e.g. John Doe"
 msgstr "Por ejemplo, John Smith"
+
+#. module: auth_signup
+#: code:addons/auth_signup/controllers/main.py:115
+#, python-format
+msgid "Passwords do not match; please retype them."
+msgstr "Las contraseñas no coinciden; por favor escríbalas nuevamente."
