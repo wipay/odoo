@@ -388,7 +388,7 @@ class account_payment(models.Model):
                     if rec.payment_type == 'outbound':
                         sequence_code = 'account.payment.supplier.invoice'
             #La siguiente linea fue modificada por TRESCLOUD, para evitar saltos de secuencia en reaprobacion de pagos
-            if rec.name == 'Draft Payment':
+            if rec.name == 'Draft Payment' or not rec.name:
                 rec.name = self.payment_sequence(rec.payment_date, sequence_code)
             if not rec.name and rec.payment_type != 'transfer':
                 raise UserError(_("You have to define a sequence for %s in your company.") % (sequence_code,))
