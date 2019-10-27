@@ -990,7 +990,7 @@ class AccountInvoice(models.Model):
 
             date = inv.date or inv.date_invoice
             move_vals = {
-                'ref': self.get_ref_for_account_move(),
+                'ref': self.get_ref_for_account_move(inv),
                 'line_ids': line,
                 'journal_id': journal.id,
                 'date': date,
@@ -1014,11 +1014,11 @@ class AccountInvoice(models.Model):
         return True
     
     @api.model
-    def get_ref_for_account_move(self):
+    def get_ref_for_account_move(self, invoice):
         '''
         Metodo hook para agregarle ref al asiento contable de la factura
         '''
-        return self.reference
+        return invoice.reference
 
     def _check_invoice_reference(self):
         for invoice in self:
