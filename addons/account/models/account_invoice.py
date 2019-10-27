@@ -756,7 +756,7 @@ class AccountInvoice(models.Model):
             analytic_tag_ids = [(4, analytic_tag.id, None) for analytic_tag in line.analytic_tag_ids]
             #Codigo agregado por TRESCLOUD
             #Adicionamos el display_name que en nuestro core se computa como "Fact 001-001-0000001"
-            name = " ".join([line.invoice_id.display_name,line.name.split('\n')[0][:64]])
+            name = " ".join([self.name_get()[0][1],line.name.split('\n')[0][:64]])
             move_line_dict = {
                 'invl_id': line.id,
                 'type': 'src',
@@ -791,7 +791,7 @@ class AccountInvoice(models.Model):
                 done_taxes.append(tax.id)
                 #Codigo agregado por TRESCLOUD
                 #Adicionamos el display_name que en nuestro core se computa como "Fact 001-001-0000001"
-                name = " ".join([tax_line.invoice_id.display_name,tax_line.name])
+                name = " ".join([self.name_get()[0][1],tax_line.name])
                 res.append({
                     'invoice_tax_line_id': tax_line.id,
                     'tax_line_id': tax_line.tax_id.id,
@@ -901,7 +901,7 @@ class AccountInvoice(models.Model):
                     amount_currency += res_amount_currency
                 #agregado por trescloud
                 array_name = []
-                array_name.append(self.display_name)
+                array_name.append(self.name_get()[0][1])
                 if self.name:
                     array_name.append(self.name)
                 name = ' '.join(item for item in array_name)
@@ -919,7 +919,7 @@ class AccountInvoice(models.Model):
                 })
         else:
             array_name = []
-            array_name.append(self.display_name)
+            array_name.append(self.name_get()[0][1])
             if self.name:
                 array_name.append(self.name)
             name = ' '.join(item for item in array_name)
@@ -990,7 +990,7 @@ class AccountInvoice(models.Model):
 
             date = inv.date or inv.date_invoice
             move_vals = {
-                'ref': inv.reference,
+                'ref': self.get_ref_for_account_move(),
                 'line_ids': line,
                 'journal_id': journal.id,
                 'date': date,
@@ -1012,6 +1012,13 @@ class AccountInvoice(models.Model):
             }
             inv.with_context(ctx).write(vals)
         return True
+    
+    @api.model
+    def get_ref_for_account_move(self):
+        '''
+        Metodo hook para agregarle ref al asiento contable de la factura
+        '''
+        return self.reference
 
     def _check_invoice_reference(self):
         for invoice in self:
