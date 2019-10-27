@@ -756,6 +756,8 @@ class AccountInvoice(models.Model):
             analytic_tag_ids = [(4, analytic_tag.id, None) for analytic_tag in line.analytic_tag_ids]
             #Codigo agregado por TRESCLOUD
             #Adicionamos el display_name que en nuestro core se computa como "Fact 001-001-0000001"
+            #Usamos el name_get en lugar del display name pues en este punto el display name solo tiene almacenado
+            #el prefijo en lugar el numero de factura completo
             name = " ".join([self.name_get()[0][1],line.name.split('\n')[0][:64]])
             move_line_dict = {
                 'invl_id': line.id,
