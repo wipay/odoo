@@ -5933,7 +5933,7 @@ msgstr "Etiqueta"
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_move_line_name
 msgid "Label"
-msgstr "Referencia"
+msgstr "Etiqueta"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_tax_description
