@@ -38,15 +38,12 @@ class Stage(models.Model):
     requirements = fields.Text('Requirements', help="Enter here the internal requirements for this stage (ex: Offer sent to customer). It will appear as a tooltip over the stage's name.")
     team_id = fields.Many2one('crm.team', string='Sales Team', ondelete='set null',
         help='Specific team that uses this stage. Other teams will not be able to see or use this stage.')
-    legend_priority = fields.Text('Priority Management Explanation', translate=True,
-        help='Explanation text to help users using the star and priority mechanism on stages or issues that are in this stage.')
     fold = fields.Boolean('Folded in Pipeline',
         help='This stage is folded in the kanban view when there are no records in that stage to display.')
 
     # This field for interface only
     team_count = fields.Integer('team_count', compute='_compute_team_count')
 
-    @api.multi
     def _compute_team_count(self):
         for stage in self:
             stage.team_count = self.env['crm.team'].search_count([])

@@ -25,10 +25,15 @@ class TestDefaultTeam(common.SavepointCase):
         })
         # Europe Team (fall back  team)
         cls.team_2 = cls.env.ref('sales_team.team_sales_department')
+        cls.team_3 = cls.env['crm.team'].create({
+            'name': 'Team 3',
+            'sequence': 2,
+            'company_id': False
+        })
 
     def test_01_user_team(self):
         """Get default team, when user belongs to one."""
-        team = self.CrmTeam.sudo(self.user)._get_default_team_id()
+        team = self.CrmTeam.with_user(self.user)._get_default_team_id()
         self.assertEqual(team, self.team_1)
 
     def test_02_fallback_team(self):
@@ -40,9 +45,9 @@ class TestDefaultTeam(common.SavepointCase):
         # Clear users from team.
         self.team_1.member_ids = [(5,)]
         # Case 1.
-        team = self.CrmTeam.sudo(self.user)._get_default_team_id()
+        team = self.CrmTeam.with_user(self.user)._get_default_team_id()
         self.assertEqual(team, self.team_2)
-        # Case 2.
+        # Case 2. If default team is not active, fall back is the next team with the higher sequence
         self.team_2.active = False
-        team = self.CrmTeam.sudo(self.user)._get_default_team_id()
-        self.assertEqual(team, self.CrmTeam)
+        team = self.CrmTeam.with_user(self.user)._get_default_team_id()
+        self.assertEqual(team, self.team_3)

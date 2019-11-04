@@ -23,9 +23,9 @@ class LunchOrderWizard(models.TransientModel):
 
     currency_id = fields.Many2one('res.currency', default=lambda self: self.env.company.currency_id)
 
-    product_id = fields.Many2one('lunch.product', string='Product ID')
+    product_id = fields.Many2one('lunch.product', string='Product')
     product_description = fields.Text('Description', related='product_id.description')
-    product_name = fields.Char('Product', related='product_id.name')
+    product_name = fields.Char('Product Name', related='product_id.name')
     product_category = fields.Many2one('lunch.product.category', related='product_id.category_id')
     topping_label_1 = fields.Char(related='product_id.category_id.topping_label_1')
     topping_label_2 = fields.Char(related='product_id.category_id.topping_label_2')
@@ -43,9 +43,12 @@ class LunchOrderWizard(models.TransientModel):
                                      domain="[('category_id', '=', product_category), ('topping_category', '=', 3)]",
                                      default=lambda self: self._default_order_line().topping_ids_3)
 
-    available_toppings_1 = fields.Boolean(help='Are toppings available for this product', compute='_compute_available_toppings')
-    available_toppings_2 = fields.Boolean(help='Are toppings available for this product', compute='_compute_available_toppings')
-    available_toppings_3 = fields.Boolean(help='Are toppings available for this product', compute='_compute_available_toppings')
+    available_toppings_1 = fields.Boolean(help='Are extras available for this product', compute='_compute_available_toppings')
+    available_toppings_2 = fields.Boolean(help='Are extras available for this product', compute='_compute_available_toppings')
+    available_toppings_3 = fields.Boolean(help='Are extras available for this product', compute='_compute_available_toppings')
+
+    image_1920 = fields.Image(related='product_id.image_1920')
+    image_128 = fields.Image(related='product_id.image_128')
 
     quantity = fields.Float('Quantity', default=1)
     price_total = fields.Float('Total Price', compute='_compute_price_total')

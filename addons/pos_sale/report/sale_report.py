@@ -37,7 +37,6 @@ class SaleReport(models.Model):
             count(*) AS nbr,
             pos.name AS name,
             pos.date_order AS date,
-            pos.date_order AS confirmation_date,
             CASE WHEN pos.state = 'draft' THEN 'pos_draft' WHEN pos.state = 'done' THEN 'pos_done' else pos.state END AS state,
             pos.partner_id AS partner_id,
             pos.user_id AS user_id,
@@ -49,7 +48,7 @@ class SaleReport(models.Model):
             t.categ_id AS categ_id,
             pos.pricelist_id AS pricelist_id,
             NULL AS analytic_account_id,
-            config.crm_team_id AS team_id,
+            pos.crm_team_id AS team_id,
             p.product_tmpl_id,
             partner.country_id AS country_id,
             partner.industry_id AS industry_id,
@@ -102,7 +101,7 @@ class SaleReport(models.Model):
             partner.industry_id,
             partner.commercial_partner_id,
             u.factor,
-            config.crm_team_id
+            pos.crm_team_id
         '''
         current = '(SELECT %s FROM %s GROUP BY %s)' % (select_, from_, groupby_)
 

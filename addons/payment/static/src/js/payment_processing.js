@@ -71,7 +71,7 @@ odoo.define('payment.processing', function (require) {
                 'tx_error': [],
             };
 
-            if (transactions.length > 0 && transactions[0].acquirer_provider == 'transfer') {
+            if (transactions.length > 0 && ['transfer', 'sepa_direct_debit'].indexOf(transactions[0].acquirer_provider) >= 0) {
                 window.location = transactions[0].return_url;
                 return;
             }
@@ -94,7 +94,7 @@ odoo.define('payment.processing', function (require) {
                 return nbTx;
             }
             // if there's only one tx to manage
-            if(countTxInState(['tx_done', 'tx_error']) === 1) {
+            if(countTxInState(['tx_done', 'tx_error', 'tx_pending']) === 1) {
                 var tx = render_values['tx_done'][0] || render_values['tx_error'][0];
                 if (tx) {
                     window.location = tx.return_url;
@@ -110,7 +110,7 @@ odoo.define('payment.processing', function (require) {
             this.$el.find('.o_payment_processing_content').html(html);
         },
         displayLoading: function () {
-            var msg = _t("We are processing your payments, please wait ...");
+            var msg = _t("We are processing your payment, please wait ...");
             $.blockUI({
                 'message': '<h2 class="text-white"><img src="/web/static/src/img/spin.png" class="fa-pulse"/>' +
                     '    <br />' + msg +

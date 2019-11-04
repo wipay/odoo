@@ -13,6 +13,7 @@
 
         <link href="/survey/static/src/css/survey_print.css" rel="stylesheet" type="text/css"/>
         <link href="/survey/static/src/css/survey_result.css" rel="stylesheet" type="text/css"></link>
+        <link rel="stylesheet" type="text/scss" href="/survey/static/src/scss/survey_templates.scss"/>
     </template>
 
     <template id="survey_report_assets_pdf" inherit_id="web.report_assets_pdf">
@@ -24,6 +25,7 @@
     <template id="assets_backend" name="survey assets" inherit_id="web.assets_backend">
         <xpath expr="." position="inside">
             <link rel="stylesheet" href="/survey/static/src/css/survey_result.css"/>
+            <script type="text/javascript" src="/survey/static/src/js/fields_section_one2many.js"/>
         </xpath>
     </template>
 

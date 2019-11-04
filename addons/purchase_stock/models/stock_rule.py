@@ -45,7 +45,7 @@ class StockRule(models.Model):
                 uom_id=procurement.product_uom)
 
             if not supplier:
-                msg = _('There is no vendor associated to the product %s. Please define a vendor for this product.') % (procurement.product_id.display_name,)
+                msg = _('There is no matching vendor price to generate the purchase order for product %s (no vendor defined, minimum quantity not reached, dates not valid, ...). Go on the product form and complete the list of vendors.') % (procurement.product_id.display_name)
                 raise UserError(msg)
 
             partner = supplier.name
@@ -90,7 +90,7 @@ class StockRule(models.Model):
             procurements = self._merge_procurements(procurements_to_merge)
 
             po_lines_by_product = {}
-            grouped_po_lines = groupby(po.order_line.filtered(lambda l: l.product_uom == l.product_id.uom_po_id).sorted('product_id'), key=lambda l: l.product_id.id)
+            grouped_po_lines = groupby(po.order_line.filtered(lambda l: not l.display_type and l.product_uom == l.product_id.uom_po_id).sorted('product_id'), key=lambda l: l.product_id.id)
             for product, po_lines in grouped_po_lines:
                 po_lines_by_product[product] = self.env['purchase.order.line'].concat(*list(po_lines))
             po_line_values = []
@@ -188,11 +188,15 @@ class StockRule(models.Model):
             price_unit = seller.currency_id._convert(
                 price_unit, line.order_id.currency_id, line.order_id.company_id, fields.Date.today())
 
-        return {
+        res = {
             'product_qty': line.product_qty + procurement_uom_po_qty,
             'price_unit': price_unit,
             'move_dest_ids': [(4, x.id) for x in values.get('move_dest_ids', [])]
         }
+        orderpoint_id = values.get('orderpoint_id')
+        if orderpoint_id:
+            res['orderpoint_id'] = orderpoint_id.id
+        return res
 
     @api.model
     def _prepare_purchase_order_line(self, product_id, product_qty, product_uom, company_id, values, po):
@@ -217,10 +221,10 @@ class StockRule(models.Model):
             price_unit = seller.currency_id._convert(
                 price_unit, po.currency_id, po.company_id, po.date_order or fields.Date.today())
 
-        product_lang = product_id.with_context({
-            'lang': partner.lang,
-            'partner_id': partner.id,
-        })
+        product_lang = product_id.with_context(
+            lang=partner.lang,
+            partner_id=partner.id,
+        )
         name = product_lang.display_name
         if product_lang.description_purchase:
             name += '\n' + product_lang.description_purchase
@@ -273,7 +277,7 @@ class StockRule(models.Model):
             'user_id': False,
             'picking_type_id': self.picking_type_id.id,
             'company_id': company_id.id,
-            'currency_id': partner.with_context(force_company=company_id.id).property_purchase_currency_id.id or self.env.company.currency_id.id,
+            'currency_id': partner.with_context(force_company=company_id.id).property_purchase_currency_id.id or company_id.currency_id.id,
             'dest_address_id': values.get('partner_id', False),
             'origin': ', '.join(origins),
             'payment_term_id': partner.with_context(force_company=company_id.id).property_supplier_payment_term_id.id,

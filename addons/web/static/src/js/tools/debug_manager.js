@@ -3,6 +3,7 @@ odoo.define('web.DebugManager', function (require) {
 
 var core = require('web.core');
 var session = require('web.session');
+var utils = require('web.utils');
 var Widget = require('web.Widget');
 
 var QWeb = core.qweb;
@@ -88,10 +89,7 @@ var DebugManager = Widget.extend({
      */
     regenerateAssets: function () {
         var self = this;
-        var domain = [
-            ['res_model', '=', 'ir.ui.view'],
-            ['name', 'like', 'assets_']
-        ];
+        var domain = utils.assetsDomain();
         this._rpc({
             model: 'ir.attachment',
             method: 'search',

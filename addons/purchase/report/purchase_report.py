@@ -14,7 +14,7 @@ class PurchaseReport(models.Model):
     _auto = False
     _order = 'date_order desc, price_total desc'
 
-    date_order = fields.Datetime('Order Date', readonly=True, help="Date on which this document has been created", oldname='date')
+    date_order = fields.Datetime('Order Date', readonly=True, help="Date on which this document has been created")
     state = fields.Selection([
         ('draft', 'Draft RFQ'),
         ('sent', 'RFQ Sent'),
@@ -34,11 +34,11 @@ class PurchaseReport(models.Model):
     delay_pass = fields.Float('Days to Receive', digits=(16, 2), readonly=True)
     price_total = fields.Float('Total', readonly=True)
     price_average = fields.Float('Average Cost', readonly=True, group_operator="avg")
-    nbr_lines = fields.Integer('# of Lines', readonly=True, oldname='nbr')
+    nbr_lines = fields.Integer('# of Lines', readonly=True)
     category_id = fields.Many2one('product.category', 'Product Category', readonly=True)
     product_tmpl_id = fields.Many2one('product.template', 'Product Template', readonly=True)
     country_id = fields.Many2one('res.country', 'Partner Country', readonly=True)
-    fiscal_position_id = fields.Many2one('account.fiscal.position', string='Fiscal Position', oldname='fiscal_position', readonly=True)
+    fiscal_position_id = fields.Many2one('account.fiscal.position', string='Fiscal Position', readonly=True)
     account_analytic_id = fields.Many2one('account.analytic.account', 'Analytic Account', readonly=True)
     commercial_partner_id = fields.Many2one('res.partner', 'Commercial Entity', readonly=True)
     weight = fields.Float('Gross Weight', readonly=True)
@@ -50,7 +50,6 @@ class PurchaseReport(models.Model):
     qty_billed = fields.Float('Qty Billed', readonly=True)
     qty_to_be_billed = fields.Float('Qty to be Billed', readonly=True)
 
-    @api.model_cr
     def init(self):
         # self._table = sale_report
         tools.drop_view_if_exists(self.env.cr, self._table)
@@ -93,7 +92,10 @@ class PurchaseReport(models.Model):
                     sum(l.product_qty / line_uom.factor * product_uom.factor) as qty_ordered,
                     sum(l.qty_received / line_uom.factor * product_uom.factor) as qty_received,
                     sum(l.qty_invoiced / line_uom.factor * product_uom.factor) as qty_billed,
-                    sum(l.product_qty / line_uom.factor * product_uom.factor) - sum(l.qty_received / line_uom.factor * product_uom.factor) as qty_to_be_billed
+                    case when t.purchase_method = 'purchase' 
+                         then sum(l.product_qty / line_uom.factor * product_uom.factor) - sum(l.qty_invoiced / line_uom.factor * product_uom.factor)
+                         else sum(l.qty_received / line_uom.factor * product_uom.factor) - sum(l.qty_invoiced / line_uom.factor * product_uom.factor)
+                    end as qty_to_be_billed
         """ % self.env['res.currency']._select_companies_rates()
         return select_str
 
@@ -136,6 +138,7 @@ class PurchaseReport(models.Model):
                 line_uom.uom_type,
                 line_uom.category_id,
                 t.uom_id,
+                t.purchase_method,
                 line_uom.id,
                 product_uom.factor,
                 partner.country_id,

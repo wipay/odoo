@@ -14,8 +14,8 @@ class HrOrgChartController(http.Controller):
             return None
         employee_id = int(employee_id)
 
-        if ('context' in kw and 'allowed_company_ids' in kw['context']):
-            cids = kw['context']['allowed_company_ids']
+        if 'allowed_company_ids' in request.env.context:
+            cids = request.env.context['allowed_company_ids']
         else:
             cids = [request.env.company.id]
 
@@ -38,6 +38,7 @@ class HrOrgChartController(http.Controller):
             link='/mail/view?model=%s&res_id=%s' % ('hr.employee.public', employee.id,),
             job_id=job.id,
             job_name=job.name or '',
+            job_title=employee.job_title or '',
             direct_sub_count=len(employee.child_ids),
             indirect_sub_count=employee.child_all_count,
         )
@@ -53,7 +54,10 @@ class HrOrgChartController(http.Controller):
 
         employee = self._check_employee(employee_id, **kw)
         if not employee:  # to check
-            return {}
+            return {
+                'managers': [],
+                'children': [],
+            }
 
         # compute employee data for org chart
         ancestors, current = request.env['hr.employee.public'].sudo(), employee.sudo()

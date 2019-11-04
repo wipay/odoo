@@ -261,7 +261,7 @@ var FileWidget = SearchableMediaWidget.extend({
      * @override
      */
     _clear: function () {
-        if (!this.$media.is('img')) {
+        if (this.$media.is('img')) {
             return;
         }
         var allImgClasses = /(^|\s+)((img(\s|$)|img-(?!circle|rounded|thumbnail))[^\s]*)/g;
@@ -390,7 +390,11 @@ var FileWidget = SearchableMediaWidget.extend({
             });
             optimizeDialog.on('closed', self, function () {
                 self.noSave = true;
-                resolve(attachment);
+                if (isExisting) {
+                    reject();
+                } else {
+                    resolve(attachment);
+                }
             });
         });
         var always = function () {
@@ -418,16 +422,17 @@ var FileWidget = SearchableMediaWidget.extend({
         var attachments = this.attachments.slice(0, this.numberOfAttachmentsToDisplay);
 
         // Render menu & content
-        this.$('.existing-attachments').replaceWith(
+        this.$('.o_we_existing_attachments').replaceWith(
             this._renderExisting(attachments)
         );
 
         this._highlightSelected();
 
         // adapt load more
+        var noLoadMoreButton = this.NUMBER_OF_ATTACHMENTS_TO_DISPLAY >= this.attachments.length;
         var noMoreImgToLoad = this.numberOfAttachmentsToDisplay >= this.attachments.length;
+        this.$('.o_load_done_msg').toggleClass('d-none', noLoadMoreButton || !noMoreImgToLoad);
         this.$('.o_load_more').toggleClass('d-none', noMoreImgToLoad);
-        this.$('.o_load_done_msg').toggleClass('d-none', !noMoreImgToLoad);
     },
     /**
      * @private
@@ -539,7 +544,7 @@ var FileWidget = SearchableMediaWidget.extend({
      * @param {boolean} isURL
      * @param {boolean} isImage
      */
-    _updateAddUrlUi(emptyValue, isURL, isImage) {
+    _updateAddUrlUi: function (emptyValue, isURL, isImage) {
         this.$addUrlButton.toggleClass('btn-secondary', emptyValue)
             .toggleClass('btn-primary', !emptyValue)
             .prop('disabled', !isURL);
@@ -679,7 +684,11 @@ var FileWidget = SearchableMediaWidget.extend({
                 }).then(function (prevented) {
                     if (_.isEmpty(prevented)) {
                         self.attachments = _.without(self.attachments, attachment);
-                        $a.closest('.o_existing_attachment_cell').remove();
+                        if (!self.attachments.length) {
+                            self._renderImages(); //render the message and image if empty
+                        } else {
+                            $a.closest('.o_existing_attachment_cell').remove();
+                        }
                         return;
                     }
                     self.$errorText.replaceWith(QWeb.render('wysiwyg.widgets.image.existing.error', {
@@ -816,6 +825,14 @@ var DocumentWidget = FileWidget.extend({
         this._super.apply(this, arguments);
         this.$addUrlButton.text((isURL && isImage) ? _t("Add as image") : _t("Add document"));
         this.$urlWarning.toggleClass('d-none', !isURL || !isImage);
+    },
+    /**
+     * @override
+     */
+    _getAttachmentsDomain: function (needle) {
+        var domain = this._super.apply(this, arguments);
+        // the assets should not be part of the documents
+        return domain.concat('!', utils.assetsDomain());
     },
 });
 
@@ -992,8 +1009,9 @@ var VideoWidget = MediaWidget.extend({
     /**
      * @constructor
      */
-    init: function (parent, media) {
+    init: function (parent, media, options) {
         this._super.apply(this, arguments);
+        this.isForBgVideo = !!options.isForBgVideo;
         this._onVideoCodeInput = _.debounce(this._onVideoCodeInput, 1000);
     },
     /**
@@ -1004,7 +1022,7 @@ var VideoWidget = MediaWidget.extend({
 
         if (this.media) {
             var $media = $(this.media);
-            var src = $media.data('oe-expression') || $media.data('src') || '';
+            var src = $media.data('oe-expression') || $media.data('src') || ($media.is('iframe') ? $media.attr('src') : '') || '';
             this.$('textarea#o_video_text').val(src);
 
             this.$('input#o_video_autoplay').prop('checked', src.indexOf('autoplay=1') >= 0);
@@ -1030,6 +1048,9 @@ var VideoWidget = MediaWidget.extend({
      */
     save: function () {
         this._updateVideo();
+        if (this.isForBgVideo) {
+            return Promise.resolve({bgVideoSrc: this.$content.attr('src')});
+        }
         if (this.$('.o_video_dialog_iframe').is('iframe')) {
             this.$media = $(
                 '<div class="media_iframe_video" data-oe-expression="' + this.$content.attr('src') + '">' +
@@ -1059,8 +1080,11 @@ var VideoWidget = MediaWidget.extend({
             }
         }
         var allVideoClasses = /(^|\s)media_iframe_video(\s|$)/g;
-        this.media.className = this.media.className && this.media.className.replace(allVideoClasses, ' ');
-        this.media.innerHTML = '';
+        var isVideo = this.media.className && this.media.className.match(allVideoClasses);
+        if (isVideo) {
+            this.media.className = this.media.className.replace(allVideoClasses, ' ');
+            this.media.innerHTML = '';
+        }
     },
     /**
      * Creates a video node according to the given URL and options. If not
@@ -1104,7 +1128,7 @@ var VideoWidget = MediaWidget.extend({
             return {errorCode: 0};
         }
 
-        var autoplay = options.autoplay ? '?autoplay=1' : '?autoplay=0';
+        var autoplay = options.autoplay ? '?autoplay=1&mute=1' : '?autoplay=0';
 
         if (ytMatch && ytMatch[2].length === 11) {
             $video.attr('src', '//www.youtube' + (ytMatch[1] || '') + '.com/embed/' + ytMatch[2] + autoplay);
@@ -1115,7 +1139,7 @@ var VideoWidget = MediaWidget.extend({
             $video.attr('src', vinMatch[0] + '/embed/simple');
             videoType = 'vin';
         } else if (vimMatch && vimMatch[3].length) {
-            $video.attr('src', '//player.vimeo.com/video/' + vimMatch[3] + autoplay);
+            $video.attr('src', '//player.vimeo.com/video/' + vimMatch[3] + autoplay.replace('mute', 'muted'));
             videoType = 'vim';
         } else if (dmMatch && dmMatch[2].length) {
             var justId = dmMatch[2].replace('video/', '');
@@ -1133,7 +1157,8 @@ var VideoWidget = MediaWidget.extend({
             $video.attr('src', $video.attr('src') + '&rel=0');
         }
         if (options.loop && (ytMatch || vimMatch)) {
-            $video.attr('src', $video.attr('src') + '&loop=1');
+            var videoSrc = _.str.sprintf('%s&loop=1', $video.attr('src'));
+            $video.attr('src', ytMatch ? _.str.sprintf('%s&playlist=%s', videoSrc, ytMatch[2]) : videoSrc);
         }
         if (options.hide_controls && (ytMatch || dmMatch)) {
             $video.attr('src', $video.attr('src') + '&controls=0');
@@ -1179,13 +1204,13 @@ var VideoWidget = MediaWidget.extend({
         var url = embedMatch ? embedMatch[1] : code;
 
         var query = this._createVideoNode(url, {
-            autoplay: this.$('input#o_video_autoplay').is(':checked'),
-            hide_controls: this.$('input#o_video_hide_controls').is(':checked'),
-            loop: this.$('input#o_video_loop').is(':checked'),
-            hide_fullscreen: this.$('input#o_video_hide_fullscreen').is(':checked'),
-            hide_yt_logo: this.$('input#o_video_hide_yt_logo').is(':checked'),
-            hide_dm_logo: this.$('input#o_video_hide_dm_logo').is(':checked'),
-            hide_dm_share: this.$('input#o_video_hide_dm_share').is(':checked'),
+            'autoplay': this.isForBgVideo || this.$('input#o_video_autoplay').is(':checked'),
+            'hide_controls': this.isForBgVideo || this.$('input#o_video_hide_controls').is(':checked'),
+            'loop': this.isForBgVideo || this.$('input#o_video_loop').is(':checked'),
+            'hide_fullscreen': this.isForBgVideo || this.$('input#o_video_hide_fullscreen').is(':checked'),
+            'hide_yt_logo': this.isForBgVideo || this.$('input#o_video_hide_yt_logo').is(':checked'),
+            'hide_dm_logo': this.isForBgVideo || this.$('input#o_video_hide_dm_logo').is(':checked'),
+            'hide_dm_share': this.isForBgVideo || this.$('input#o_video_hide_dm_share').is(':checked'),
         });
 
         var $optBox = this.$('.o_video_dialog_options');
@@ -1201,8 +1226,9 @@ var VideoWidget = MediaWidget.extend({
         // Individually show / hide options base on the video provider
         $optBox.find('div.o_' + query.type + '_option').removeClass('d-none');
 
-        // Hide the entire options box if no options are available
-        $optBox.toggleClass('d-none', $optBox.find('div:not(.d-none)').length === 0);
+        // Hide the entire options box if no options are available or if the
+        // dialog is opened for a background-video
+        $optBox.toggleClass('d-none', this.isForBgVideo || $optBox.find('div:not(.d-none)').length === 0);
 
         if (query.type === 'yt') {
             // Youtube only: If 'hide controls' is checked, hide 'fullscreen'

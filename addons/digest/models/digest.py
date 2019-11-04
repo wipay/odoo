@@ -80,21 +80,17 @@ class Digest(models.Model):
         vals['next_run_date'] = date.today() + relativedelta(days=3)
         return super(Digest, self).create(vals)
 
-    @api.multi
     def action_subscribe(self):
         if self.env.user not in self.user_ids:
             self.sudo().user_ids |= self.env.user
 
-    @api.multi
     def action_unsubcribe(self):
         if self.env.user in self.user_ids:
             self.sudo().user_ids -= self.env.user
 
-    @api.multi
     def action_activate(self):
         self.state = 'activated'
 
-    @api.multi
     def action_deactivate(self):
         self.state = 'deactivated'
 
@@ -109,8 +105,8 @@ class Digest(models.Model):
         self.ensure_one()
         res = {}
         for tf_name, tf in self._compute_timeframes(company).items():
-            digest = self.with_context(start_date=tf[0][0], end_date=tf[0][1], company=company).sudo(user.id)
-            previous_digest = self.with_context(start_date=tf[1][0], end_date=tf[1][1], company=company).sudo(user.id)
+            digest = self.with_context(start_date=tf[0][0], end_date=tf[0][1], company=company).with_user(user)
+            previous_digest = self.with_context(start_date=tf[1][0], end_date=tf[1][1], company=company).with_user(user)
             kpis = {}
             for field_name, field in self._fields.items():
                 if field.type == 'boolean' and field_name.startswith(('kpi_', 'x_kpi_', 'x_studio_kpi_')) and self[field_name]:

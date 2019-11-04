@@ -50,7 +50,7 @@ class TestWarehouse(common.TestMrpCommon):
         return p
 
     def test_manufacturing_route(self):
-        warehouse_1_stock_manager = self.warehouse_1.sudo(self.user_stock_manager)
+        warehouse_1_stock_manager = self.warehouse_1.with_user(self.user_stock_manager)
         manu_rule = self.env['stock.rule'].search([
             ('action', '=', 'manufacture'),
             ('warehouse_id', '=', self.warehouse_1.id)])
@@ -90,10 +90,12 @@ class TestWarehouse(common.TestMrpCommon):
         lot_product_4 = self.env['stock.production.lot'].create({
             'name': '0000000000001',
             'product_id': self.product_4.id,
+            'company_id': self.env.company.id,
         })
         lot_product_2 = self.env['stock.production.lot'].create({
             'name': '0000000000002',
             'product_id': self.product_2.id,
+            'company_id': self.env.company.id,
         })
 
         stock_inv_product_4 = self.env['stock.inventory'].create({
@@ -172,7 +174,7 @@ class TestWarehouse(common.TestMrpCommon):
         workorder = mo_laptop.workorder_ids[0]
 
         workorder.button_start()
-        serial = self.env['stock.production.lot'].create({'product_id': self.laptop.id})
+        serial = self.env['stock.production.lot'].create({'product_id': self.laptop.id, 'company_id': self.env.company.id})
         workorder.finished_lot_id = serial
         workorder.record_production()
         mo_laptop.button_mark_done()
@@ -190,7 +192,7 @@ class TestWarehouse(common.TestMrpCommon):
         """
         self.laptop.tracking = 'serial'
         mo_laptop = self.new_mo_laptop()
-        serial = self.env['stock.production.lot'].create({'product_id': self.laptop.id})
+        serial = self.env['stock.production.lot'].create({'product_id': self.laptop.id, 'company_id': self.env.company.id})
 
         product_produce = self.env['mrp.product.produce'].with_context({
             'active_id': mo_laptop.id,
@@ -305,8 +307,6 @@ class TestKitPicking(common.TestMrpCommon):
         # We create an 'immediate transfer' receipt for x3 kit_parent
         self.test_partner = self.env['res.partner'].create({
             'name': 'Notthat Guyagain',
-            'supplier': True,
-            'customer': True,
         })
         self.test_supplier = self.env['stock.location'].create({
             'name': 'supplier',

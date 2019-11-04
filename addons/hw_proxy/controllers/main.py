@@ -127,7 +127,7 @@ class Proxy(http.Controller):
                 %s
                 </pre>
 
-            """ % subprocess.check_output('lsusb -v', shell=True).decode('utf-8')
+            """ % subprocess.check_output(['lsusb', '-v']).decode('utf-8')
 
         return request.make_response(resp,{
             'Cache-Control': 'no-cache',
@@ -208,17 +208,6 @@ class Proxy(http.Controller):
     @http.route('/hw_proxy/print_receipt', type='json', auth='none', cors='*')
     def print_receipt(self, receipt):
         print('print_receipt %s', receipt)
-
-    @http.route('/hw_proxy/is_scanner_connected', type='json', auth='none', cors='*')
-    def is_scanner_connected(self, receipt):
-        print('is_scanner_connected?')
-        return False
-
-    @http.route('/hw_proxy/scanner', type='json', auth='none', cors='*')
-    def scanner(self, receipt):
-        print('scanner')
-        time.sleep(10)
-        return ''
 
     @http.route('/hw_proxy/log', type='json', auth='none', cors='*')
     def log(self, arguments):

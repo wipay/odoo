@@ -25,6 +25,7 @@ var Gui = core.Class.extend({
         this.startup_screen = null;
         this.current_popup  = null;
         this.current_screen = null;
+        this.show_sync_errors = true;
 
         this.chrome.ready.then(function(){
             self.close_other_tabs();
@@ -165,6 +166,15 @@ var Gui = core.Class.extend({
         this.current_popup = this.popup_instances[name];
         return this.current_popup.show(options);
     },
+    show_sync_error_popup: function() {
+        if (this.show_sync_errors) {
+            this.show_popup('error-sync',{
+                'title':_t('Changes could not be saved'),
+                'body': _t('You must be connected to the internet to save your changes.\n\n' +
+                        'Orders that where not synced before will be synced next time you close an order while connected to the internet or when you close the session.'),
+            });
+        }
+    },
 
     // close the current popup.
     close_popup: function() {
@@ -193,7 +203,7 @@ var Gui = core.Class.extend({
         localStorage['message'] = '';
         localStorage['message'] = JSON.stringify({
             'message':'close_tabs',
-            'session': this.pos.pos_session.id,
+            'config': this.pos.config.id,
             'window_uid': now,
         });
 
@@ -210,7 +220,7 @@ var Gui = core.Class.extend({
 
                 var msg = JSON.parse(event.newValue);
                 if ( msg.message  === 'close_tabs' &&
-                     msg.session  ==  self.pos.pos_session.id &&
+                     msg.config  ==  self.pos.config.id &&
                      msg.window_uid != now) {
 
                     console.info('POS / Session opened in another window. EXITING POS');

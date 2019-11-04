@@ -37,7 +37,7 @@ class StockRule(models.Model):
         for procurement, rule in procurements:
             bom = self._get_matching_bom(procurement.product_id, procurement.company_id, procurement.values)
             if not bom:
-                msg = _('There is no Bill of Material found for the product %s. Please define a Bill of Material for this product.') % (procurement.product_id.display_name,)
+                msg = _('There is no Bill of Material of type manufacture or kit found for the product %s. Please define a Bill of Material for this product.') % (procurement.product_id.display_name,)
                 raise UserError(msg)
 
             productions_values_by_company[procurement.company_id.id].append(rule._prepare_mo_vals(*procurement, bom))
@@ -66,7 +66,6 @@ class StockRule(models.Model):
         fields += ['bom_line_id']
         return fields
 
-    @api.multi
     def _get_matching_bom(self, product_id, company_id, values):
         if values.get('bom_id', False):
             return values['bom_id']
@@ -83,8 +82,9 @@ class StockRule(models.Model):
             'location_src_id': self.location_src_id.id or self.picking_type_id.default_location_src_id.id or location_id.id,
             'location_dest_id': location_id.id,
             'bom_id': bom.id,
-            'date_planned_start': fields.Datetime.to_string(self._get_date_planned(product_id, company_id, values)),
+            'date_deadline': fields.Datetime.to_string(self._get_date_planned(product_id, company_id, values)),
             'date_planned_finished': values['date_planned'],
+            'date_planned_start': fields.Datetime.from_string(values['date_planned']) - relativedelta(hours=1),
             'procurement_group_id': False,
             'propagate_cancel': self.propagate_cancel,
             'propagate_date': self.propagate_date,

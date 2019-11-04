@@ -389,12 +389,8 @@ tour.register('main_flow_tour', {
     trigger: 'label:contains("Untaxed Amount")',
     // click somewhere else to exit cell focus
 }, {
-    trigger: ".o_statusbar_buttons > button.o_sale_print:enabled",
-    content: _t("<p><b>Print this quotation.</b></p>"),
-    position: "bottom"
-}, {
     trigger: ".o_statusbar_buttons > button:enabled:contains('Send by Email')",
-    extra_trigger: ".o_statusbar_status .btn-primary:contains('Quotation Sent')",
+    extra_trigger: ".o_statusbar_status .btn-primary:contains('Quotation')",
     content: _t("Try to send it to email"),
     position: "bottom",
 }, {
@@ -529,7 +525,7 @@ tour.register('main_flow_tour', {
     content: _t('go to Vendor Bills'),
     position: 'bottom',
 }, {
-    trigger: ".o_statusbar_buttons > button:enabled:contains('Validate')",
+    trigger: ".o_statusbar_buttons > button:enabled:contains('Post')",
     content: _t("Try to send it to email"),
     position: "bottom",
 }, {
@@ -608,7 +604,7 @@ tour.register('main_flow_tour', {
     position: "bottom"
 }, {
     trigger: ".o_data_row:first",
-    extra_trigger: '.o_control_panel > .breadcrumb:contains("Sales Orders")',
+    extra_trigger: '.o_control_panel .breadcrumb:contains("Sales Orders")',
     content: _t("Go to the last sale order"),
     position: "right"
 }, {
@@ -664,7 +660,7 @@ tour.register('main_flow_tour', {
     content: _t("Create and View Invoices"),
     position: "bottom",
 }, {
-    trigger: ".o_statusbar_buttons > button:enabled:contains('Validate')",
+    trigger: ".o_statusbar_buttons > button:enabled:contains('Post')",
     content: _t("Validate"),
     position: "bottom",
 }, {

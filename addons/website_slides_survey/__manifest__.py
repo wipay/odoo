@@ -13,6 +13,8 @@
         'views/assets.xml',
         'views/slide_channel_views.xml',
         'views/slide_slide_views.xml',
+        'views/survey_survey_views.xml',
+        'views/website_slides_menu_views.xml',
         'views/website_slides_templates_course.xml',
         'views/website_slides_templates_lesson.xml',
         'views/website_slides_templates_lesson_fullscreen.xml',
@@ -25,5 +27,6 @@
     'demo': [
         'data/survey_demo.xml',
         'data/slide_slide_demo.xml',
+        'data/survey.user_input_line.csv',
     ],
 }

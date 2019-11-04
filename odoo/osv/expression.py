@@ -123,6 +123,7 @@ from zlib import crc32
 from datetime import date, datetime, time
 import odoo.modules
 from odoo.tools import pycompat
+from odoo.tools.misc import get_lang
 from ..models import MAGIC_COLUMNS, BaseModel
 import odoo.tools as tools
 
@@ -134,8 +135,8 @@ AND_OPERATOR = '&'
 DOMAIN_OPERATORS = (NOT_OPERATOR, OR_OPERATOR, AND_OPERATOR)
 
 # List of available term operators. It is also possible to use the '<>'
-# operator, which is strictly the same as '!='; the later should be prefered
-# for consistency. This list doesn't contain '<>' as it is simpified to '!='
+# operator, which is strictly the same as '!='; the later should be preferred
+# for consistency. This list doesn't contain '<>' as it is simplified to '!='
 # by the normalize_operator() function (so later part of the code deals with
 # only one representation).
 # Internals (i.e. not available to the user) 'inselect' and 'not inselect'
@@ -198,11 +199,12 @@ def normalize_domain(domain):
         if expected == 0:                   # more than expected, like in [A, B]
             result[0:0] = [AND_OPERATOR]             # put an extra '&' in front
             expected = 1
-        result.append(token)
         if isinstance(token, (list, tuple)):  # domain term
             expected -= 1
+            token = tuple(token)
         else:
             expected += op_arity.get(token, 0) - 1
+        result.append(token)
     assert expected == 0, 'This domain is syntactically not correct: %s' % (domain)
     return result
 
@@ -713,7 +715,7 @@ class expression(object):
                 :var obj comodel: relational model of field (field.comodel)
                     (res_partner.bank_ids -> res.partner.bank)
         """
-        cr, uid, context = self.root_model.env.args
+        cr, uid, context, su = self.root_model.env.args
 
         def to_ids(value, comodel, leaf):
             """ Normalize a single id or name, or a list of those, into a list of ids
@@ -1145,7 +1147,7 @@ class expression(object):
 
                     params = (
                         model._name + ',' + left,
-                        model.env.lang or 'en_US',
+                        get_lang(model.env).code,
                         'model',
                         right,
                     )
@@ -1264,11 +1266,11 @@ class expression(object):
             column = '%s.%s' % (table_alias, _quote(left))
             query = '(%s %s %s)' % (unaccent(column + cast), sql_operator, unaccent(format))
 
+            if (need_wildcard and not right) or (right and operator in NEGATIVE_TERM_OPERATORS):
+                query = '(%s OR %s."%s" IS NULL)' % (query, table_alias, left)
+
             if need_wildcard:
-                native_str = pycompat.to_text(right)
-                if not native_str:
-                    query = '(%s OR %s."%s" IS NULL)' % (query, table_alias, left)
-                params = ['%%%s%%' % native_str]
+                params = ['%%%s%%' % pycompat.to_text(right)]
             else:
                 field = model._fields[left]
                 params = [field.convert_to_column(right, model, validate=False)]

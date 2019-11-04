@@ -26,7 +26,7 @@ class PosOrderReport(models.Model):
     average_price = fields.Float(string='Average Price', readonly=True, group_operator="avg")
     location_id = fields.Many2one('stock.location', string='Location', readonly=True)
     company_id = fields.Many2one('res.company', string='Company', readonly=True)
-    nbr_lines = fields.Integer(string='Sale Line Count', readonly=True, oldname='nbr')
+    nbr_lines = fields.Integer(string='Sale Line Count', readonly=True)
     product_qty = fields.Integer(string='Product Quantity', readonly=True)
     journal_id = fields.Many2one('account.journal', string='Journal')
     delay_validation = fields.Integer(string='Delay Validation')
@@ -63,13 +63,13 @@ class PosOrderReport(models.Model):
                 pt.pos_categ_id,
                 s.pricelist_id,
                 s.session_id,
-                s.invoice_id IS NOT NULL AS invoiced
+                s.account_move IS NOT NULL AS invoiced
         """
 
     def _from(self):
         return """
             FROM pos_order_line AS l
-                LEFT JOIN pos_order s ON (s.id=l.order_id)
+                INNER JOIN pos_order s ON (s.id=l.order_id)
                 LEFT JOIN product_product p ON (l.product_id=p.id)
                 LEFT JOIN product_template pt ON (p.product_tmpl_id=pt.id)
                 LEFT JOIN uom_uom u ON (u.id=pt.uom_id)
@@ -81,7 +81,7 @@ class PosOrderReport(models.Model):
             GROUP BY
                 s.id, s.date_order, s.partner_id,s.state, pt.categ_id,
                 s.user_id, s.location_id, s.company_id, s.sale_journal,
-                s.pricelist_id, s.invoice_id, s.create_date, s.session_id,
+                s.pricelist_id, s.account_move, s.create_date, s.session_id,
                 l.product_id,
                 pt.categ_id, pt.pos_categ_id,
                 p.product_tmpl_id,
@@ -94,7 +94,6 @@ class PosOrderReport(models.Model):
                 SUM(l.qty * u.factor) != 0
         """
 
-    @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self._cr, self._table)
         self._cr.execute("""
