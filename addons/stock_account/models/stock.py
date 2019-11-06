@@ -263,7 +263,15 @@ class StockMove(models.Model):
             acc_dest = self.location_dest_id.valuation_in_account_id.id
         else:
             acc_dest = accounts_data['stock_output'].id
-
+        #Las siguiente lineas fueron agregadas por Trescloud
+        ctx = self._context.copy()
+        #Por contexto se setea el acc_src y acc_dest con el fin
+        #de prevalecer la cuenta ingresada por el usuarios, no importa
+        #si las dos cuentas son iguales, un metodo superior seleccionara la
+        #cuenta contable (acc_src o acc_dest) la contapartida le da la variable acc_valuation
+        if ctx.get('force_account_adjust_inventory', False):
+            acc_src = acc_dest = ctx.get('force_account_adjust_inventory', False)
+        #Fin de las lineas agregadas por Trescloud.
         acc_valuation = accounts_data.get('stock_valuation', False)
         if acc_valuation:
             acc_valuation = acc_valuation.id
