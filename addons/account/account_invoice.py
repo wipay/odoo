@@ -844,6 +844,12 @@ class account_invoice(osv.osv):
         :return: the (possibly updated) final move_lines to create for this invoice
         """
         return move_lines
+    
+    def _extend_taxes_manual(self, cr, uid, tax, tax_key, context=None):
+        """
+        Hook para extender el cambio de bases imponibles
+        """
+        return tax_key
 
     def check_tax_lines(self, cr, uid, inv, compute_taxes, ait_obj):
         company_currency = self.pool['res.company'].browse(cr, uid, inv.company_id.id).currency_id
@@ -854,6 +860,7 @@ class account_invoice(osv.osv):
             tax_key = []
             for tax in inv.tax_line:
                 if tax.manual:
+                    tax_key = self._extend_taxes_manual(cr, uid, tax, tax_key, context={})
                     continue
                 key = (tax.tax_code_id.id, tax.base_code_id.id, tax.account_id.id, tax.account_analytic_id.id)
                 tax_key.append(key)
