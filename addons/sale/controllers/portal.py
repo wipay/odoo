@@ -90,16 +90,41 @@ class CustomerPortal(CustomerPortal):
         })
         return request.render("sale.portal_my_quotations", values)
 
+    # INICIO DEL CODIGO AGREAGDO POR TRESCLOUD
+    def get_portal_my_orders_base_domain_order_satates(self, partner):
+        """
+         Returns valid order domains to be used in base domain to search
+         orders to show in user history.
+        """
+        return ['sale', 'done']
+
+    def get_portal_my_orders_base_domain(self, partner):
+        """
+        Returns base domain to search orders to show in user history.
+        May be used as a hook to add new domain tuples.
+        """
+        domain = [
+            ('message_partner_ids', 'child_of',
+             [partner.commercial_partner_id.id]),
+            (
+                'state',
+                'in',
+                self.get_portal_my_orders_base_domain_order_satates(
+                    partner)
+            )
+        ]
+        return domain
+    # FIN DEL CODIGO AGREAGDO POR TRESCLOUD
+
     @http.route(['/my/orders', '/my/orders/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_orders(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
         SaleOrder = request.env['sale.order']
 
-        domain = [
-            ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
-            ('state', 'in', ['sale', 'done'])
-        ]
+        # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+        domain = self.get_portal_my_orders_base_domain(partner)
+        # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
 
         searchbar_sortings = {
             'date': {'label': _('Order Date'), 'order': 'date_order desc'},
