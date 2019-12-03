@@ -790,7 +790,9 @@ publicWidget.registry.websiteSaleCart = publicWidget.Widget.extend({
         $new.addClass('border border-primary');
 
         var $form = $(ev.currentTarget).parent('div.one_kanban').find('form.d-none');
-        $.post($form.attr('action'), $form.serialize()+'&xhr=1');
+        // INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+        return $.post($form.attr('action'), $form.serialize()+'&xhr=1');
+        // FIN DEL CODIGO MODIFICADO POR TRESCLOUD
     },
     /**
      * @private
@@ -937,4 +939,11 @@ publicWidget.registry.productsSearchBar = publicWidget.Widget.extend({
         }
     },
 });
+
+// INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+ return {
+    websiteSaleCart: publicWidget.registry.websiteSaleCart,
+ }
+ // fin DEL CODIGO AGREGADO POR TRESCLOUD
+
 });
