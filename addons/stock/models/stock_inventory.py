@@ -274,6 +274,11 @@ class Inventory(models.Model):
                 product_data[void_field] = False
             product_data['theoretical_qty'] = product_data['product_qty']
             if product_data['product_id']:
+                product_id = Product.browse(product_data['product_id'])
+                #La siguientes lines fueron agregadas por trescloud, para 
+                #filtramos producto inactivos.
+                if not product_id.active:
+                    continue
                 product_data['product_uom_id'] = Product.browse(product_data['product_id']).uom_id.id
                 quant_products |= Product.browse(product_data['product_id'])
             vals.append(product_data)
@@ -297,6 +302,10 @@ class Inventory(models.Model):
             exhausted_domain += [('id', 'not in', quant_products.ids)]
         exhausted_products = self.env['product.product'].search(exhausted_domain)
         for product in exhausted_products:
+            #La siguientes lines fueron agregadas por trescloud, para 
+            #filtramos producto inactivos.
+            if not product.active:
+                continue
             vals.append({
                 'inventory_id': self.id,
                 'product_id': product.id,
