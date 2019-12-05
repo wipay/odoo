@@ -211,6 +211,20 @@ models.Order = models.Order.extend({
         });
         this.trigger('change',this);
     },
+    // INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+    // Devuelve el objeto de valores que ha cambiado
+    get_push_obj: function(overwrite_obj, curr, categories){
+        var result = {
+            'id':       curr.product_id,
+            'name':     this.pos.db.get_product_by_id(curr.product_id).display_name,
+            'name_wrapped': curr.product_name_wrapped,
+            'note':     curr.note,
+            'qty':      0,
+        }
+        $.extend(true, result, overwrite_obj);
+        return result;
+    },
+    // FIN DEL CODIGO AGREGADO POR TRESCLOUD
     computeChanges: function(categories){
         var current_res = this.build_line_resume();
         var old_res     = this.saved_resume || {};
@@ -224,29 +238,23 @@ models.Order = models.Order.extend({
             var old  = old_res[line_hash];
 
             if (typeof old === 'undefined') {
-                add.push({
-                    'id':       curr.product_id,
-                    'name':     this.pos.db.get_product_by_id(curr.product_id).display_name,
-                    'name_wrapped': curr.product_name_wrapped,
-                    'note':     curr.note,
+                // INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+                add.push(this.get_push_obj({
                     'qty':      curr.qty,
-                });
+                }, curr, categories));
+                // FIN DEL CODIGO MODIFICADO POR TRESCLOUD
             } else if (old.qty < curr.qty) {
-                add.push({
-                    'id':       curr.product_id,
-                    'name':     this.pos.db.get_product_by_id(curr.product_id).display_name,
-                    'name_wrapped': curr.product_name_wrapped,
-                    'note':     curr.note,
+                // INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+                add.push(this.get_push_obj({
                     'qty':      curr.qty - old.qty,
-                });
+                }, curr, categories));
+                // FIN DEL CODIGO MODIFICADO POR TRESCLOUD
             } else if (old.qty > curr.qty) {
-                rem.push({
-                    'id':       curr.product_id,
-                    'name':     this.pos.db.get_product_by_id(curr.product_id).display_name,
-                    'name_wrapped': curr.product_name_wrapped,
-                    'note':     curr.note,
+                // INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+                rem.push(this.get_push_obj({
                     'qty':      old.qty - curr.qty,
-                });
+                }, curr, categories));
+                // FIN DEL CODIGO MODIFICADO POR TRESCLOUD
             }
         }
 
