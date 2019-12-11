@@ -120,7 +120,7 @@ class ProductTemplate(models.Model):
     barcode = fields.Char('Barcode', oldname='ean13', related='product_variant_ids.barcode')
     default_code = fields.Char(
         'Internal Reference', compute='_compute_default_code',
-        inverse='_set_default_code', store=True)
+        inverse='_set_default_code', store=True, track_visibility='onchange')
 
     item_ids = fields.One2many('product.pricelist.item', 'product_tmpl_id', 'Pricelist Items')
 
