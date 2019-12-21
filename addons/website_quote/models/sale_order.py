@@ -116,7 +116,8 @@ class SaleOrder(models.Model):
             'discount':option.discount, 
             'website_description':option.website_description
         }
-
+    
+    #siguiente metodo agregada por trescloud
     def _get_data_quote_line(self, line, discount, price):
         '''
         hook para modificar los valores del diccionario
