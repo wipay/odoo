@@ -101,6 +101,36 @@ class SaleOrder(models.Model):
             template = self.template_id.with_context(lang=self.partner_id.lang)
             self.website_description = template.website_description
 
+    #siguiente metodo agregada por trescloud
+    def _get_data_options_sale(self, price, option):
+        '''
+        hook para modificar los valores del diccionario
+        '''
+        return {
+            'product_id':option.product_id.id, 
+            'layout_category_id':option.layout_category_id, 
+            'name':option.name, 
+            'quantity':option.quantity, 
+            'uom_id':option.uom_id.id, 
+            'price_unit':price, 
+            'discount':option.discount, 
+            'website_description':option.website_description
+        }
+
+    def _get_data_quote_line(self, line, discount, price):
+        return {
+            'name':line.name, 
+            'price_unit':price, 
+            'discount':100 - ((100 - discount) * (100 - line.discount) / 100), 
+            'product_uom_qty':line.product_uom_qty, 
+            'product_id':line.product_id.id, 
+            'layout_category_id':line.layout_category_id, 
+            'product_uom':line.product_uom_id.id, 
+            'website_description':line.website_description, 
+            'state':'draft', 
+            'customer_lead':self._get_customer_lead(line.product_id.product_tmpl_id)
+            }
+
     @api.onchange('template_id')
     def onchange_template_id(self):
         if not self.template_id:
@@ -118,19 +148,8 @@ class SaleOrder(models.Model):
 
             else:
                 price = line.price_unit
-
-            data = {
-                'name': line.name,
-                'price_unit': price,
-                'discount': 100 - ((100 - discount) * (100 - line.discount)/100),
-                'product_uom_qty': line.product_uom_qty,
-                'product_id': line.product_id.id,
-                'layout_category_id': line.layout_category_id,
-                'product_uom': line.product_uom_id.id,
-                'website_description': line.website_description,
-                'state': 'draft',
-                'customer_lead': self._get_customer_lead(line.product_id.product_tmpl_id),
-            }
+            #la siguiente linea modificada por Trescloud 
+            data = self._get_data_quote_line(line, discount, price)
             if self.pricelist_id:
                 data.update(self.env['sale.order.line']._get_purchase_price(self.pricelist_id, line.product_id, line.product_uom_id, fields.Date.context_today(self)))
             order_lines.append((0, 0, data))
@@ -144,16 +163,8 @@ class SaleOrder(models.Model):
                 price = self.pricelist_id.with_context(uom=option.uom_id.id).get_product_price(option.product_id, 1, False)
             else:
                 price = option.price_unit
-            data = {
-                'product_id': option.product_id.id,
-                'layout_category_id': option.layout_category_id,
-                'name': option.name,
-                'quantity': option.quantity,
-                'uom_id': option.uom_id.id,
-                'price_unit': price,
-                'discount': option.discount,
-                'website_description': option.website_description,
-            }
+            #la siguiente linea modificada por Trescloud 
+            data = self._get_data_options_sale(price, option)
             option_lines.append((0, 0, data))
         self.options = option_lines
 
