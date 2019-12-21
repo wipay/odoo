@@ -118,6 +118,9 @@ class SaleOrder(models.Model):
         }
 
     def _get_data_quote_line(self, line, discount, price):
+        '''
+        hook para modificar los valores del diccionario
+        '''
         return {
             'name':line.name, 
             'price_unit':price, 
