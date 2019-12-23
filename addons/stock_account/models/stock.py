@@ -155,7 +155,7 @@ class StockQuant(models.Model):
             #y en cada iteracion del costo se reescribe
             #de esta forma funcionaria inclusive con PT con multiples Quants a distintos costos
             ctx = self._context.copy()
-            if ctx.get('cost_production'):
+            if ctx.get('tc_cost_production'):
                 ctx['cost_production'] = cost
             move_lines = move.with_context(ctx)._prepare_account_move_line(qty, cost, credit_account_id, debit_account_id)
             
