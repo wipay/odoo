@@ -98,6 +98,14 @@ class StockQuant(models.Model):
 
         location_from = move.location_id
         location_to = self[0].location_id  # TDE FIXME: as the accounting is based on this value, should probably check all location_to to be the same
+        
+        #AGREGADO POR TRESCLOUD        
+        if self._context.get('tc_force_location_id',False):
+            #Util para reprocesamiento del asiento de costo...
+            #con el tiempo los quants se mueven a otras ubicaciones
+            location_to = move.location_dest_id
+        #FIN DE CODIGO AGREGADO POR TRESCLOUD
+        
         company_from = location_from.usage == 'internal' and location_from.company_id or False
         company_to = location_to and (location_to.usage == 'internal') and location_to.company_id or False
 
@@ -141,7 +149,16 @@ class StockQuant(models.Model):
             quant_cost_qty[quant.cost] += quant.qty
 
         for cost, qty in quant_cost_qty.iteritems():
-            move_lines = move._prepare_account_move_line(qty, cost, credit_account_id, debit_account_id)
+            
+            #TRESCLOUD ctx agregado para "reprocesar" asientos contables de MRP en Proyecto X
+            #El ctx se usa desde sync_costs(), alla se setea en tru
+            #y en cada iteracion del costo se reescribe
+            #de esta forma funcionaria inclusive con PT con multiples Quants a distintos costos
+            ctx = self._context.copy()
+            if ctx.get('tc_cost_production'):
+                ctx['cost_production'] = cost
+            move_lines = move.with_context(ctx)._prepare_account_move_line(qty, cost, credit_account_id, debit_account_id)
+            
             if move_lines:
                 date = self._context.get('force_period_date', fields.Date.context_today(self))
                 #Siguiente linea fue agregada por Trescloud
