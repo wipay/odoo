@@ -547,9 +547,19 @@ exports.PosModel = Backbone.Model.extend({
         var self = this;
         var def  = new $.Deferred();
         var fields = _.find(this.models,function(model){ return model.model === 'res.partner'; }).fields;
+        /* INICIO DEL CODIGO AGREGADO POR TRESCLOUD*/
+        /* Agregamos 1 segundo a la fecha almacenada en js db para evitar que por tema
+        * milisegundos se carguen todos los partners que tienen la misma fecha con milisegudos
+        * de diferencia
+        */
+        var local_partner_date = new Date((this.db.get_partner_write_date() || '').replace(/^(\d{4}-\d{2}-\d{2}) ((\d{2}:?){3})$/, '$1T$2Z'));
+        local_partner_date.setSeconds( local_partner_date.getSeconds() + 1 );
+        /* FIN DEL CODIGO AGREGADO POR TRESCLOUD*/
         new Model('res.partner')
             .query(fields)
-            .filter([['customer','=',true],['write_date','>',this.db.get_partner_write_date()]])
+            /* INICIO DEL CODIGO MODIFICADO POR TRESCLOUD*/
+            .filter([['customer','=',true],['write_date','>', local_partner_date.toUTCString()]])
+            /* FIN DEL CODIGO MODIFICADO POR TRESCLOUD*/
             .all({'timeout':3000, 'shadow': true})
             .then(function(partners){
                 if (self.db.add_partners(partners)) {   // check if the partners we got were real updates

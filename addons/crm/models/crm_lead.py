@@ -720,6 +720,20 @@ class Lead(FormatAddress, models.Model):
             :param parent_id : id of the parent partner (False if no parent)
             :returns res.partner record
         """
+        # Codigo modificado por Trescloud
+        values = self.get_values_for_create_contact(name, is_company, parent_id=False)
+        # Fin del codigo modificado por Trescloud
+        return self.env['res.partner'].create(values)
+
+    # Codigo modificado por Trescloud
+    @api.multi
+    def get_values_for_create_contact(self, name, is_company, parent_id=False):
+        """
+        :param name : furtur name of the partner
+        :param is_company : True if the partner is a company
+        :param parent_id : id of the parent partner (False if no parent)
+        :returns values dict for partner creation
+        """
         email_split = tools.email_split(self.email_from)
         values = {
             'name': name,
@@ -742,7 +756,9 @@ class Lead(FormatAddress, models.Model):
             'is_company': is_company,
             'type': 'contact'
         }
-        return self.env['res.partner'].create(values)
+        return values
+        # Fin del codigo modificado por Trescloud
+
 
     @api.multi
     def _create_lead_partner(self):

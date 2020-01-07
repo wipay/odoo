@@ -98,6 +98,14 @@ class StockQuant(models.Model):
 
         location_from = move.location_id
         location_to = self[0].location_id  # TDE FIXME: as the accounting is based on this value, should probably check all location_to to be the same
+        
+        #AGREGADO POR TRESCLOUD        
+        if self._context.get('tc_force_location_id',False):
+            #Util para reprocesamiento del asiento de costo...
+            #con el tiempo los quants se mueven a otras ubicaciones
+            location_to = move.location_dest_id
+        #FIN DE CODIGO AGREGADO POR TRESCLOUD
+        
         company_from = location_from.usage == 'internal' and location_from.company_id or False
         company_to = location_to and (location_to.usage == 'internal') and location_to.company_id or False
 
@@ -141,7 +149,16 @@ class StockQuant(models.Model):
             quant_cost_qty[quant.cost] += quant.qty
 
         for cost, qty in quant_cost_qty.iteritems():
-            move_lines = move._prepare_account_move_line(qty, cost, credit_account_id, debit_account_id)
+            
+            #TRESCLOUD ctx agregado para "reprocesar" asientos contables de MRP en Proyecto X
+            #El ctx se usa desde sync_costs(), alla se setea en tru
+            #y en cada iteracion del costo se reescribe
+            #de esta forma funcionaria inclusive con PT con multiples Quants a distintos costos
+            ctx = self._context.copy()
+            if ctx.get('tc_cost_production'):
+                ctx['cost_production'] = cost
+            move_lines = move.with_context(ctx)._prepare_account_move_line(qty, cost, credit_account_id, debit_account_id)
+            
             if move_lines:
                 date = self._context.get('force_period_date', fields.Date.context_today(self))
                 #Siguiente linea fue agregada por Trescloud
@@ -263,7 +280,15 @@ class StockMove(models.Model):
             acc_dest = self.location_dest_id.valuation_in_account_id.id
         else:
             acc_dest = accounts_data['stock_output'].id
-
+        #Las siguiente lineas fueron agregadas por Trescloud
+        ctx = self._context.copy()
+        #Por contexto se setea el acc_src y acc_dest con el fin
+        #de prevalecer la cuenta ingresada por el usuarios, no importa
+        #si las dos cuentas son iguales, un metodo superior seleccionara la
+        #cuenta contable (acc_src o acc_dest) la contapartida le da la variable acc_valuation
+        if ctx.get('force_account_adjust_inventory', False):
+            acc_src = acc_dest = ctx.get('force_account_adjust_inventory', False)
+        #Fin de las lineas agregadas por Trescloud.
         acc_valuation = accounts_data.get('stock_valuation', False)
         if acc_valuation:
             acc_valuation = acc_valuation.id

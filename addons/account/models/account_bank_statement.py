@@ -1022,7 +1022,9 @@ class AccountBankStatementLine(models.Model):
             move.post()
             #record the move name on the statement line to be able to retrieve it in case of unreconciliation
             self.write({'move_name': move.name})
-            payment.write({'payment_reference': move.name})
+            # CODIGO MODIFICADO POR TRESCLOUD 
+            # SE ELIMINA ESTE WRITE PORQUE HACE QUE LOS PAGOS VAYAN A ESTADO "sent"
+            #payment.write({'payment_reference': move.name})
         elif self.move_name:
             raise UserError(_('Operation not allowed. Since your statement line already received a number, you cannot reconcile it entirely with existing journal entries otherwise it would make a gap in the numbering. You should book an entry and make a regular revert of it in case you want to cancel it.'))
         counterpart_moves.assert_balanced()

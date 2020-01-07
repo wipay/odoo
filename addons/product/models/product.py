@@ -123,7 +123,7 @@ class ProductProduct(models.Model):
         digits=dp.get_precision('Product Price'), inverse='_set_product_lst_price',
         help="The sale price is managed from the product template. Click on the 'Variant Prices' button to set the extra attribute prices.")
 
-    default_code = fields.Char('Internal Reference', index=True)
+    default_code = fields.Char('Internal Reference', index=True, track_visibility='onchange')
     code = fields.Char('Internal Reference', compute='_compute_product_code')
     partner_ref = fields.Char('Customer Ref', compute='_compute_partner_ref')
 
