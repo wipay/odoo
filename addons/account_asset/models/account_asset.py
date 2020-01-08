@@ -173,7 +173,7 @@ class AccountAssetAsset(models.Model):
                     else: #desde la segunda depreciacion
                         #para mantener los valores calculados el recalculo debe hacerse
                         #reversando la primera depreciacion
-                        if posted_depreciation_line_ids:
+                        if posted_depreciation_line_ids and amount_to_depr:
                             amount_to_depr += posted_depreciation_line_ids[0].amount
                         amount = amount_to_depr / (undone_dotation_number - max(len(posted_depreciation_line_ids),1))
             elif self.method == 'degressive':
