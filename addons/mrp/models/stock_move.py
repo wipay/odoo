@@ -194,6 +194,7 @@ class StockMove(models.Model):
                         continue
                     else:
                         old_move_lot[key][0].quantity = quantity
+                    #siguiente linea agregada por trescloud
                     mv_lot_id = old_move_lot[key][0]
                 else:
                     vals = {
@@ -204,6 +205,8 @@ class StockMove(models.Model):
                         'quantity': quantity,
                         'lot_id': key,
                     }
+                    #lots.create(vals)
+                    #siguiente linea modificada por trescloud
                     mv_lot_id = lots.create(vals)
                 #siguiente linea agregada por trescloud
                 move._update_lot_done_in_mrp(mv_lot_id, quantity, key)
@@ -342,7 +345,7 @@ class StockMove(models.Model):
             'only_create': only_create,
             'create_lots': True,
             'state_done': self.is_done,
-            'show_reserved': show_reserved
+            'show_reserved': show_reserved,
         }
 
     @api.multi
@@ -350,6 +353,17 @@ class StockMove(models.Model):
         ctx = dict(self.env.context)
         self.ensure_one()
         view = self.env.ref('mrp.view_stock_move_lots')
+        #comento las siguientes lineas sera agregado en un nuevo metodo.
+        #serial = (self.has_tracking == 'serial')            
+        #only_create = False  # Check picking type in theory            
+        #show_reserved = any([x for x in self.move_lot_ids if x.quantity > 0.0])       
+        #ctx.update({            
+        #    'serial': serial,
+        #    'only_create': only_create,
+        #    'create_lots': True,
+        #    'state_done': self.is_done,
+        #    'show_reserved': show_reserved,
+        #})
         #siguiente linea agregado por trescloud
         ctx.update(self._get_context_split_lot())
         if ctx.get('w_production'):
