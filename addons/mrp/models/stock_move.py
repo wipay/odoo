@@ -187,11 +187,14 @@ class StockMove(models.Model):
                     group_new_quant[key] = quantity
             for key in group_new_quant:
                 quantity = group_new_quant[key]
+                #siguiente linea agregada por trescloud
+                mv_lot_id = False
                 if old_move_lot.get(key):
                     if old_move_lot[key][0].quantity == quantity:
                         continue
                     else:
                         old_move_lot[key][0].quantity = quantity
+                    mv_lot_id = old_move_lot[key][0]
                 else:
                     vals = {
                         'move_id': move.id,
@@ -201,9 +204,19 @@ class StockMove(models.Model):
                         'quantity': quantity,
                         'lot_id': key,
                     }
-                    lots.create(vals)
+                    mv_lot_id = lots.create(vals)
+                #siguiente linea agregada por trescloud
+                move._update_lot_done_in_mrp(mv_lot_id, quantity, key)
         return True
-
+    
+    #siguiente metodo agregado por Trescloud
+    def _update_lot_done_in_mrp(self, mv_lot_id, quantity, key):
+        '''
+        Hook para setear la cantida realizada de los lotes de
+        ordenes de produccion
+        '''
+        pass
+        
     @api.multi
     def _create_extra_move(self):
         ''' Creates an extra move if necessary depending on extra quantities than foreseen or extra moves'''
@@ -303,6 +316,7 @@ class StockMove(models.Model):
                         self.env['stock.quant'].quants_move(quants, move, move.location_dest_id, lot_id = movelot.lot_id.id, owner_id=move.restrict_partner_id.id)
             moves_to_unreserve |= move
             # Next move in production order
+            #TODO: contexto
             if move.move_dest_id and move.move_dest_id.state not in ('done', 'cancel'):
                 move.move_dest_id.action_assign()
         moves_to_unreserve.quants_unreserve()
@@ -315,21 +329,29 @@ class StockMove(models.Model):
         production_moves.move_validate()
         return super(StockMove, self-production_moves).action_done()
 
+    #siguiente metodo agregado por trescloud
+    def _get_context_split_lot(self):
+        '''
+        Metodo Hook sera modificado en un modulo superior.
+        '''
+        serial = self.has_tracking == 'serial'
+        only_create = False # Check picking type in theory
+        show_reserved = any([x for x in self.move_lot_ids if x.quantity > 0.0])
+        return {
+            'serial': serial,
+            'only_create': only_create,
+            'create_lots': True,
+            'state_done': self.is_done,
+            'show_reserved': show_reserved
+        }
+
     @api.multi
     def split_move_lot(self):
         ctx = dict(self.env.context)
         self.ensure_one()
         view = self.env.ref('mrp.view_stock_move_lots')
-        serial = (self.has_tracking == 'serial')
-        only_create = False  # Check picking type in theory
-        show_reserved = any([x for x in self.move_lot_ids if x.quantity > 0.0])
-        ctx.update({
-            'serial': serial,
-            'only_create': only_create,
-            'create_lots': True,
-            'state_done': self.is_done,
-            'show_reserved': show_reserved,
-        })
+        #siguiente linea agregado por trescloud
+        ctx.update(self._get_context_split_lot())
         if ctx.get('w_production'):
             action = self.env.ref('mrp.act_mrp_product_produce').read()[0]
             action['context'] = ctx
