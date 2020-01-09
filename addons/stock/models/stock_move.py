@@ -11,6 +11,11 @@ from odoo.addons.procurement.models import procurement
 from odoo.exceptions import UserError
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.tools.float_utils import float_compare, float_round, float_is_zero
+# Codigo modificado por TRESCLOUD
+# Se agrega libreria de log
+import logging
+_logger = logging.getLogger(__name__)
+# Fin del codigo modificado por TRESCLOUD
 
 
 class StockMove(models.Model):
@@ -813,8 +818,26 @@ class StockMove(models.Model):
 
         # Sort operations according to entire packages first, then package + lot, package only, lot only
         operations = operations.sorted(key=lambda x: ((x.package_id and not x.product_id) and -4 or 0) + (x.package_id and -2 or 0) + (x.pack_lot_ids and -1 or 0))
+        # Codigo modificado por TRESCLOUD
+        # Se agrega total a procesar
+        total = len(operations)
+        i = 1
+        show_info_log = self._context.get('show_info_log', False)
+        # Fin del codigo modificado por TRESCLOUD
 
         for operation in operations:
+            # Codigo modificado por TRESCLOUD
+            # Se agrega log al proceso si es solicitado por contexto
+            if show_info_log:
+                _logger.info('Ajuste de Inventario, reserva, operation.id: %s, %s de %s, producto id: %s, nombre del producto: %s' % (
+                    str(operation.id),
+                    str(total),
+                    str(i),
+                    str(operation.product_id.id) if operation.product_id else '',
+                    operation.product_id.name) if operation.product_id else ''
+                    )
+                i += 1
+            # Fin del codigo modificado por TRESCLOUD
 
             # product given: result put immediately in the result package (if False: without package)
             # but if pack moved entirely, quants should not be written anything for the destination package
@@ -890,7 +913,22 @@ class StockMove(models.Model):
 
         # Check for remaining qtys and unreserve/check move_dest_id in
         move_dest_ids = set()
+        # Codigo modificado por TRESCLOUD
+        # Se verifica cuantos movientos en total se van a procesar
+        total = len(self)
+        i = 1
+        # Fin del codigo modificado por TRESCLOUD
         for move in self:
+            # Codigo modificado por TRESCLOUD
+            # Se agrega log al proceso si es solicitado por contexto
+            if show_info_log:
+                _logger.info('Ajuste de Inventario, asignacion, move.id: %s, %s de %s' % (
+                    str(move.id),
+                    str(total),
+                    str(i))
+                    )
+                i += 1
+            # Fin del codigo modificado por TRESCLOUD
             if float_compare(remaining_move_qty[move.id], 0, precision_rounding=move.product_id.uom_id.rounding) > 0:  # In case no pack operations in picking
                 move.check_tracking(False)  # TDE: do in batch ? redone ? check this
 

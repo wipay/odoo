@@ -5,7 +5,11 @@ from odoo import api, fields, models, _
 from odoo.addons import decimal_precision as dp
 from odoo.exceptions import UserError
 from odoo.tools import float_utils
-
+# Codigo modificado por TRESCLOUD
+# Se agrega libreria de log
+import logging
+_logger = logging.getLogger(__name__)
+# Fin del codigo modificado por TRESCLOUD
 
 class Inventory(models.Model):
     _name = "stock.inventory"
@@ -168,7 +172,13 @@ class Inventory(models.Model):
             raise UserError(_('You cannot set a negative product quantity in an inventory line:\n\t%s - qty: %s') % (negative.product_id.name, negative.product_qty))
         self.action_check()
         self.write({'state': 'done'})
-        self.post_inventory()
+        # Codigo modificado por TRESCLOUD
+        # Se agrega contexto para usar log informativo
+        #self.post_inventory()
+        new_context = self._context.copy()
+        new_context.update({'show_info_log': True})
+        self.with_context(new_context).post_inventory()
+        # Fin del codigo modificado por TRESCLOUD
         return True
 
     @api.multi
@@ -183,10 +193,27 @@ class Inventory(models.Model):
         """ Checks the inventory and computes the stock move to do """
         # tde todo: clean after _generate_moves
         for inventory in self:
+            _logger.info('Ajuste de Inventario, id %s' % str(inventory.id))            
             # first remove the existing stock moves linked to this inventory
             inventory.mapped('move_ids').unlink()
+            # Codigo modificado por TRESCLOUD
+            # Se agrega total a procesar
+            total = len(inventory.line_ids)
+            i = 1
+            # Fin del codigo modificado por TRESCLOUD
             for line in inventory.line_ids:
                 # compare the checked quantities on inventory lines to the theorical one
+                # Codigo modificado por TRESCLOUD
+                # Se agrega log al proceso
+                _logger.info('Ajuste de Inventario, id %s, %s de %s, producto id: %s, nombre del producto: %s' % (
+                    str(inventory.id),
+                    str(total),
+                    str(i),
+                    str(line.product_id.id),
+                    line.product_id.name)
+                    )
+                i += 1
+                # Fin del codigo modificado por TRESCLOUD
                 stock_move = line._generate_moves()
 
     @api.multi
