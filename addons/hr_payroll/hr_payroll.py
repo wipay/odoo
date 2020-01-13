@@ -783,7 +783,12 @@ class hr_salary_rule(osv.osv):
         'appears_on_payslip': fields.boolean('Appears on Payslip', help="Used to display the salary rule on payslip."),
         'parent_rule_id':fields.many2one('hr.salary.rule', 'Parent Salary Rule', select=True),
         'company_id':fields.many2one('res.company', 'Company', required=False),
-        'condition_select': fields.selection([('none', 'Always True'),('range', 'Range'), ('python', 'Python Expression')], "Condition Based on", required=True),
+        'condition_select': fields.selection([
+            ('none', 'Always True'),
+            ('range', 'Range'),
+            ('python', 'Python Expression'),
+            ('has_account_move', 'Si existen mov. contables por netear')
+        ], "Condition Based on", required=True),
         'condition_range':fields.char('Range Based on',size=1024, readonly=False, help='This will be used to compute the % fields values; in general it is on basic, but you can also use categories code fields in lowercase as a variable names (hra, ma, lta, etc.) and the variable basic.'),
         'condition_python':fields.text('Python Condition', required=True, readonly=False, help='Applied this rule for calculation if condition is true. You can specify condition like basic > 1000.'),
         'condition_range_min': fields.float('Minimum Range', required=False, help="The minimum amount, applied for this rule."),
@@ -792,6 +797,7 @@ class hr_salary_rule(osv.osv):
             ('percentage','Percentage (%)'),
             ('fix','Fixed Amount'),
             ('code','Python Code'),
+            ('account_move', 'Movimientos Contables a Netear')
         ],'Amount Type', select=True, required=True, help="The computation method for the rule amount."),
         'amount_fix': fields.float('Fixed Amount', digits_compute=dp.get_precision('Payroll'),),
         'amount_percentage': fields.float('Percentage (%)', digits_compute=dp.get_precision('Payroll Rate'), help='For example, enter 50.0 to apply a percentage of 50%'),
@@ -892,7 +898,13 @@ result = rules.NET > categories.NET * 0.10''',
         @return: returns True if the given rule match the condition for the given contract. Return False otherwise.
         """
         rule = self.browse(cr, uid, rule_id, context=context)
-
+        #Las siguientes 6 lineas fueron agregadas por Trescloud
+        if rule.condition_select == 'has_account_move':
+            try:
+                amount = localdict.get('force_amount')
+                return amount
+            except:
+                raise osv.except_osv(u'Error de usuario', u'Contacte a soporte. Error inesperado en la condición de la regla salarial %s (%s).' % (rule.name, rule.code))
         if rule.condition_select == 'none':
             return True
         elif rule.condition_select == 'range':

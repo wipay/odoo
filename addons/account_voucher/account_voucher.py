@@ -1552,9 +1552,12 @@ class account_voucher(osv.osv):
             # Get the name of the account_move just created
             name = move_pool.browse(cr, uid, move_id, context=context).name
             # Create the first line of the voucher
-            move_line_id = move_line_pool.create(cr, uid, self.first_move_line_get(cr,uid,voucher.id, move_id, company_currency, current_currency, local_context), local_context)
-            move_line_brw = move_line_pool.browse(cr, uid, move_line_id, context=context)
-            line_total = move_line_brw.debit - move_line_brw.credit
+            #Las siguientes 5 lineas fueron modificadas por Trescloud
+            move_line_ids = self.get_debit_move_line_ids(cr, uid, voucher.id, move_id, company_currency, current_currency, context=local_context)
+            move_lines = move_line_pool.browse(cr, uid, move_line_ids, context=context)
+            line_total = 0.0
+            for move_line in move_lines:
+                line_total += move_line.debit - move_line.credit
             rec_list_ids = []
             if voucher.type == 'sale':
                 line_total = line_total - self._convert_amount(cr, uid, voucher.tax_amount, voucher.id, context=ctx)
@@ -1581,6 +1584,14 @@ class account_voucher(osv.osv):
                 if len(rec_ids) >= 2:
                     reconcile = move_line_pool.reconcile_partial(cr, uid, rec_ids, writeoff_acc_id=voucher.writeoff_acc_id.id, writeoff_period_id=voucher.period_id.id, writeoff_journal_id=voucher.journal_id.id)
         return True
+    
+    def get_debit_move_line_ids(self, cr, uid, voucher_id, move_id, company_currency, current_currency, context=None):
+        '''
+        Metodo hook para modificar su compartamiento en sf
+        '''
+        if context is None:
+            context = {}
+        return [self.pool.get('account.move.line').create(cr, uid, self.first_move_line_get(cr, uid, voucher_id, move_id, company_currency, current_currency, context=context), context=context)]
 
     def copy(self, cr, uid, id, default=None, context=None):
         if default is None:
