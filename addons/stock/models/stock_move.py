@@ -831,8 +831,8 @@ class StockMove(models.Model):
             if show_info_log:
                 _logger.info('Ajuste de Inventario, reserva, operation.id: %s, %s de %s, producto id: %s, nombre del producto: %s' % (
                     str(operation.id),
-                    str(total),
                     str(i),
+                    str(total),
                     str(operation.product_id.id) if operation.product_id else '',
                     operation.product_id.name) if operation.product_id else ''
                     )
@@ -924,8 +924,8 @@ class StockMove(models.Model):
             if show_info_log:
                 _logger.info('Ajuste de Inventario, asignacion, move.id: %s, %s de %s' % (
                     str(move.id),
-                    str(total),
-                    str(i))
+                    str(i)),
+                    str(total)
                     )
                 i += 1
             # Fin del codigo modificado por TRESCLOUD
