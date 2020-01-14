@@ -233,7 +233,7 @@ class account_asset_asset(osv.osv):
             year = depreciation_date.year
             total_days = (year % 4) and 365 or 366
             # TRESCLOUD: Se lee la depreciacion acumulada por que en recalculos la tabla requiere retomar desde este valor
-            accumulated_depreciation = asset.accumulated_depreciation
+            accumulated_depreciation = asset.accumulated_depreciation if module_ids else amount_to_depr
             undone_dotation_number = self._compute_board_undone_dotation_nb(cr, uid, asset, depreciation_date, total_days, context=context)
             for x in range(len(posted_depreciation_line_ids), undone_dotation_number):
                 i = x + 1
