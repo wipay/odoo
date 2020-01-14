@@ -924,9 +924,9 @@ class StockMove(models.Model):
             if show_info_log:
                 _logger.info('Ajuste de Inventario, asignacion, move.id: %s, %s de %s' % (
                     str(move.id),
-                    str(i)),
+                    str(i),
                     str(total)
-                    )
+                ))
                 i += 1
             # Fin del codigo modificado por TRESCLOUD
             if float_compare(remaining_move_qty[move.id], 0, precision_rounding=move.product_id.uom_id.rounding) > 0:  # In case no pack operations in picking
