@@ -207,8 +207,8 @@ class Inventory(models.Model):
                 # Se agrega log al proceso
                 _logger.info('Ajuste de Inventario, id %s, %s de %s, producto id: %s, nombre del producto: %s' % (
                     str(inventory.id),
-                    str(total),
                     str(i),
+                    str(total),
                     str(line.product_id.id),
                     line.product_id.name)
                     )
