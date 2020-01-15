@@ -962,18 +962,7 @@ class StockMove(models.Model):
             self.browse(list(move_dest_ids)).action_assign()
 
         pickings.filtered(lambda picking: picking.state == 'done' and not picking.date_done).write({'date_done': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-        #Codigo agregado por Trescloud
-        if self._context.get('bypass_group_account_move', False):
-            self.create_grouped_accounting_entry()
-        #fin codigo Trescloud
         return True
-    
-    # Metodo agregado por TRESCLOUD
-    def create_grouped_accounting_entry(self):
-        '''
-        Hook sera sobreescrito en un modulo superior.
-        '''
-        pass
         
     @api.multi
     def unlink(self):
