@@ -924,9 +924,9 @@ class StockMove(models.Model):
             if show_info_log:
                 _logger.info('Ajuste de Inventario, asignacion, move.id: %s, %s de %s' % (
                     str(move.id),
-                    str(i)),
+                    str(i),
                     str(total)
-                    )
+                    ))
                 i += 1
             # Fin del codigo modificado por TRESCLOUD
             if float_compare(remaining_move_qty[move.id], 0, precision_rounding=move.product_id.uom_id.rounding) > 0:  # In case no pack operations in picking
@@ -949,7 +949,7 @@ class StockMove(models.Model):
 
             # unreserve the quants and make them available for other operations/moves
             move.quants_unreserve()
-
+        
         # Check the packages have been placed in the correct locations
         self.mapped('quant_ids').filtered(lambda quant: quant.package_id and quant.qty > 0).mapped('package_id')._check_location_constraint()
 
@@ -962,9 +962,19 @@ class StockMove(models.Model):
             self.browse(list(move_dest_ids)).action_assign()
 
         pickings.filtered(lambda picking: picking.state == 'done' and not picking.date_done).write({'date_done': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-
+        #Codigo agregado por Trescloud
+        if self._context.get('bypass_group_account_move', False):
+            self.create_grouped_accounting_entry()
+        #fin codigo Trescloud
         return True
-
+    
+    # Metodo agregado por TRESCLOUD
+    def create_grouped_accounting_entry(self):
+        '''
+        Hook sera sobreescrito en un modulo superior.
+        '''
+        pass
+        
     @api.multi
     def unlink(self):
         if any(move.state not in ('draft', 'cancel') for move in self):
