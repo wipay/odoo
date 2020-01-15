@@ -133,8 +133,10 @@ class StockQuant(models.Model):
     
     #Metodo agregado por Trescloud
     def move_lines(self, journal_id, move_lines, date, move):
-        '''hook para poder agrupar lineas del asiento contable'''
-        new_account_move = move.env['account.move'].create({
+        '''
+        hook para poder agrupar lineas del asiento contable
+        '''
+        new_account_move = self.env['account.move'].create({
             'journal_id': journal_id,
             'line_ids': move_lines,
             'date': date,
@@ -166,7 +168,12 @@ class StockQuant(models.Model):
 
     def _quant_create_from_move(self, qty, move, lot_id=False, owner_id=False, src_package_id=False, dest_package_id=False, force_location_from=False, force_location_to=False):
         quant = super(StockQuant, self)._quant_create_from_move(qty, move, lot_id=lot_id, owner_id=owner_id, src_package_id=src_package_id, dest_package_id=dest_package_id, force_location_from=force_location_from, force_location_to=force_location_to)
-        quant._account_entry_move(move)
+        #codigo modificado por TRESCLOUD Enviamos por contexto un flag para evitar la creaccion de asiento contable
+        #por cada move.
+        #quant._account_entry_move(move
+        if not self._context.get('bypass_group_account_move', False):
+            quant._account_entry_move(move)
+        #Fin modificacion TRESCLOUD
         if move.product_id.valuation == 'real_time':
             # If the precision required for the variable quant cost is larger than the accounting
             # precision, inconsistencies between the stock valuation and the accounting entries
@@ -192,7 +199,12 @@ class StockQuant(models.Model):
 
     def _quant_update_from_move(self, move, location_dest_id, dest_package_id, lot_id=False, entire_pack=False):
         res = super(StockQuant, self)._quant_update_from_move(move, location_dest_id, dest_package_id, lot_id=lot_id, entire_pack=entire_pack)
-        self._account_entry_move(move)
+        #codigo modificado por TRESCLOUD Enviamos por contexto un flag para evitar la creaccion de asiento contable
+        #por cada stock_move.
+        #self._account_entry_move(move)
+        if not self._context.get('bypass_group_account_move', False):
+            self._account_entry_move(move)
+        #Fin modificacion TRESCLOUD
         return res
 
 
