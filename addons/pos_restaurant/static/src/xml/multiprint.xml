@@ -40,7 +40,9 @@
                     <br />
                     <br />
                     <t t-foreach="changes.cancelled" t-as="change">
-                        <line>
+                        <!-- INICIO DEL CODIGO MODIFICADO POR TRESCLOUD -->
+                        <line id="cancelled_changes_line">
+                        <!-- FIN DEL CODIGO MODIFICADO POR TRESCLOUD -->
                             <left><value><t t-esc="change.qty" /></value></left>
                             <right><t t-esc="change.name_wrapped[0]" /></right>
                         </line>
