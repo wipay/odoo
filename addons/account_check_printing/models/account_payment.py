@@ -91,8 +91,16 @@ class AccountPayment(models.Model):
         if vals['payment_method_id'] == self.env.ref('account_check_printing.account_payment_method_check').id:
             journal = self.env['account.journal'].browse(vals['journal_id'])
             if journal.check_manual_sequencing:
-                vals.update({'check_number': journal.check_sequence_id.next_by_id()})
+                if self.consume_check_sequence():
+                    vals.update({'check_number': journal.check_sequence_id.next_by_id()})
         return super(AccountPayment, self).create(vals)
+    
+    @api.model
+    def consume_check_sequence(self):
+        '''
+        Metodo hook para consumir secuencias de cheque el create del pago
+        '''
+        return True
 
     @api.multi
     def print_checks(self):
