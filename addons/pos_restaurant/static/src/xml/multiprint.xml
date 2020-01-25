@@ -46,7 +46,9 @@
                             <left><value><t t-esc="change.qty" /></value></left>
                             <right><t t-esc="change.name_wrapped[0]" /></right>
                         </line>
-                        <t t-call="NameWrapped"/>
+                        <!-- INICIO DEL CODIGO MODIFICADO POR TRESCLOUD -->
+                        <t t-call="NameWrapped" id="cancelled_name_wrapped"/>
+                        <!-- FIN DEL CODIGO MODIFICADO POR TRESCLOUD -->
                         <t t-if="change.note">
                             <line>
                                 <left>NOTE</left>
@@ -71,7 +73,9 @@
                         <left><value><t t-esc="change.qty" /></value></left>
                         <right><t t-esc="change.name_wrapped[0]" /></right>
                     </line>
-                    <t t-call="NameWrapped"/>
+                    <!-- INICIO DEL CODIGO MODIFICADO POR TRESCLOUD -->
+                    <t t-call="NameWrapped" id="new_name_wrapped"/>
+                    <!-- FIN DEL CODIGO MODIFICADO POR TRESCLOUD -->
                     <t t-if="change.note">
                         <line>
                             <left>NOTE</left>
