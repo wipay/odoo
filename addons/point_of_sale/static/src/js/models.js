@@ -1299,8 +1299,19 @@ exports.Orderline = Backbone.Model.extend({
             product_description_sale: this.get_product().description_sale,
         };
     },
+    //INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+    /*
+    * Hook para poder modificar este valor en otros modulos
+    */
+    get_wrapped_product_name_max_length: function(){
+        // 40 * line ratio of .6
+        return 24;
+    },
+    //FIN DEL CODIGO AGREGADO POR TRESCLOUD
     generate_wrapped_product_name: function() {
-        var MAX_LENGTH = 24; // 40 * line ratio of .6
+        //INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+        var MAX_LENGTH = this.get_wrapped_product_name_max_length();
+        //FIN DEL CODIGO MODIFICADO POR TRESCLOUD
         var wrapped = [];
         var name = this.get_product().display_name;
         var current_line = "";
