@@ -162,7 +162,18 @@ class LandedCost(models.Model):
         product_price_prec_digits = self.env['decimal.precision'].precision_get('Product Price')
         for landed_cost in self:
             total_amount = sum(landed_cost.valuation_adjustment_lines.mapped('additional_landed_cost'))
-            if not tools.float_compare(total_amount, landed_cost.amount_total, precision_digits=prec_digits) == 0:
+            #Siguientes lineas de redondeo agregadas por trescloud.
+            #Se aplica un redondeo con el product_price_prec_digits para aumentar el rango de decimales,
+            #pues es la precision usada en las campos involucrados(total_amount, landed_cost_amount_total)
+            #difieren en centavos es decir total_amount puede tomar el valor de 7063.394999999998 y 
+            #landed_cost.amount_total el valor de 7063.395 que a dos decimales seria
+            # para total_amount = 7063.39 y para amount_total = 7063.40.
+            # TODO: talvez sustituir con un rango de tolerancia.
+            total_amount = tools.float_round(total_amount, product_price_prec_digits)
+            landed_cost_amount_total = tools.float_round(landed_cost.amount_total, product_price_prec_digits)
+            #Siguiente linea modificado por trescloud.
+            #if not tools.float_compare(total_amount, landed_cost.amount_total, precision_digits=prec_digits) == 0:
+            if not tools.float_compare(total_amount, landed_cost_amount_total, precision_digits=prec_digits) == 0:
                 return False
 
             val_to_cost_lines = defaultdict(lambda: 0.0)
