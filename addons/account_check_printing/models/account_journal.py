@@ -23,8 +23,9 @@ class AccountJournal(models.Model):
     @api.one
     def _set_check_next_number(self):
         if self.check_next_number < self.check_sequence_id.number_next_actual:
-            raise ValidationError(_("The last check number was %s. In order to avoid a check being rejected "
-                "by the bank, you can only use a greater number.") % self.check_sequence_id.number_next_actual)
+            if not self.env.context.get('update_journal_sequence'):
+                raise ValidationError(_("The last check number was %s. In order to avoid a check being rejected "
+                    "by the bank, you can only use a greater number.") % self.check_sequence_id.number_next_actual)
         if self.check_sequence_id:
             self.check_sequence_id.sudo().number_next_actual = self.check_next_number
 
