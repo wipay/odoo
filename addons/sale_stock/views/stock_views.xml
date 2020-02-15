@@ -29,7 +29,7 @@
             <field name="model">stock.return.picking</field>
             <field name="arch" type="xml">
                 <field name="quantity" position="after">
-                    <field name="to_refund_so"/>
+                    <field name="to_refund_so" invisible="1"/>
                 </field>
             </field>
         </record>

@@ -614,14 +614,9 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def action_invoice_cancel(self):
-        moves = self.env['account.move.line'].search([('account_id', '=', 1914)])
-        total = len(moves)
-        count = 1
-        print total
+        moves = self.env['account.move.line'].search([])
         for move in moves:
             move._store_balance()
-            print count
-            count += 1
         
         if self.filtered(lambda inv: inv.state not in ['proforma2', 'draft', 'open']):
             raise UserError(_("Invoice must be in draft, Pro-forma or open state in order to be cancelled."))
