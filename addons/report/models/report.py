@@ -163,7 +163,9 @@ class Report(models.Model):
         # assets are not in cache and must be generated. To workaround this issue, we manually
         # commit the writes in the `ir.attachment` table. It is done thanks to a key in the context.
         context = dict(self.env.context)
-        if not config['test_enable']:
+        if 'commit_assetsbundle' in context:
+            context['commit_assetsbundle'] = context.get('commit_assetsbundle', True)
+        elif not config['test_enable']:
             context['commit_assetsbundle'] = True
 
         # Disable the debug mode in the PDF rendering in order to not split the assets bundle
