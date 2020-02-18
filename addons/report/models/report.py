@@ -163,6 +163,9 @@ class Report(models.Model):
         # assets are not in cache and must be generated. To workaround this issue, we manually
         # commit the writes in the `ir.attachment` table. It is done thanks to a key in the context.
         context = dict(self.env.context)
+        # CODIGO MODIFICADO POR TRESCLOUD
+        # Este codigo es necesario para cuando no se necesita que el reporte haga commit
+        # inmediatamente despues de ser eliminado, Es util en migraciones.
         if 'commit_assetsbundle' in context:
             context['commit_assetsbundle'] = context.get('commit_assetsbundle', True)
         elif not config['test_enable']:
