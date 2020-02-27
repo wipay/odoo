@@ -333,13 +333,27 @@ class AccountInvoice(models.Model):
     _sql_constraints = [
         ('number_uniq', 'unique(number, company_id, journal_id, type)', 'Invoice Number must be unique per Company!'),
     ]
+    # INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+    @api.model
+    def _get_invoice_onchange_fields(self):
+        """
+        Devuelve un diccionario con los valores que se modifican en cada
+        onchange de la factura, se pueden agregar nuevos onchange o agregar
+        campos a los ya existentes
+        """
+        onchanges = {
+            '_onchange_partner_id': ['account_id', 'payment_term_id',
+                                     'fiscal_position_id', 'partner_bank_id'],
+            '_onchange_journal_id': ['currency_id'],
+        }
+        return onchanges
+    # FIN DEL CODIGO AGREGADO POR TRESCLOUD
 
     @api.model
     def create(self, vals):
-        onchanges = {
-            '_onchange_partner_id': ['account_id', 'payment_term_id', 'fiscal_position_id', 'partner_bank_id'],
-            '_onchange_journal_id': ['currency_id'],
-        }
+        # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+        onchanges = self._get_invoice_onchange_fields()
+        # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
         for onchange_method, changed_fields in onchanges.items():
             if any(f not in vals for f in changed_fields):
                 invoice = self.new(vals)
