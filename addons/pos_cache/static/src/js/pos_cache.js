@@ -35,9 +35,20 @@ odoo.define('pos_cache.pos_cache', function (require) {
 
                 self.chrome.loading_message(_t('Loading') + ' product.product', 1);
                 return records.then(function (product) {
-                    self.db.add_products(product);
+                    // INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+                    self.post_process_products(product);
+                    // FIN DEL CODIGO MODIFICADO POR TRESCLOUD
                 });
             });
         },
+        // INICIO DEL CODIGO AGREGADO POR TRESCLOUD
+        /*
+        * Hook para poder realizar operaciones sobre los productos cargados
+        * desde cache. Este modulo deshabilita la carga normal.
+        */
+        post_process_products: function (products) {
+            this.db.add_products(products);
+        },
+        // FIN DEL CODIGO AGREGADO POR TRESCLOUD
     });
 });
