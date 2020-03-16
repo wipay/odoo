@@ -262,14 +262,30 @@ class MrpWorkorder(models.Model):
                     'done_wo': False,
                     })
 
+    #Metodo agregado por Trescloud
+    def _validate_final_lot_id(self):
+        '''
+        Hook sera utilizado en un modulo superior
+        '''
+        if (self.production_id.product_id.tracking != 'none') and not self.final_lot_id:
+            raise UserError(_('You should provide a lot for the final product'))
+    
+    #Metodo agregado por Trescloud
+    def _update_move_lote_finished(self):
+        '''
+        Hook sera utilizado en un modulo superior
+        @return:  True
+        '''
+        return True
+    
     @api.multi
     def record_production(self):
         self.ensure_one()
         if self.qty_producing <= 0:
             raise UserError(_('Please set the quantity you produced in the Current Qty field. It can not be 0!'))
-
-        if (self.production_id.product_id.tracking != 'none') and not self.final_lot_id:
-            raise UserError(_('You should provide a lot for the final product'))
+        
+        #Invoicacion a nuevo metodo hook agregado por Trescloud
+        self._validate_final_lot_id()
 
         # Update quantities done on each raw material line
         raw_moves = self.move_raw_ids.filtered(lambda x: (x.has_tracking == 'none') and (x.state not in ('done', 'cancel')) and x.bom_line_id)
@@ -316,6 +332,10 @@ class MrpWorkorder(models.Model):
             for production_move in production_moves:
                 if production_move.product_id.id == self.production_id.product_id.id and production_move.product_id.tracking != 'none':
                     move_lot = production_move.move_lot_ids.filtered(lambda x: x.lot_id.id == self.final_lot_id.id)
+                    #Invoicacion a nuevo metodo hook agregado por Trescloud para bypass
+                    #la creacion de lote.
+                    if not self._update_move_lote_finished():
+                        continue
                     if move_lot:
                         move_lot.quantity += self.qty_producing
                         move_lot.quantity_done += self.qty_producing
