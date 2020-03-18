@@ -175,7 +175,13 @@ class AccountAssetAsset(models.Model):
                         #reversando la primera depreciacion
                         if posted_depreciation_line_ids and amount_to_depr:
                             amount_to_depr += posted_depreciation_line_ids[0].amount
-                        amount = amount_to_depr / (undone_dotation_number - max(len(posted_depreciation_line_ids),1))
+                        #Caso de borde cuando la fecha de inicio de depreciaciones es el primer dia del mes
+                        #no se le incrementa 1 depreciacion, es tratado como si no hubiese seleccionado la
+                        #opcion de prorrateo, pues si no se hace esto se genera una ultima depreciacion con
+                        #valores negativos
+                        amount = amount_to_depr / (undone_dotation_number - max(len(posted_depreciation_line_ids), 1))
+                        if int(self.date.split('-')[2]) == 1:
+                            amount = amount_to_depr / (undone_dotation_number - max(len(posted_depreciation_line_ids), 0))
             elif self.method == 'degressive':
                 amount = residual_amount * self.method_progress_factor
                 if self.prorata:
@@ -199,7 +205,13 @@ class AccountAssetAsset(models.Model):
                 depreciation_date = date(depreciation_date.year, depreciation_date.month, depreciation_date.day) + relativedelta(months=+self.method_period)
                 undone_dotation_number += 1
         if self.prorata:
+            #Caso de borde cuando la fecha de inicio de depreciaciones es el primer dia del mes
+            #no se le incrementa 1 depreciacion, es tratado como si no hubiese seleccionado la
+            #opcion de prorrateo, pues si no se hace esto se genera una ultima depreciacion con
+            #valores negativos
             undone_dotation_number += 1
+            if int(self.date.split('-')[2]) == 1:
+                undone_dotation_number -= 1    
         return undone_dotation_number
 
     @api.multi
