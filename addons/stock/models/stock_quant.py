@@ -430,12 +430,16 @@ class Quant(models.Model):
         '''
         # TDE FIXME: clean me
         reservations = [(None, qty)]
-
         pack_operation = self.env['stock.pack.operation'].browse(pack_operation_id)
+        #Codigo comentado por Trescloud
+        #location = pack_operation.location_id if pack_operation else move.location_id
+        ## don't look for quants in location that are of type production, supplier or inventory.
+        #if location.usage in ['inventory', 'production', 'supplier']:
+        #    return reservations
+        #Fin codigo comentado
         #La siguiente funcion fue agregada por Trescloud.
         if self._quants_reservation_valided_location(pack_operation, move):
             return reservations
-            # return self._Reservation(reserved_quants, qty, qty, move, None)
 
         restrict_lot_id = lot_id if pack_operation else move.restrict_lot_id.id or lot_id
         removal_strategy = move.get_removal_strategy()
