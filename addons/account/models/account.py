@@ -814,24 +814,9 @@ class AccountTax(models.Model):
 
             tax_amount = tax._compute_amount(base, price_unit, quantity, product, partner)
             
-            #modificado por trescloud
-            round_globally = False
-            if 'type_ec' in tax._fields: #vemos si tienen nuestra localizacion
-                if tax.type_ec in ['withhold_vat','withhold_income_tax']:
-                    #las retenciones en compras se aplican sobre el impuesto global
-                    #no se redondean por línea
-                    round_globally = True
-            if round_globally:
-                #no redondeamos en cada linea, los centesimales se acumulan
-                #hasta el final!... este caso es especial para retenciones
-                tax_amount = tax_amount
-                #fin modificaciones trescloud
-                
-            elif not round_tax:
-                tax_amount = round(tax_amount, prec)
-            else:
-                tax_amount = currency.round(tax_amount)
-
+            #TRESCLOUD: Ponemos un metodo para que sea heredable para casos especiales de monto aplicado
+            tax_amount = self._finish_tax_amount_computation(tax, currency, round_tax, tax_amount, prec)
+                        
             if tax.price_include:
                 total_excluded -= tax_amount
                 base -= tax_amount
@@ -865,6 +850,18 @@ class AccountTax(models.Model):
         }
 
 
+    @api.model
+    def _finish_tax_amount_computation(self, tax, currency, round_tax, tax_amount, prec):
+        '''
+        Permite ultimar detalles del computo de impuestos, tales como el redondeo
+        O computos especiales de cada localizacion
+        '''
+        if not round_tax:
+            tax_amount = round(tax_amount, prec)
+        else:
+            tax_amount = currency.round(tax_amount)
+
+    @api.model
     def _compute_base_amount(self, tax, base, total_excluded, price_unit, currency=None, quantity=1.0, product=None, partner=None):
         """"Calcula base imponible para casos especiales
         """
