@@ -813,7 +813,21 @@ class AccountTax(models.Model):
                 continue
 
             tax_amount = tax._compute_amount(base, price_unit, quantity, product, partner)
-            if not round_tax:
+            
+            #modificado por trescloud
+            round_globally = False
+            if 'type_ec' in tax._fields: #vemos si tienen nuestra localizacion
+                if tax.type_ec in ['withhold_vat','withhold_income_tax']:
+                    #las retenciones en compras se aplican sobre el impuesto global
+                    #no se redondean por línea
+                    round_globally = True
+            if round_globally:
+                #no redondeamos en cada linea, los centesimales se acumulan
+                #hasta el final!... este caso es especial para retenciones
+                tax_amount = tax_amount
+                #fin modificaciones trescloud
+                
+            elif not round_tax:
                 tax_amount = round(tax_amount, prec)
             else:
                 tax_amount = currency.round(tax_amount)
