@@ -813,11 +813,10 @@ class AccountTax(models.Model):
                 continue
 
             tax_amount = tax._compute_amount(base, price_unit, quantity, product, partner)
-            if not round_tax:
-                tax_amount = round(tax_amount, prec)
-            else:
-                tax_amount = currency.round(tax_amount)
-
+            
+            #TRESCLOUD: Ponemos un metodo para que sea heredable para casos especiales de monto aplicado
+            tax_amount = self._finish_tax_amount_computation(tax, currency, round_tax, tax_amount, prec)
+                        
             if tax.price_include:
                 total_excluded -= tax_amount
                 base -= tax_amount
@@ -851,6 +850,18 @@ class AccountTax(models.Model):
         }
 
 
+    @api.model
+    def _finish_tax_amount_computation(self, tax, currency, round_tax, tax_amount, prec):
+        '''
+        Permite ultimar detalles del computo de impuestos, tales como el redondeo
+        O computos especiales de cada localizacion
+        '''
+        if not round_tax:
+            tax_amount = round(tax_amount, prec)
+        else:
+            tax_amount = currency.round(tax_amount)
+
+    @api.model
     def _compute_base_amount(self, tax, base, total_excluded, price_unit, currency=None, quantity=1.0, product=None, partner=None):
         """"Calcula base imponible para casos especiales
         """
