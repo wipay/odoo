@@ -1309,6 +1309,7 @@
                     <filter string="Unposted" domain="[('move_id.state','=','draft')]" help="Unposted Journal Items"/>
                     <filter name="posted" string="Posted" domain="[('move_id.state','=','posted')]" help="Posted Journal Items"/>
                     <separator/>
+                    <!-- Codigo modificado por TRESCLOUD se cambia "('balance','!=', 0)" por "('reconciled','=', False)"-->
                     <filter string="Unreconciled" domain="[('full_reconcile_id', '=', False), ('reconciled','=', False), ('account_id.reconcile','=',True)]" help="Journal items where matching number isn't set" name="unreconciled"/>
                     <separator/>
                     <filter string="Payable" domain="[('account_id.internal_type', '=', 'payable')]" help="From Payable accounts" name="payable"/>
