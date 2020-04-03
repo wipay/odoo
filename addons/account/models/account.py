@@ -849,7 +849,6 @@ class AccountTax(models.Model):
             'base': base,
         }
 
-
     @api.model
     def _finish_tax_amount_computation(self, tax, currency, round_tax, tax_amount, prec):
         '''
@@ -860,6 +859,7 @@ class AccountTax(models.Model):
             tax_amount = round(tax_amount, prec)
         else:
             tax_amount = currency.round(tax_amount)
+        return tax_amount
 
     @api.model
     def _compute_base_amount(self, tax, base, total_excluded, price_unit, currency=None, quantity=1.0, product=None, partner=None):
