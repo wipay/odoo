@@ -6681,7 +6681,7 @@ msgstr "Sin mensaje"
 #: code:addons/account/models/account_invoice.py:1080
 #, python-format
 msgid "No appropriate payment method enabled on journal %s"
-msgstr "No se ha habilitado un método de pago apropiado en el diario %s"
+msgstr "Es obligatorio el uso del método de débito o pago 'Manual' en el diario %s"
 
 #. module: account
 #: selection:account.financial.report,display_detail:0
