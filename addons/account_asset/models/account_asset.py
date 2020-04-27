@@ -157,7 +157,8 @@ class AccountAssetAsset(models.Model):
             #Cuando es la ultima linea de depreciacion se le resta el valor de salvaguarda que ya fue descontado en las depreciaciones anteriores
             #de no poner las siguientes 3 lineas de codigo la ultima linea saldria con el valor que le corresponde mas el valor de salvaguarda
             amount = residual_amount
-            if amount > 0.0:
+            prec = self.env['decimal.precision'].precision_get('Account')
+            if float_compare(amount, 0.00, precision_digits=prec) != 0:
                 amount -= self.salvage_value
         else:
             if self.method == 'linear':
