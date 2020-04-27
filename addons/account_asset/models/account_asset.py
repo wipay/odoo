@@ -153,7 +153,12 @@ class AccountAssetAsset(models.Model):
     def _compute_board_amount(self, sequence, residual_amount, amount_to_depr, undone_dotation_number, posted_depreciation_line_ids, total_days, depreciation_date):
         amount = 0
         if sequence == undone_dotation_number:
+            #Codigo modificado por Trescloud
+            #Cuando es la ultima linea de depreciacion se le resta el valor de salvaguarda que ya fue descontado en las depreciaciones anteriores
+            #de no poner las siguientes 3 lineas de codigo la ultima linea saldria con el valor que le corresponde mas el valor de salvaguarda
             amount = residual_amount
+            if amount > 0.0:
+                amount -= self.salvage_value
         else:
             if self.method == 'linear':
                 amount = amount_to_depr / (undone_dotation_number - len(posted_depreciation_line_ids))
