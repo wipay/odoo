@@ -590,6 +590,28 @@ class MonetaryInherits(models.Model):
     currency_id = fields.Many2one('res.currency')
 
 
+class MonetaryOrder(models.Model):
+    _name = 'test_new_api.monetary_order'
+    _description = 'Sales Order'
+
+    currency_id = fields.Many2one('res.currency')
+    line_ids = fields.One2many('test_new_api.monetary_order_line', 'order_id')
+    total = fields.Monetary(compute='_compute_total', store=True)
+
+    @api.depends('line_ids.subtotal')
+    def _compute_total(self):
+        for record in self:
+            record.total = sum(line.subtotal for line in record.line_ids)
+
+
+class MonetaryOrderLine(models.Model):
+    _name = 'test_new_api.monetary_order_line'
+    _description = 'Sales Order Line'
+
+    order_id = fields.Many2one('test_new_api.monetary_order', required=True, ondelete='cascade')
+    subtotal = fields.Float(digits=(10, 2))
+
+
 class FieldWithCaps(models.Model):
     _name = 'test_new_api.field_with_caps'
     _description = 'Model with field defined with capital letters'
@@ -710,6 +732,23 @@ class ModelChildNoCheck(models.Model):
     parent_id = fields.Many2one('test_new_api.model_parent', check_company=False)
 
 
+class ModelPrivateAddressOnchange(models.Model):
+    _name = 'test_new_api.model_private_address_onchange'
+    _description = 'Model Private Address Onchange'
+    _check_company_auto = True
+
+    name = fields.Char()
+    company_id = fields.Many2one('res.company', required=True)
+    address_id = fields.Many2one('res.partner', check_company=True)
+
+    @api.onchange('name')
+    def _onchange_name(self):
+        if self.name and not self.address_id:
+            self.address_id = self.env['res.partner'].sudo().create({
+                'name': self.name,
+                'type': 'private',
+            })
+
 # model with explicit and stored field 'display_name'
 class Display(models.Model):
     _name = 'test_new_api.display'
@@ -742,6 +781,10 @@ class ModelActiveField(models.Model):
     active = fields.Boolean(default=True)
     parent_id = fields.Many2one('test_new_api.model_active_field')
     children_ids = fields.One2many('test_new_api.model_active_field', 'parent_id')
+    all_children_ids = fields.One2many('test_new_api.model_active_field', 'parent_id',
+                                       context={'active_test': False})
+    active_children_ids = fields.One2many('test_new_api.model_active_field', 'parent_id',
+                                          context={'active_test': True})
     parent_active = fields.Boolean(string='Active Parent', related='parent_id.active', store=True)
 
 
@@ -764,3 +807,61 @@ class InverseM2oRef(models.Model):
     def _compute_model_ids_count(self):
         for rec in self:
             rec.model_ids_count = len(rec.model_ids)
+
+
+class ModelChildM2o(models.Model):
+    _name = 'test_new_api.model_child_m2o'
+    _description = 'dummy model with override write and ValidationError'
+
+    name = fields.Char('Name')
+    parent_id = fields.Many2one('test_new_api.model_parent_m2o', ondelete='cascade')
+    size1 = fields.Integer(compute='_compute_sizes', store=True)
+    size2 = fields.Integer(compute='_compute_sizes', store=True)
+
+    @api.depends('parent_id.name')
+    def _compute_sizes(self):
+        for record in self:
+            record.size1 = len(self.parent_id.name)
+            record.size2 = len(self.parent_id.name)
+
+    def write(self, vals):
+        res = super(ModelChildM2o, self).write(vals)
+        if self.name == 'A':
+            raise ValidationError('the first existing child should not be changed when adding a new child to the parent')
+        return res
+
+
+class ModelParentM2o(models.Model):
+    _name = 'test_new_api.model_parent_m2o'
+    _description = 'dummy model with multiple childs'
+
+    name = fields.Char('Name')
+    child_ids = fields.One2many('test_new_api.model_child_m2o', 'parent_id', string="Children")
+
+
+class Country(models.Model):
+    _name = 'test_new_api.country'
+    _description = 'Country, ordered by name'
+    _order = 'name, id'
+
+    name = fields.Char()
+
+
+class City(models.Model):
+    _name = 'test_new_api.city'
+    _description = 'City, ordered by country then name'
+    _order = 'country_id, name, id'
+
+    name = fields.Char()
+    country_id = fields.Many2one('test_new_api.country')
+
+# abstract model with a selection field
+class StateMixin(models.AbstractModel):
+    _name = 'test_new_api.state_mixin'
+    _description = 'Dummy state mixin model'
+
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('confirmed', 'Confirmed'),
+        ('done', 'Done'),
+    ])

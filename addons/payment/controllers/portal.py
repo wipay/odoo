@@ -35,7 +35,7 @@ class PaymentProcessing(http.Controller):
         if not transactions:
             return False
         tx_ids_list = set(request.session.get("__payment_tx_ids__", [])) | set(transactions.ids)
-        request.session["__payment_tx_ids__"] = tx_ids_list
+        request.session["__payment_tx_ids__"] = list(tx_ids_list)
         return True
 
     @staticmethod
@@ -199,6 +199,8 @@ class WebsitePayment(http.Controller):
         acquirers = None
         if acquirer_id:
             acquirers = env['payment.acquirer'].browse(int(acquirer_id))
+        if order_id:
+            acquirers = env['payment.acquirer'].search([('state', 'in', ['enabled', 'test']), ('company_id', '=', order.company_id.id)])
         if not acquirers:
             acquirers = env['payment.acquirer'].search([('state', 'in', ['enabled', 'test']), ('company_id', '=', user.company_id.id)])
 
@@ -222,7 +224,14 @@ class WebsitePayment(http.Controller):
         # s2s mode will always generate a token, which we don't want for public users
         valid_flows = ['form', 's2s'] if not user._is_public() else ['form']
         values['acquirers'] = [acq for acq in acquirers if acq.payment_flow in valid_flows]
-        values['pms'] = request.env['payment.token'].search([('acquirer_id', 'in', acquirers.ids)])
+        if partner_id:
+            values['pms'] = request.env['payment.token'].search([
+                ('acquirer_id', 'in', acquirers.ids),
+                ('partner_id', '=', partner_id)
+            ])
+        else:
+            values['pms'] = []
+
 
         return request.render('payment.pay', values)
 
@@ -322,6 +331,9 @@ class WebsitePayment(http.Controller):
             elif tx.state == 'pending':
                 status = 'warning'
                 message = tx.acquirer_id.pending_msg
+            else:
+                status = 'danger'
+                message = tx.state_message or _('An error occured during the processing of this payment')
             PaymentProcessing.remove_payment_transaction(tx)
             return request.render('payment.confirm', {'tx': tx, 'status': status, 'message': message})
         else:

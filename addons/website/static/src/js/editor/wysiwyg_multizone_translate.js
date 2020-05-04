@@ -29,8 +29,6 @@ var RTETranslatorWidget = rte.Class.extend({
                     this._getEscapedElement($el).html()
                 ],
                 context: context,
-            }).catch(function (error) {
-                Dialog.alert(null, error.data.message);
             });
         }
         return this._super($el, context, withLang === undefined ? true : withLang);
@@ -97,7 +95,7 @@ var WysiwygTranslate = WysiwygMultizone.extend({
         var promise = this.editor.prependTo(this.$editor[0].ownerDocument.body);
 
         return promise.then(function () {
-            self.options.toolbarHandler.append(self.editor.$el);
+            self._relocateEditorBar();
             var attrs = ['placeholder', 'title', 'alt'];
             _.each(attrs, function (attr) {
                 self._getEditableArea().filter('[' + attr + '*="data-oe-translation-id="]').filter(':empty, input, select, textarea, img').each(function () {
