@@ -424,26 +424,41 @@ class PurchaseOrder(models.Model):
             seq += 5
             move.sequence = seq
     
+    #El siguiente metodo esta modificado por trescloud para en algunos casos crear dos picking
+    #funcionalidad requerida por aditmaq para separar MRP y MSP
     @api.multi
     def _create_picking(self):
-        StockPicking = self.env['stock.picking']
         for order in self:
             if any([ptype in ['product', 'consu'] for ptype in order.order_line.mapped('product_id.type')]):
                 pickings = order.picking_ids.filtered(lambda x: x.state not in ('done','cancel'))
                 if not pickings:
-                    res = order._prepare_picking()
-                    picking = StockPicking.create(res)
+                    pickings = self.create_picking_for_purchase(order)
                 else:
-                    picking = pickings[0]
-                moves = order.order_line._create_stock_moves(picking)
-                moves = moves.filtered(lambda x: x.state not in ('done', 'cancel')).action_confirm()
-                #Siguiente línea fue creado por Trescloud
-                self._create_sequence(moves)
-                moves.force_assign()
-                picking.message_post_with_view('mail.message_origin_link',
-                    values={'self': picking, 'origin': order},
-                    subtype_id=self.env.ref('mail.mt_note').id)
+                    pickings = [pickings[0]]
+                ctx = self.env.context.copy()
+                picking_number = 1
+                for picking in pickings:
+                    ctx.update({
+                        'picking_number': picking_number
+                    })
+                    moves = order.order_line.with_context(ctx)._create_stock_moves(picking)
+                    moves = moves.filtered(lambda x: x.state not in ('done', 'cancel')).action_confirm()
+                    #Siguiente línea fue creado por Trescloud
+                    self._create_sequence(moves)
+                    moves.force_assign()
+                    picking.message_post_with_view('mail.message_origin_link',
+                        values={'self': picking, 'origin': order},
+                        subtype_id=self.env.ref('mail.mt_note').id)
+                    picking_number += 1
         return True
+    
+    @api.multi
+    def create_picking_for_purchase(self, order):
+        '''
+        Metodo hook para crear la cabecera del picking, va ser modificado en aditmaq
+        '''
+        res = order._prepare_picking()
+        return [self.env['stock.picking'].create(res)]
 
     @api.multi
     def _add_supplier_to_product(self):

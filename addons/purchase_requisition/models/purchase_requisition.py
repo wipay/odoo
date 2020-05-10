@@ -216,18 +216,25 @@ class PurchaseOrder(models.Model):
                 price_unit = requisition.company_id.currency_id.compute(price_unit, currency)
 
             # Create PO line
-            order_lines.append((0, 0, {
-                'name': name,
-                'product_id': line.product_id.id,
-                'product_uom': line.product_id.uom_po_id.id,
-                'product_qty': product_qty,
-                'price_unit': price_unit,
-                'taxes_id': [(6, 0, taxes_ids)],
-                'date_planned': requisition.schedule_date or fields.Date.today(),
-                'procurement_ids': [(6, 0, [requisition.procurement_id.id])] if requisition.procurement_id else False,
-                'account_analytic_id': line.account_analytic_id.id,
-            }))
+            #La siguiente linea fue modificada por Trescloud
+            order_lines.append((0, 0, self.get_line_for_purchase_order_line_vals(name, line, product_qty, price_unit, taxes_ids, requisition)))
         self.order_line = order_lines
+        
+    def get_line_for_purchase_order_line_vals(self, name, line, product_qty, price_unit, taxes_ids, requisition):
+        '''
+        Metodo hook que va ser modificado en aditmaq para seperar las cantidad de MRP y MSP
+        '''
+        return {
+            'name': name,
+            'product_id': line.product_id.id,
+            'product_uom': line.product_id.uom_po_id.id,
+            'product_qty': product_qty,
+            'price_unit': price_unit,
+            'taxes_id': [(6, 0, taxes_ids)],
+            'date_planned': requisition.schedule_date or fields.Date.today(),
+            'procurement_ids': [(6, 0, [requisition.procurement_id.id])] if requisition.procurement_id else False,
+            'account_analytic_id': line.account_analytic_id.id
+        }
 
     @api.multi
     def button_confirm(self):
