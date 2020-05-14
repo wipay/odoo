@@ -222,7 +222,7 @@ class PurchaseOrder(models.Model):
         
     def get_line_for_purchase_order_line_vals(self, name, line, product_qty, price_unit, taxes_ids, requisition):
         '''
-        Metodo hook que va ser modificado en aditmaq para seperar las cantidad de MRP y MSP
+        Metodo hook que va ser modificado en aditmaq para seperar las cantidad de MSP y MRP
         '''
         return {
             'name': name,

@@ -425,7 +425,7 @@ class PurchaseOrder(models.Model):
             move.sequence = seq
     
     #El siguiente metodo esta modificado por trescloud para en algunos casos crear dos picking
-    #funcionalidad requerida por aditmaq para separar MRP y MSP
+    #funcionalidad requerida por aditmaq para separar MSP y MRP
     @api.multi
     def _create_picking(self):
         for order in self:
