@@ -303,10 +303,18 @@ class SaleOrder(models.Model):
         }
         return invoice_vals
 
+    #El siguiente metodo fue modificado por Trescloud
     @api.multi
     def print_quotation(self):
         self.filtered(lambda s: s.state == 'draft').write({'state': 'sent'})
-        return self.env['report'].get_action(self, 'sale.report_saleorder')
+        return self.env['report'].get_action(self, self.get_report_for_print_quotation())
+
+    @api.model
+    def get_report_for_print_quotation(self):
+        '''
+        Metodo hook va ser modificado en Trescloud
+        '''
+        return 'sale.report_saleorder'
 
     @api.multi
     def action_view_invoice(self):
