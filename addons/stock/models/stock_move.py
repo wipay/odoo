@@ -686,7 +686,9 @@ class StockMove(models.Model):
     def action_cancel(self):
         """ Cancels the moves and if all moves are cancelled it cancels the picking. """
         # TDE DUMB: why is cancel_procuremetn in ctx we do quite nothing ?? like not updating the move ??
-        if any(move.state == 'done' for move in self):
+        #bypass por contexto 'force_cancel' agregado por Trescloud
+        ctx = self._context.copy()
+        if any(move.state == 'done' for move in self) and not ctx.get('force_cancel_pending_move', False):
             raise UserError(_('You cannot cancel a stock move that has been set to \'Done\'.'))
 
         procurements = self.env['procurement.order']
