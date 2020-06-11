@@ -590,7 +590,8 @@ class Picking(models.Model):
                         for lot in lots_grouped.get(mapping, {}).keys()],
             }
             product_id_to_vals.setdefault(mapping.product.id, list()).append(val_dict)
-
+        #Siguiente linea modificada por Trescloud en remplazo de :
+        #for move in self.move_lines.filtered(lambda move: move.state not in ('done', 'cancel')):
         for move in self.discard_move_line():
             values = product_id_to_vals.pop(move.product_id.id, [])
             pack_operation_values += values
