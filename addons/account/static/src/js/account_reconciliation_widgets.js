@@ -78,7 +78,7 @@ var abstractReconciliation = Widget.extend(ControlPanelMixin, {
         this.model_presets = new Model("account.reconcile.model");
         this.max_move_lines_displayed = 5;
         // Number of reconciliations loaded initially and by clicking 'show more'
-        this.num_reconciliations_fetched_in_batch = 10;
+        this.num_reconciliations_fetched_in_batch = 100;
         this.animation_speed = 100; // "Blocking" animations
         this.aestetic_animation_speed = 300; // eye candy
         // We'll need to get the code of an account selected in a many2one field (which returns the id)
