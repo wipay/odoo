@@ -166,7 +166,10 @@ class PackOperation(models.Model):
 
     @api.multi
     def unlink(self):
-        if any([operation.state in ('done', 'cancel') for operation in self]):
+        #siguiente contexto mig_force_unlink agregado por Trescloud
+        ctx = self._context.copy()
+        if any([operation.state in ('done', 'cancel') for operation in self]) and\
+            not ctx.get('mig_force_unlink', False):
             raise UserError(_('You can not delete pack operations of a done picking'))
         return super(PackOperation, self).unlink()
 
