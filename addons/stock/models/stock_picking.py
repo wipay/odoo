@@ -502,6 +502,13 @@ class Picking(models.Model):
         self.action_assign()
         self.do_prepare_partial()
 
+    #metodo agregado por trescloud
+    def discard_move_line(self):
+        '''
+        Metodo hook se alterara para reprocesos de operaciones.
+        '''
+        return self.move_lines.filtered(lambda move:move.state not in ('done', 'cancel'))
+
     def _prepare_pack_ops(self, quants, forced_qties):
         """ Prepare pack_operations, returns a list of dict to give at create """
         # TDE CLEANME: oh dear ...
@@ -542,8 +549,14 @@ class Picking(models.Model):
         # Lots will go into pack operation lot object
         qtys_grouped = {}
         lots_grouped = {}
+        #siguiente linea agregada por trescloud.
+        ctx = self._context.copy()
         for quant in valid_quants:
-            key = _Mapping(quant.product_id, quant.package_id, quant.owner_id, quant.location_id, computed_putaway_locations[quant.product_id])
+            #las siguientes dos lineas agregadas por trescloud
+            # para alterar la ubicacion origen y destino de la operacion a reprocesar.
+            location_id = ctx.get('mig_redo_operation', False) and self.location_id or quant.location_id
+            location_dest_id = ctx.get('mig_redo_operation', False) and self.location_dest_id.id or computed_putaway_locations[quant.product_id]
+            key = _Mapping(quant.product_id, quant.package_id, quant.owner_id, location_id, location_dest_id)
             qtys_grouped.setdefault(key, 0.0)
             qtys_grouped[key] += quant.qty
             if quant.product_id.tracking != 'none' and quant.lot_id:
@@ -577,8 +590,9 @@ class Picking(models.Model):
                         for lot in lots_grouped.get(mapping, {}).keys()],
             }
             product_id_to_vals.setdefault(mapping.product.id, list()).append(val_dict)
-
-        for move in self.move_lines.filtered(lambda move: move.state not in ('done', 'cancel')):
+        #Siguiente linea modificada por Trescloud en remplazo de :
+        #for move in self.move_lines.filtered(lambda move: move.state not in ('done', 'cancel')):
+        for move in self.discard_move_line():
             values = product_id_to_vals.pop(move.product_id.id, [])
             pack_operation_values += values
         return pack_operation_values
