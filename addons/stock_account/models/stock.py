@@ -147,23 +147,16 @@ class StockQuant(models.Model):
     #Metodo agregado por trescloud
     def get_is_outgoing_average(self, move):
         '''
-        verifica que la operacion de movimiento de inventario
-        sea de salidas y con el metodo de costo promedio.
+        Hook para evitar la agrupacion de quants por costos.
         '''
-        is_outgoing_average = False
-        if move.product_id and move.product_id.cost_method == 'average':
-            if move.location_id.usage == 'supplier' and move.location_dest_id.usage == 'internal':
-                is_outgoing_average = False
-            else:
-                is_outgoing_average = True
-        return is_outgoing_average
+        return False
 
     def _create_account_move_line(self, move, credit_account_id, debit_account_id, journal_id):
         # group quants by cost
         quant_cost_qty = defaultdict(lambda: 0.0)
         #TRESCLOUD: cuando es salida de inventario y costo promedio no es necesario agrupar los 
         #quant por que el costo se obtiene de la ficha del producto.
-        if move.product_id and move.product_id.cost_method == 'average' and self.get_is_outgoing_average(move):
+        if self.get_is_outgoing_average(move):
             quant_cost_qty[0.00] = sum(self.mapped('qty'))
         #FIN TRESCLOUD
         else:
