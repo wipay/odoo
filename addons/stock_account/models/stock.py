@@ -144,11 +144,24 @@ class StockQuant(models.Model):
         })
         new_account_move.post()
         
+    #Metodo agregado por trescloud
+    def get_is_outgoing_average(self, move):
+        '''
+        Hook para evitar la agrupacion de quants por costos.
+        '''
+        return False
+
     def _create_account_move_line(self, move, credit_account_id, debit_account_id, journal_id):
         # group quants by cost
         quant_cost_qty = defaultdict(lambda: 0.0)
-        for quant in self:
-            quant_cost_qty[quant.cost] += quant.qty
+        #TRESCLOUD: cuando es salida de inventario y costo promedio no es necesario agrupar los 
+        #quant por que el costo se obtiene de la ficha del producto.
+        if self.get_is_outgoing_average(move):
+            quant_cost_qty[0.00] = sum(self.mapped('qty'))
+        #FIN TRESCLOUD
+        else:
+            for quant in self:
+                quant_cost_qty[quant.cost] += quant.qty
 
         for cost, qty in quant_cost_qty.iteritems():
             
@@ -159,6 +172,10 @@ class StockQuant(models.Model):
             ctx = self._context.copy()
             if ctx.get('tc_cost_production'):
                 ctx['cost_production'] = cost
+            #TRESCLOUD reprocesos: forzamos la generacion del asiento contable con el costo historico
+            if ctx.get('tc_history_price') and move.product_id:
+               #forzar asiento contable con el costo promedio vigente a la fecha
+               ctx['cost_production'] = move.product_id.get_history_price(self.mapped('company_id')[0].id, date=move.date)
             move_lines = move.with_context(ctx)._prepare_account_move_line(qty, cost, credit_account_id, debit_account_id)
             
             if move_lines:
