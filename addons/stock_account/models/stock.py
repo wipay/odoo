@@ -217,9 +217,13 @@ class StockQuant(models.Model):
     def _quant_update_from_move(self, move, location_dest_id, dest_package_id, lot_id=False, entire_pack=False):
         res = super(StockQuant, self)._quant_update_from_move(move, location_dest_id, dest_package_id, lot_id=lot_id, entire_pack=entire_pack)
         #codigo modificado por TRESCLOUD Enviamos por contexto un flag para evitar la creaccion de asiento contable
-        #por cada stock_move.
+        #por cada stock_move. add contexto  "tc_quants_wthout_acc_entry". evitar modificar o crear asiento contable.
         #self._account_entry_move(move)
-        if not self._context.get('bypass_group_account_move', False):
+        return_without_acc_entry = False
+        if self._context.get('bypass_group_account_move', False) or \
+            self._context.get('tc_quants_wthout_acc_entry', False):
+            return_without_acc_entry = True
+        if not return_without_acc_entry:
             self._account_entry_move(move)
         #Fin modificacion TRESCLOUD
         return res
