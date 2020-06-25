@@ -167,7 +167,14 @@ class Quant(models.Model):
             move.write({'state': 'assigned'})
         elif float_compare(reserved_availability, 0, precision_rounding=rounding) > 0 and not move.partially_available:
             move.write({'partially_available': True})
-
+    
+    #Metodo Agregado por Trescloud.
+    def get_sudo_stock_quant(self):
+        '''
+        Hook en un modulo superior se modificara el sudo por suspend_security
+        '''
+        return self.env['stock.quant'].sudo()
+        
     @api.model
     def quants_move(self, quants, move, location_to, location_from=False, lot_id=False, owner_id=False, src_package_id=False, dest_package_id=False, entire_pack=False):
         """Moves all given stock.quant in the given destination location.  Unreserve from current move.
@@ -185,9 +192,12 @@ class Quant(models.Model):
         # TDE CLEANME: use ids + quantities dict
         if location_to.usage == 'view':
             raise UserError(_('You cannot move to a location of type view %s.') % (location_to.name))
-
-        quants_reconcile_sudo = self.env['stock.quant'].sudo()
-        quants_move_sudo = self.env['stock.quant'].sudo()
+        #siguientes lineas modificadas por Trescloud
+        #quants_reconcile_sudo = self.env['stock.quant'].sudo()
+        #quants_move_sudo = self.env['stock.quant'].sudo()
+        quants_reconcile_sudo = self.get_sudo_stock_quant()
+        quants_move_sudo = self.get_sudo_stock_quant()
+        #fin de la modificacion
         check_lot = False
         for quant, qty in quants:
             if not quant:
