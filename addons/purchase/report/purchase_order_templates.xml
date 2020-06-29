@@ -44,7 +44,7 @@
                 </div>
             </div>
 
-            <table class="table table-condensed">
+            <table name="lines" class="table table-condensed">
                 <thead>
                     <tr>
                         <th><strong>Description</strong></th>
