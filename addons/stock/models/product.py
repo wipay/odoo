@@ -124,6 +124,7 @@ class Product(models.Model):
         #Siguiente linea agregada por trescloud
         ctx = self._context.copy()
         domain_exclude = self.with_context(ctx).domain_exclude_moves()
+        domain_exclude_location = self.with_context(move_type='OUT').domain_exclude_moves()
         domain_quant = [('product_id', 'in', self.ids)] + domain_quant_loc
 
         dates_in_the_past = False
@@ -131,7 +132,7 @@ class Product(models.Model):
             dates_in_the_past = True
         #siguientes dos lineas fueron modificadas por trescloud
         domain_move_in = [('product_id', 'in', self.ids)] + domain_move_in_loc + domain_exclude
-        domain_move_out = [('product_id', 'in', self.ids)] + domain_move_out_loc + domain_exclude
+        domain_move_out = [('product_id', 'in', self.ids)] + domain_move_out_loc + domain_exclude + domain_exclude_location
         if lot_id:
             domain_quant += [('lot_id', '=', lot_id)]
         if owner_id:
