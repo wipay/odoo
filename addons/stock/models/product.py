@@ -121,10 +121,13 @@ class Product(models.Model):
     @api.multi
     def _compute_quantities_dict(self, lot_id, owner_id, package_id, from_date=False, to_date=False):
         domain_quant_loc, domain_move_in_loc, domain_move_out_loc = self._get_domain_locations()
-        #Siguiente linea agregada por trescloud
+        #Siguientes 3 lineas agregada por trescloud
         ctx = self._context.copy()
+        #domain para excluir el movimiento actual ya estaba definido por trescloud.
         domain_exclude = self.with_context(ctx).domain_exclude_moves()
-        domain_exclude_location = self.with_context(move_type='OUT').domain_exclude_moves()
+        #Se define este domain para poder exluir de las salidas aquellas ubicaciones que no son parte del
+        #calculo para el stock disponible.
+        domain_exclude_output = self.with_context(move_type='OUT').domain_exclude_moves()
         domain_quant = [('product_id', 'in', self.ids)] + domain_quant_loc
 
         dates_in_the_past = False
@@ -132,7 +135,7 @@ class Product(models.Model):
             dates_in_the_past = True
         #siguientes dos lineas fueron modificadas por trescloud
         domain_move_in = [('product_id', 'in', self.ids)] + domain_move_in_loc + domain_exclude
-        domain_move_out = [('product_id', 'in', self.ids)] + domain_move_out_loc + domain_exclude + domain_exclude_location
+        domain_move_out = [('product_id', 'in', self.ids)] + domain_move_out_loc + domain_exclude + domain_exclude_output
         if lot_id:
             domain_quant += [('lot_id', '=', lot_id)]
         if owner_id:
