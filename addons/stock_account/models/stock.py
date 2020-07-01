@@ -343,7 +343,11 @@ class StockMove(models.Model):
         """
         self.ensure_one()
 
-        if self._context.get('force_valuation_amount'):
+        #siguientes dos lineas modificada por trescloud
+        #forzamos el valor de asiento aunque sea el valor de cero util en reprocesos
+        #if self._context.get('force_valuation_amount')
+        if self._context.get('force_valuation_amount') or \
+            ('force_valuation_amount' in self._context.keys() and  self._context.get('redo_tc_cost', False)):
             valuation_amount = self._context.get('force_valuation_amount')
         else:
             if self.product_id.cost_method == 'average':
