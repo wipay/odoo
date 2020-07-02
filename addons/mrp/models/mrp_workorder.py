@@ -372,7 +372,7 @@ class MrpWorkorder(models.Model):
     #siguiente metodo agregado por trescloud.
     def workorder_update_production_state(self, workorder):
         '''
-        Hook modificado en un modulo superior.
+        Hook sera utilizado en modulo superior.
         '''
         return workorder.production_id.state != 'progress'
 
