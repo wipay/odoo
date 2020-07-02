@@ -369,6 +369,13 @@ class MrpWorkorder(models.Model):
             self.button_finish()
         return True
 
+    #siguiente metodo agregado por trescloud.
+    def workorder_update_production_state(self, workorder):
+        '''
+        Hook sera utilizado en modulo superior.
+        '''
+        return workorder.production_id.state != 'progress'
+
     @api.multi
     def button_start(self):
         # TDE CLEANME
@@ -382,7 +389,9 @@ class MrpWorkorder(models.Model):
             if not len(loss_id):
                 raise UserError(_("You need to define at least one productivity loss in the category 'Performance'. Create one from the Manufacturing app, menu: Configuration / Productivity Losses."))
         for workorder in self:
-            if workorder.production_id.state != 'progress':
+            #siguiente linea modificada por Trescloud
+            #if workorder.production_id.state != 'progress':
+            if self.workorder_update_production_state(workorder):
                 workorder.production_id.write({
                     'state': 'progress',
                     'date_start': datetime.now(),
