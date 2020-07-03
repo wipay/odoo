@@ -354,11 +354,13 @@
                             attrs="{'invisible':[('type', '!=', 'product')]}"
                             class="oe_stat_button" icon="fa-building-o">
                             <div class="o_form_field o_stat_info">
-                                <span class="o_stat_value"><field name="virtual_available" widget="integer"/>
+                            	<!-- siguiente codigo modificado por Trescloud, se modifica el widget="integer" por widget="decimal"  -->
+                                <span class="o_stat_value"><field name="virtual_available" widget="decimal"/>
                                     <span attrs="{'invisible':[('outgoing_qty', '=', 0),('incoming_qty','=',0)]}" groups="base.group_no_one">
-                                        (-<field name="outgoing_qty" widget="integer"/>+<field name="incoming_qty" widget="integer"/>)
+                                        (-<field name="outgoing_qty" widget="decimal"/>+<field name="incoming_qty" widget="decimal"/>)
                                     </span>
                                 </span>
+                                <!-- Fin modificacion -->
                                 <span class="o_stat_text">Forecasted</span>
                             </div>
                         </button>
