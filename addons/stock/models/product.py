@@ -128,7 +128,7 @@ class Product(models.Model):
         #Se define este domain para poder exluir de las salidas aquellas ubicaciones que no son parte del
         #calculo para el stock disponible.
         domain_exclude_output = self.with_context(move_type='OUT').domain_exclude_moves()
-        domain_quant = [('product_id', 'in', self.ids)] + domain_quant_loc
+        domain_quant = [('product_id', 'in', self.ids)] + domain_quant_loc + domain_exclude
 
         dates_in_the_past = False
         if to_date and to_date < fields.Datetime.now(): #Only to_date as to_date will correspond to qty_available
