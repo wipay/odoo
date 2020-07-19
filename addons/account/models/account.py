@@ -889,6 +889,7 @@ class AccountTax(models.Model):
 class AccountReconcileModel(models.Model):
     _name = "account.reconcile.model"
     _description = "Preset to create journal entries during a invoices and payments matching"
+    _order = 'sequence'
 
     name = fields.Char(string='Button Label', required=True)
     sequence = fields.Integer(required=True, default=10)
