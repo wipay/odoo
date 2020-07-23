@@ -40,7 +40,11 @@ class ProductionLot(models.Model):
     @api.one
     @api.depends('quant_ids.qty')
     def _product_qty(self):
-        self.product_qty = sum(self.quant_ids.mapped('qty'))
+        # Siguientes lineas modificadas por Trescloud 
+        # se toma como referencia la version 11, 13 de odoo. 
+        #self.product_qty = sum(self.quant_ids.mapped('qty'))
+        quants = self.quant_ids.filtered(lambda q: q.location_id.usage in ['internal', 'transit'])
+        self.product_qty = sum(quants.mapped('qty'))
 
     @api.multi
     def action_traceability(self):
