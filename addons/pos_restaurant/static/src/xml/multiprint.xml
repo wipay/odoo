@@ -41,19 +41,24 @@
                     <br />
                     <t t-foreach="changes.cancelled" t-as="change">
                         <!-- INICIO DEL CODIGO MODIFICADO POR TRESCLOUD -->
-                        <line id="cancelled_changes_line">
-                        <!-- FIN DEL CODIGO MODIFICADO POR TRESCLOUD -->
-                            <left><value><t t-esc="change.qty" /></value></left>
-                            <right><t t-esc="change.name_wrapped[0]" /></right>
-                        </line>
-                        <!-- INICIO DEL CODIGO MODIFICADO POR TRESCLOUD -->
-                        <t t-call="NameWrapped" id="cancelled_name_wrapped"/>
+	                    <div align='left'>
+	                    	<!-- una opcion mas vistosa-->
+	                    	<div bold='on' size='double'>
+	                    		<t t-esc="change.qty"/>
+	                    		<span bold='off' size='normal'>
+	                    			<t t-esc="change.name" />
+	                    			
+	                   			</span>
+	                   		</div>
+	                    	<!-- una opcion mas simple-->
+	                    	<!--
+	                   		<t t-esc="change.qty"/>
+	                    	<span t-esc="change.name"/>
+	                    	-->
+	                    </div>
+                        <div id="cancelled_name_wrapped"/>
                         <!-- FIN DEL CODIGO MODIFICADO POR TRESCLOUD -->
                         <t t-if="change.note">
-                            <line>
-                                <left>NOTE</left>
-                                <right>...</right>
-                            </line>
                             <div><span font='b' bold='off' line-ratio='0.4' indent='1' width='30'>--- <t t-esc="change.note" /></span></div>
                             <line></line>
                         </t>
@@ -67,26 +72,36 @@
                 <br />
                 <br />
                 <t t-foreach="changes.new" t-as="change">
-                    <!-- INICIO DEL CODIGO MODIFICADO POR TRESCLOUD -->
-                    <line id="new_changes_line">
-                    <!-- FIN DEL CODIGO MODIFICADO POR TRESCLOUD -->
-                        <left><value><t t-esc="change.qty" /></value></left>
-                        <right><t t-esc="change.name_wrapped[0]" /></right>
-                    </line>
-                    <!-- INICIO DEL CODIGO MODIFICADO POR TRESCLOUD -->
-                    <t t-call="NameWrapped" id="new_name_wrapped"/>
-                    <!-- FIN DEL CODIGO MODIFICADO POR TRESCLOUD -->
+                
+                    <!-- INICIO DEL CODIGO MODIFICADO POR TRESCLOUD -->                    
+                    <div align='left'>
+                    	<!-- una opcion mas vistosa-->
+                    	<div bold='on' size='double'>
+                    		<t t-esc="change.qty"/>
+                    		<span bold='off' size='normal'>
+                    			<t t-esc="change.name" />
+                    			
+                   			</span>
+                   		</div>
+                    	<!-- una opcion mas simple-->
+                    	<!--
+                   		<t t-esc="change.qty"/>
+                    	<span t-esc="change.name"/>
+                    	-->
+                    </div>
+                    <!-- Comentamos porque no usamos name_wrapped[0] sino name, no requerimos
+                         imprimir por separado la otra mitad del nombre muy largo.
+                    <t t-call="NameWrapped" id="new_name_wrapped"/> -->
+                    <div id="new_name_wrapped"/>
                     <t t-if="change.note">
-                        <line>
-                            <left>NOTE</left>
-                            <right>...</right>
-                        </line>
                         <div><span font='b' bold='off' line-ratio='0.4' indent='1' width='30'>--- <t t-esc="change.note" /></span></div>
                         <line></line>
                     </t>
+                    <!-- FIN DEL CODIGO MODIFICADO POR TRESCLOUD -->
                 </t>
                 <br />
                 <br />
+                <div id="extra_messages"/>
             </t>
         </receipt>
     </t>
