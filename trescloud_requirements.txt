@@ -18,4 +18,5 @@ pandas==0.24.2 #modulo de flujo de caja
 xlsxwriter==1.2.2 #para reportes excel sin restrinccion de filas
 ERPpeek==1.7.1 #Usado en el modulo trescloud_erpdeuna
 Wand==0.5.8 # Se usa en ecua_sale_invoice para la importacion masiva de imagenes
-
+acme-tiny==4.1.0 # Necesario para el modulo letsencrypt del reposiotrio server-tools
+IPy==1.0 # Necesario para el modulo letsencrypt del reposiotrio server-tools
