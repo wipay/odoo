@@ -760,7 +760,7 @@ class PurchaseOrderLine(models.Model):
     @api.model
     def create_move_from_po(self, vals):
         '''
-        Metodo hook va ser modificado en Aditmaq
+        Metodo hook va ser modificado en Proyecto X
         '''
         return self.env['stock.move'].create(vals)        
 
