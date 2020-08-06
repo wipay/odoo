@@ -749,12 +749,20 @@ class PurchaseOrderLine(models.Model):
 
     @api.multi
     def _create_stock_moves(self, picking):
-        moves = self.env['stock.move']
         done = self.env['stock.move'].browse()
         for line in self:
             for val in line._prepare_stock_moves(picking):
-                done += moves.create(val)
+                move = self.create_move_from_po(val)
+                if move:
+                    done += move
         return done
+
+    @api.model
+    def create_move_from_po(self, vals):
+        '''
+        Metodo hook va ser modificado en Proyecto X
+        '''
+        return self.env['stock.move'].create(vals)        
 
     @api.multi
     def unlink(self):
