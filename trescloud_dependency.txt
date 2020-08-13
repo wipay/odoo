@@ -11,3 +11,4 @@
 #   Odoo 13, Debian Buster (10), x64
 
 htop
+cloc # Requerido por repositorio enterprise
