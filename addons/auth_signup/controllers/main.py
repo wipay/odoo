@@ -38,7 +38,10 @@ class AuthSignupHome(Home):
                     qcontext["error"] = _("Another user is already registered using this email address.")
                 else:
                     _logger.error(e.message)
-                    qcontext['error'] = _("Could not create a new account.")
+                    # INICIO DEL CODIGO MODIFICADO POR TRESCLOUD
+                    # qcontext['error'] = _("Could not create a new account.")
+                    qcontext['error'] = e.message or _("Could not create a new account.")
+                    # FIN DEL CODIGO MODIFICADO POR TRESCLOUD
 
         return request.render('auth_signup.signup', qcontext)
 
