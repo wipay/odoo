@@ -219,7 +219,7 @@ def dump_db(db_name, stream, backup_format='zip'):
         with odoo.tools.osutil.tempdir() as dump_dir:
             filestore = odoo.tools.config.filestore(db_name)
             if os.path.exists(filestore):
-                shutil.copytree(filestore, os.path.join(dump_dir, 'filestore'), copy_function=copy)
+                shutil.copytree(filestore, os.path.join(dump_dir, 'filestore'), copy_function=shutil.copy)
             with open(os.path.join(dump_dir, 'manifest.json'), 'w') as fh:
                 db = odoo.sql_db.db_connect(db_name)
                 with db.cursor() as cr:
