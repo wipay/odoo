@@ -223,7 +223,7 @@ def dump_db(db_name, stream, backup_format='zip'):
                 # Problemas con respaldos, se reemplaza el metodo y solo es valido
                 # para usarse en linux (usa directamente cp)
                 if os.name == 'posix':
-                    if os.system('cp -r filestore %s' % os.path.join(dump_dir, 'filestore')) !=0:
+                    if os.system('cp -r %s %s' % (filestore, os.path.join(dump_dir, 'filestore'))) !=0:
                         raise UserError(u'No se pudo respaldar el filestore!')
                 else:
                     shutil.copytree(filestore, os.path.join(dump_dir, 'filestore'))
