@@ -1,2 +1,3 @@
 tabulate>=0.8.6 # usado en l10n_ec/models/account_move.py
 acme_tiny>=4.1.0 #Usado por el modulo let's encrypt
+IPy>=1.0 #Usado por el modulo let's encrypt
