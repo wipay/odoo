@@ -611,7 +611,7 @@ actual arch.
             'msg': message,
         }
         _logger.info(message)
-        raise ValueError(message)
+        #raise ValueError(message)
 
     def locate_node(self, arch, spec):
         """ Locate a node in a source (parent) architecture.

@@ -359,11 +359,12 @@ class Website(Home):
 
         if get_bundle:
             context = dict(request.context)
-            return {
+            a = {
                 'web.assets_common': request.env['ir.qweb']._get_asset_link_urls('web.assets_common', options=context),
                 'web.assets_frontend': request.env['ir.qweb']._get_asset_link_urls('web.assets_frontend', options=context),
                 'website.assets_editor': request.env['ir.qweb']._get_asset_link_urls('website.assets_editor', options=context),
             }
+            return a
 
         return True
 

@@ -190,7 +190,7 @@ class ResPartner(models.Model):
                 if country_code:
                     if not check_func(country_code.lower(), partner.vat):
                         msg = partner._construct_constraint_msg(country_code.lower())
-                        raise ValidationError(msg)
+                        #raise ValidationError(msg)
 
     def _construct_constraint_msg(self, country_code):
         self.ensure_one()

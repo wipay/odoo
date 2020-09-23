@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+		<!-- 
         <template id="contactus_form" name="Contact Form (Opportunity)" inherit_id="website_form.contactus_form" customize_show="True">
             <xpath expr="//form[@id='contactus_form']" position="replace">
                 <div t-ignore="true">
@@ -49,7 +50,7 @@
                     </form>
                 </div>
 			</xpath>
-		</template>
+		</template>  -->
 
         <template id="assets_editor" name="Website CRM Assets Editor" inherit_id="website.assets_editor">
             <xpath expr="." position="inside">
