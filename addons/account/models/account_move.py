@@ -2158,19 +2158,13 @@ class AccountMove(models.Model):
         move.message_subscribe(list(all_followers_ids))
         return move
 
-    def check_entry_line(self):
-        '''
-        Hook method to modify in purchase withhold
-        '''
-        if not self.line_ids.filtered(lambda line: not line.display_type):
-            raise UserError(_('You need to add a line before posting.'))
-
     def post(self):
         # `user_has_group` won't be bypassed by `sudo()` since it doesn't change the user anymore.
         if not self.env.su and not self.env.user.has_group('account.group_account_invoice'):
             raise AccessError(_("You don't have the access rights to post an invoice."))
         for move in self:
-            move.check_entry_line()
+            if not self.line_ids.filtered(lambda line: not line.display_type):
+                raise UserError(_('You need to add a line before posting.'))
             if move.auto_post and move.date > fields.Date.today():
                 date_msg = move.date.strftime(get_lang(self.env).date_format)
                 raise UserError(_("This move is configured to be auto-posted on %s" % date_msg))
