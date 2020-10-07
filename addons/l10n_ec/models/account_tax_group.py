@@ -11,7 +11,7 @@ class AccountTaxGroup(models.Model):
         ('vat14', 'VAT 14%'),
         ('zero_vat', 'VAT 0%'),
         ('not_charged_vat', 'VAT Not Charged'),
-        ('exempt_vat', 'VAT Excempt'),
+        ('exempt_vat', 'VAT Exempt'),
         ('withhold_vat', 'VAT Withhold'),
         ('withhold_income_tax', 'Profit Withhold'),
         ('ice', 'Special Consumptions Tax (ICE)'),

@@ -237,9 +237,9 @@ msgid "VAT 14%"
 msgstr "IVA 14%"
 
 #. module: l10n_ec
-#: model:account.tax.group,name:l10n_ec.ec_tax_group_vat_excempt
+#: model:account.tax.group,name:l10n_ec.ec_tax_group_vat_exempt
 #: model:ir.model.fields.selection,name:l10n_ec.selection__account_tax_group__l10n_ec_type__exempt_vat
-msgid "VAT Excempt"
+msgid "VAT Exempt"
 msgstr "IVA Excento"
 
 #. module: l10n_ec
