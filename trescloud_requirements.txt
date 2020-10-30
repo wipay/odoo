@@ -4,3 +4,4 @@ pyOpenSSL==19.1.0 #librerias agregadas para instalarmodulosv14
 firebase-admin==3.2.1
 google-api-core==1.23.0
 google-api-python-client==1.12.4
+suds-community==0.8.4
