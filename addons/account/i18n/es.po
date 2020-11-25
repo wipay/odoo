@@ -7466,7 +7466,6 @@ msgid "Payment type"
 msgstr "Tipo de pago"
 
 #. module: account
-#: model:ir.actions.act_window,name:account.action_account_payments
 #: model:ir.actions.act_window,name:account.action_account_payments_payable
 #: model:ir.model,name:account.model_account_payment
 #: model:ir.model.fields,field_description:account.field_account_invoice_payment_ids
@@ -7477,6 +7476,11 @@ msgstr "Tipo de pago"
 #: model:ir.ui.view,arch_db:account.view_account_payment_search
 msgid "Payments"
 msgstr "Pagos"
+
+#. module: account
+#: model:ir.actions.act_window,name:account.action_account_payments
+msgid "Payments"
+msgstr "Cobros"
 
 #. module: account
 #: model:ir.ui.view,arch_db:account.account_journal_dashboard_kanban_view
