@@ -68,6 +68,8 @@ class MockModels {
             'mail.channel': {
                 fields: {
                     channel_type: { string: "Channel Type", type: "selection", default: 'channel' },
+                    // Equivalent to members but required due to some RPC giving this field in domain.
+                    channel_partner_ids: { string: "Channel Partner Ids", type: 'many2many', relation: 'res.partner' },
                     // In python this belongs to mail.channel.partner. Here for simplicity.
                     custom_channel_name: { string: "Custom channel name", type: 'char' },
                     fetched_message_id: { string: "Last Fetched", type: 'many2one', relation: 'mail.message' },
@@ -92,6 +94,15 @@ class MockModels {
                     // naive and non RFC-compliant UUID, good enough for the
                     // string comparison that are done with it during tests
                     uuid: { string: "UUID", type: "char", required: true, default() { return _.uniqueId('mail.channel_uuid-'); } },
+                },
+                records: [],
+            },
+            // Fake model to simulate "hardcoded" commands from python
+            'mail.channel_command': {
+                fields: {
+                    channel_types: { type: 'binary' }, // array is expected
+                    help: { type: 'char' },
+                    name: { type: 'char' },
                 },
                 records: [],
             },
@@ -136,6 +147,8 @@ class MockModels {
                     res_model_name: { string: "Res Model Name", type: 'char' },
                     starred_partner_ids: { string: "Favorited By", type: 'many2many', relation: 'res.partner' },
                     subject: { string: "Subject", type: 'char' },
+                    subtype_id: { string: "Subtype id", type: 'many2one', relation: 'mail.message.subtype' },
+                    tracking_value_ids: { relation: 'mail.tracking.value', string: "Tracking values", type: 'one2many' },
                 },
                 records: [],
             },
@@ -177,6 +190,15 @@ class MockModels {
                 },
                 records: [],
             },
+            'mail.tracking.value': {
+                fields: {
+                    changed_field: { string: 'Changed field', type: 'char' },
+                    field_type: { string: 'Field type', type: 'char' },
+                    new_value: { string: 'New value', type: 'char' },
+                    old_value: { string: 'Old value', type: 'char' },
+                },
+                records: [],
+            },
             'res.country': {
                 fields: {
                     code: { string: "Code", type: 'char' },
@@ -211,6 +233,18 @@ class MockModels {
                     im_status: { string: "IM Status", type: 'char' },
                     name: { string: "Name", type: 'char' },
                     partner_id: { string: "Related partners", type: 'many2one', relation: 'res.partner' },
+                },
+                records: [],
+            },
+            'res.fake': {
+                fields: {
+                    activity_ids: { string: "Activities", type: 'one2many', relation: 'mail.activity' },
+                    email_cc: { type: 'char' },
+                    partner_ids: {
+                        string: "Related partners",
+                        type: 'many2one',
+                        relation: 'res.partner'
+                    },
                 },
                 records: [],
             },

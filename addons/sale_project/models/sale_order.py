@@ -21,7 +21,7 @@ class SaleOrder(models.Model):
     @api.depends('order_line.product_id.project_id')
     def _compute_tasks_ids(self):
         for order in self:
-            order.tasks_ids = self.env['project.task'].search([('sale_line_id', 'in', order.order_line.ids)])
+            order.tasks_ids = self.env['project.task'].search(['|', ('sale_line_id', 'in', order.order_line.ids), ('sale_order_id', '=', order.id)])
             order.tasks_count = len(order.tasks_ids)
 
     @api.depends('order_line.product_id.service_tracking')
@@ -66,16 +66,17 @@ class SaleOrder(models.Model):
         form_view_id = self.env.ref('project.view_task_form2').id
 
         action = {'type': 'ir.actions.act_window_close'}
-
         task_projects = self.tasks_ids.mapped('project_id')
         if len(task_projects) == 1 and len(self.tasks_ids) > 1:  # redirect to task of the project (with kanban stage, ...)
-            action = self.with_context(active_id=task_projects.id).env.ref(
-                'project.act_project_project_2_project_task_all').read()[0]
+            action = self.with_context(active_id=task_projects.id).env['ir.actions.actions']._for_xml_id(
+                'project.act_project_project_2_project_task_all')
             action['domain'] = [('id', 'in', self.tasks_ids.ids)]
             if action.get('context'):
                 eval_context = self.env['ir.actions.actions']._get_eval_context()
                 eval_context.update({'active_id': task_projects.id})
-                action['context'] = safe_eval(action['context'], eval_context)
+                action_context = safe_eval(action['context'], eval_context)
+                action_context.update(eval_context)
+                action['context'] = action_context
         else:
             action = self.env["ir.actions.actions"]._for_xml_id("project.action_view_task")
             action['context'] = {}  # erase default context to avoid default filter
@@ -202,6 +203,7 @@ class SaleOrderLine(models.Model):
             # duplicating a project doesn't set the SO on sub-tasks
             project.tasks.filtered(lambda task: task.parent_id != False).write({
                 'sale_line_id': self.id,
+                'sale_order_id': self.order_id,
             })
         else:
             project = self.env['project.project'].create(values)

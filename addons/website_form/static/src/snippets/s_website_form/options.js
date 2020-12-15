@@ -557,9 +557,11 @@ options.registry.WebsiteFormEditor = FormEditor.extend({
                         break;
                 }
                 if (field.required) {
-                    // Get default value or for many2one fields the first option.
+                    // Try to retrieve hidden value in form, else,
+                    // get default value or for many2one fields the first option.
+                    const currentValue = this.$target.find(`.s_website_form_dnone input[name="${field.name}"]`).val();
                     const defaultValue = field.defaultValue || field.records[0].id;
-                    this._addHiddenField(defaultValue, field.name);
+                    this._addHiddenField(currentValue || defaultValue, field.name);
                 }
                 uiFragment.insertBefore(option, firstOption);
             });
@@ -712,6 +714,8 @@ options.registry.WebsiteFormEditor = FormEditor.extend({
     },
 });
 
+const authorizedFieldsCache = {};
+
 options.registry.WebsiteFieldEditor = FieldEditor.extend({
     events: _.extend({}, FieldEditor.prototype.events, {
         'click we-button.o_we_select_remove_option': '_onRemoveItemClick',
@@ -734,11 +738,20 @@ options.registry.WebsiteFieldEditor = FieldEditor.extend({
     willStart: async function () {
         const _super = this._super.bind(this);
         // Get the authorized existing fields for the form model
-        this.existingFields = await this._rpc({
-            model: "ir.model",
-            method: "get_authorized_fields",
-            args: [this.formEl.dataset.model_name],
-        }).then(fields => {
+        const model = this.formEl.dataset.model_name;
+        let getFields;
+        if (model in authorizedFieldsCache) {
+            getFields = authorizedFieldsCache[model];
+        } else {
+            getFields = this._rpc({
+                model: "ir.model",
+                method: "get_authorized_fields",
+                args: [model],
+            });
+            authorizedFieldsCache[model] = getFields;
+        }
+
+        this.existingFields = await getFields.then(fields => {
             this.fields = _.each(fields, function (field, fieldName) {
                 field.name = fieldName;
                 field.domain = field.domain || [];

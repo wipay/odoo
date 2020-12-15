@@ -33,18 +33,21 @@ class StockQuant(models.Model):
         ]
         if self.env.context.get('active_model') == 'product.product':
             domain.insert(0, "('product_id', '=', %s)" % self.env.context.get('active_id'))
-        if self.env.context.get('active_model') == 'product.template':
+        elif self.env.context.get('active_model') == 'product.template':
             product_template = self.env['product.template'].browse(self.env.context.get('active_id'))
             if product_template.exists():
                 domain.insert(0, "('product_id', 'in', %s)" % product_template.product_variant_ids.ids)
+        else:
+            domain.insert(0, "('product_id', '=', product_id)")
         return '[' + ', '.join(domain) + ']'
 
     def _domain_product_id(self):
         if not self._is_inventory_mode():
             return
         domain = [('type', '=', 'product')]
-        if self.env.context.get('product_tmpl_id'):
-            domain = expression.AND([domain, [('product_tmpl_id', '=', self.env.context['product_tmpl_id'])]])
+        if self.env.context.get('product_tmpl_ids') or self.env.context.get('product_tmpl_id'):
+            products = self.env.context.get('product_tmpl_ids', []) + [self.env.context.get('product_tmpl_id', 0)]
+            domain = expression.AND([domain, [('product_tmpl_id', 'in', products)]])
         return domain
 
     product_id = fields.Many2one(
@@ -410,7 +413,7 @@ class StockQuant(models.Model):
 
         for quant in quants:
             try:
-                with self._cr.savepoint():
+                with self._cr.savepoint(flush=False):  # Avoid flush compute store of package
                     self._cr.execute("SELECT 1 FROM stock_quant WHERE id = %s FOR UPDATE NOWAIT", [quant.id], log_exceptions=False)
                     quant.write({
                         'quantity': quant.quantity + quantity,
@@ -726,3 +729,6 @@ class QuantPackage(models.Model):
 
     def _get_contained_quants(self):
         return self.env['stock.quant'].search([('package_id', 'in', self.ids)])
+
+    def _allowed_to_move_between_transfers(self):
+        return True

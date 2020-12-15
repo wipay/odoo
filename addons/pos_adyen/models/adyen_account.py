@@ -14,6 +14,11 @@ class AdyenAccount(models.Model):
     store_ids = fields.One2many('adyen.store', 'adyen_account_id')
     terminal_ids = fields.One2many('adyen.terminal', 'adyen_account_id')
 
+    @api.model
+    def _sync_adyen_cron(self):
+        self.env['adyen.terminal']._sync_adyen_terminals()
+        super(AdyenAccount, self)._sync_adyen_cron()
+
     def action_order_terminal(self):
         if not self.store_ids:
             raise ValidationError(_('Please create a store first.'))
@@ -30,7 +35,7 @@ class AdyenAccount(models.Model):
 class AdyenStore(models.Model):
     _name = 'adyen.store'
     _inherit = ['adyen.address.mixin']
-    _description = 'Adyen for Plaforms Store'
+    _description = 'Adyen for Platforms Store'
 
     adyen_account_id = fields.Many2one('adyen.account', ondelete='cascade')
     store_reference = fields.Char('Reference', default=lambda self: uuid.uuid4().hex)
@@ -42,7 +47,7 @@ class AdyenStore(models.Model):
     @api.model
     def create(self, values):
         adyen_store_id = super(AdyenStore, self).create(values)
-        response = adyen_store_id.adyen_account_id._adyen_rpc('update_account_holder', adyen_store_id._format_data())
+        response = adyen_store_id.adyen_account_id._adyen_rpc('create_store', adyen_store_id._format_data())
         stores = response['accountHolderDetails']['storeDetails']
         created_store = next(store for store in stores if store['storeReference'] == adyen_store_id.store_reference)
         adyen_store_id.with_context(update_from_adyen=True).sudo().write({
@@ -65,7 +70,6 @@ class AdyenStore(models.Model):
                 'storeDetails': [{
                     'storeReference': self.store_reference,
                     'storeName': self.name,
-                    'merchantAccount': 'OdooMP_POS',
                     'merchantCategoryCode': '7999',
                     'address': {
                         'city': self.city,
@@ -83,7 +87,7 @@ class AdyenStore(models.Model):
 
 class AdyenTerminal(models.Model):
     _name = 'adyen.terminal'
-    _description = 'Adyen for Plaforms Terminal'
+    _description = 'Adyen for Platforms Terminal'
     _rec_name = 'terminal_uuid'
 
     adyen_account_id = fields.Many2one('adyen.account', ondelete='cascade')

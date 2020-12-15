@@ -9,17 +9,18 @@
 # Jesper Carstensen <jc@danodoo.dk>, 2020
 # Pernille Kristensen <pernillekristensen1994@gmail.com>, 2020
 # Sanne Kristensen <sanne@vkdata.dk>, 2020
-# Ejner Sønniksen <ejner@vkdata.dk>, 2020
 # lhmflexerp <lhm@flexerp.dk>, 2020
 # Mads Søndergaard, 2020
+# Ejner Sønniksen <ejner@vkdata.dk>, 2020
+# Mads Søndergaard <mads@vkdata.dk>, 2020
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server saas~13.5\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 07:29+0000\n"
+"POT-Creation-Date: 2020-09-29 13:46+0000\n"
 "PO-Revision-Date: 2020-09-07 08:18+0000\n"
-"Last-Translator: Mads Søndergaard, 2020\n"
+"Last-Translator: Mads Søndergaard <mads@vkdata.dk>, 2020\n"
 "Language-Team: Danish (https://www.transifex.com/odoo/teams/41243/da/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -171,6 +172,13 @@ msgid "Available"
 msgstr "Til rådighed"
 
 #. module: sale_stock
+#. openerp-web
+#: code:addons/sale_stock/static/src/xml/sale_stock.xml:0
+#, python-format
+msgid "Available in stock"
+msgstr "Tilgængelig på lager"
+
+#. module: sale_stock
 #: model:ir.model.fields,help:sale_stock.field_stock_rules_report__so_route_ids
 msgid "Choose to apply SO lines specific routes."
 msgstr "Vælg at anvende specifikke ruter på SO linjer"
@@ -198,12 +206,7 @@ msgstr "Dato:"
 #. module: sale_stock
 #: model:ir.model.fields,field_description:sale_stock.field_res_users__property_warehouse_id
 msgid "Default Warehouse"
-msgstr ""
-
-#. module: sale_stock
-#: model_terms:ir.ui.view,arch_db:sale_stock.view_order_form_inherit_sale_stock
-msgid "Delivered"
-msgstr "Leveret"
+msgstr "Standard Varehus"
 
 #. module: sale_stock
 #: model_terms:ir.ui.view,arch_db:sale_stock.view_order_form_inherit_sale_stock
@@ -213,7 +216,7 @@ msgstr "Levering"
 #. module: sale_stock
 #: model:ir.model.fields,field_description:sale_stock.field_sale_order_cancel__display_delivery_alert
 msgid "Delivery Alert"
-msgstr ""
+msgstr "Leveringsadvarsel"
 
 #. module: sale_stock
 #: model:ir.model.fields,field_description:sale_stock.field_sale_order__delivery_count
@@ -296,7 +299,7 @@ msgstr "Dokumentation"
 #. module: sale_stock
 #: model_terms:ir.ui.view,arch_db:sale_stock.sale_report_product_product_replenishment
 msgid "Draft SO"
-msgstr ""
+msgstr "Kladde SO"
 
 #. module: sale_stock
 #: model:ir.model.fields,field_description:sale_stock.field_sale_order__effective_date
@@ -337,6 +340,11 @@ msgid "Expected:"
 msgstr "Forventet:"
 
 #. module: sale_stock
+#: model:ir.model.fields,field_description:sale_stock.field_sale_order_line__forecast_expected_date
+msgid "Forecast Expected Date"
+msgstr "Prognose Forventet Dato"
+
+#. module: sale_stock
 #. openerp-web
 #: code:addons/sale_stock/static/src/xml/sale_stock.xml:0
 #, python-format
@@ -351,7 +359,7 @@ msgstr "Tilgængelig kvantitet idag"
 #. module: sale_stock
 #: model:ir.model.fields,field_description:sale_stock.field_sale_order__show_json_popover
 msgid "Has late picking"
-msgstr ""
+msgstr "Har forsinket pluk"
 
 #. module: sale_stock
 #: model:ir.model.fields,field_description:sale_stock.field_account_move__id
@@ -433,14 +441,9 @@ msgid "Is Mto"
 msgstr "er MTO"
 
 #. module: sale_stock
-#: model:ir.model.fields,field_description:sale_stock.field_sale_order_line__json_forecast
-msgid "JSON data for the forecast widget"
-msgstr ""
-
-#. module: sale_stock
 #: model:ir.model.fields,field_description:sale_stock.field_sale_order__json_popover
 msgid "JSON data for the popover widget"
-msgstr ""
+msgstr "JSON data for popover widget'en"
 
 #. module: sale_stock
 #: model:ir.model,name:sale_stock.model_account_move
@@ -533,6 +536,20 @@ msgstr "Flyt forventet leverings datoer frem med"
 #. openerp-web
 #: code:addons/sale_stock/static/src/xml/sale_stock.xml:0
 #, python-format
+msgid "No enough future availaibility"
+msgstr "Utilstrækkelig fremtidig tilgængelighed"
+
+#. module: sale_stock
+#. openerp-web
+#: code:addons/sale_stock/static/src/xml/sale_stock.xml:0
+#, python-format
+msgid "No future availaibility"
+msgstr "Ingen fremtidig tilgængelighed"
+
+#. module: sale_stock
+#. openerp-web
+#: code:addons/sale_stock/static/src/xml/sale_stock.xml:0
+#, python-format
 msgid "On"
 msgstr "On"
 
@@ -577,6 +594,20 @@ msgstr "Kvantitet tilgængelig idag"
 #: model:ir.model.fields,field_description:sale_stock.field_sale_order_line__qty_to_deliver
 msgid "Qty To Deliver"
 msgstr "Kvantitet til levering"
+
+#. module: sale_stock
+#. openerp-web
+#: code:addons/sale_stock/static/src/xml/sale_stock.xml:0
+#, python-format
+msgid "Remaining demand available at"
+msgstr "Tilbageværende efterspørgsel tilgængelig på"
+
+#. module: sale_stock
+#. openerp-web
+#: code:addons/sale_stock/static/src/xml/sale_stock.xml:0
+#, python-format
+msgid "Reserved"
+msgstr "Reserveret"
 
 #. module: sale_stock
 #: model_terms:ir.ui.view,arch_db:sale_stock.res_config_settings_view_form_stock
@@ -630,7 +661,7 @@ msgstr "Salgsordre"
 #. module: sale_stock
 #: model:ir.model,name:sale_stock.model_sale_order_cancel
 msgid "Sales Order Cancel"
-msgstr ""
+msgstr "Salgsordre Annuller"
 
 #. module: sale_stock
 #: model:ir.model,name:sale_stock.model_sale_order_line
@@ -703,6 +734,8 @@ msgid ""
 "Some products have already been delivered. Returns can be created from the "
 "Delivery Orders."
 msgstr ""
+"Visse produkter er allerede blevet leveret. Returneringer kan oprettes fra "
+"Leveringsordre."
 
 #. module: sale_stock
 #: model:ir.model,name:sale_stock.model_stock_move
@@ -718,7 +751,7 @@ msgstr "Lagerflytning"
 #. module: sale_stock
 #: model:ir.model,name:sale_stock.model_report_stock_report_product_product_replenishment
 msgid "Stock Replenishment Report"
-msgstr ""
+msgstr "Lager Genopfyldning Rapport"
 
 #. module: sale_stock
 #: model:ir.model,name:sale_stock.model_stock_rule
@@ -740,7 +773,7 @@ msgstr "Lager regel rapport"
 #: code:addons/sale_stock/static/src/xml/sale_stock.xml:0
 #, python-format
 msgid "The delivery"
-msgstr ""
+msgstr "Leveringen"
 
 #. module: sale_stock
 #: code:addons/sale_stock/models/sale_order.py:0
@@ -761,6 +794,8 @@ msgid ""
 "This product is packaged by %(pack_size).2f %(pack_name)s. You should sell "
 "%(quantity).2f %(unit)s."
 msgstr ""
+"Dette produkt er pakket i %(pack_size).2f %(pack_name)s. Du bør sælge "
+"%(quantity).2f %(unit)s."
 
 #. module: sale_stock
 #. openerp-web
@@ -881,4 +916,4 @@ msgstr "bearbejdet i stedet for"
 #: code:addons/sale_stock/static/src/xml/sale_stock.xml:0
 #, python-format
 msgid "will be late."
-msgstr ""
+msgstr "vil være forsinket."

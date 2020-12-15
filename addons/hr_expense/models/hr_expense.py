@@ -77,6 +77,7 @@ class HrExpense(models.Model):
     company_currency_id = fields.Many2one('res.currency', string="Report Company Currency", related='sheet_id.currency_id', store=True, readonly=False)
     total_amount_company = fields.Monetary("Total (Company Currency)", compute='_compute_total_amount_company', store=True, currency_field='company_currency_id')
     company_id = fields.Many2one('res.company', string='Company', required=True, readonly=True, states={'draft': [('readonly', False)], 'refused': [('readonly', False)]}, default=lambda self: self.env.company)
+    # TODO make required in master (sgv)
     currency_id = fields.Many2one('res.currency', string='Currency', readonly=True, states={'draft': [('readonly', False)], 'refused': [('readonly', False)]}, default=lambda self: self.env.company.currency_id)
     analytic_account_id = fields.Many2one('account.analytic.account', string='Analytic Account', check_company=True)
     analytic_tag_ids = fields.Many2many('account.analytic.tag', string='Analytic Tags', states={'post': [('readonly', True)], 'done': [('readonly', True)]}, domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]")
@@ -94,10 +95,10 @@ class HrExpense(models.Model):
         ('approved', 'Approved'),
         ('done', 'Paid'),
         ('refused', 'Refused')
-    ], compute='_compute_state', string='Status', copy=False, index=True, readonly=True, store=True, help="Status of the expense.")
+    ], compute='_compute_state', string='Status', copy=False, index=True, readonly=True, store=True, default='draft', help="Status of the expense.")
     sheet_id = fields.Many2one('hr.expense.sheet', string="Expense Report", domain="[('employee_id', '=', employee_id), ('company_id', '=', company_id)]", readonly=True, copy=False)
     reference = fields.Char("Bill Reference")
-    is_refused = fields.Boolean("Explicitely Refused by manager or acccountant", readonly=True, copy=False)
+    is_refused = fields.Boolean("Explicitly Refused by manager or accountant", readonly=True, copy=False)
 
     is_editable = fields.Boolean("Is Editable By Current User", compute='_compute_is_editable')
     is_ref_editable = fields.Boolean("Reference Is Editable By Current User", compute='_compute_is_ref_editable')
@@ -387,9 +388,9 @@ Or send your receipts at <a href="mailto:%(email)s?subject=Lunch%%20with%%20cust
         self.ensure_one()
         account_dest = self.env['account.account']
         if self.payment_mode == 'company_account':
-            if not self.sheet_id.bank_journal_id.default_account_id:
-                raise UserError(_("No account found for the %s journal, please configure one.") % (self.sheet_id.bank_journal_id.name))
-            account_dest = self.sheet_id.bank_journal_id.default_account_id.id
+            if not self.sheet_id.bank_journal_id.payment_credit_account_id:
+                raise UserError(_("No Outstanding Payments Account found for the %s journal, please configure one.") % (self.sheet_id.bank_journal_id.name))
+            account_dest = self.sheet_id.bank_journal_id.payment_credit_account_id.id
         else:
             if not self.employee_id.sudo().address_home_id:
                 raise UserError(_("No Home Address found for the employee %s, please configure one.") % (self.employee_id.name))
@@ -441,6 +442,13 @@ Or send your receipts at <a href="mailto:%(email)s?subject=Lunch%%20with%%20cust
             for tax in taxes['taxes']:
                 balance = expense.currency_id._convert(tax['amount'], company_currency, expense.company_id, account_date)
                 amount_currency = tax['amount']
+
+                if tax['tax_repartition_line_id']:
+                    rep_ln = self.env['account.tax.repartition.line'].browse(tax['tax_repartition_line_id'])
+                    base_amount = self.env['account.move']._get_base_amount_to_display(tax['base'], rep_ln)
+                else:
+                    base_amount = None
+
                 move_line_tax_values = {
                     'name': tax['name'],
                     'quantity': 1,
@@ -450,7 +458,7 @@ Or send your receipts at <a href="mailto:%(email)s?subject=Lunch%%20with%%20cust
                     'account_id': tax['account_id'] or move_line_src['account_id'],
                     'tax_repartition_line_id': tax['tax_repartition_line_id'],
                     'tax_tag_ids': tax['tag_ids'],
-                    'tax_base_amount': tax['base'],
+                    'tax_base_amount': base_amount,
                     'expense_id': expense.id,
                     'partner_id': partner_id,
                     'currency_id': expense.currency_id.id,
@@ -569,7 +577,7 @@ Or send your receipts at <a href="mailto:%(email)s?subject=Lunch%%20with%%20cust
             ], ['total_amount', 'currency_id', 'state'], ['state', 'currency_id'], lazy=False)
         for expense in expenses:
             state = expense['state']
-            currency = self.env['res.currency'].browse(expense['currency_id'][0])
+            currency = self.env['res.currency'].browse(expense['currency_id'][0]) if expense['currency_id'] else target_currency
             amount = currency._convert(
                     expense['total_amount'], target_currency, self.env.company, fields.Date.today())
             expense_state[state]['amount'] += amount
@@ -904,14 +912,11 @@ class HrExpenseSheet(models.Model):
         expense_line_ids = self.mapped('expense_line_ids')\
             .filtered(lambda r: not float_is_zero(r.total_amount, precision_rounding=(r.currency_id or self.env.company.currency_id).rounding))
         res = expense_line_ids.action_move_create()
-
-        if not self.accounting_date:
-            self.accounting_date = self.account_move_id.date
-
-        if self.payment_mode == 'own_account' and expense_line_ids:
-            self.write({'state': 'post'})
-        else:
-            self.write({'state': 'done'})
+        for sheet in self.filtered(lambda s: not s.accounting_date):
+            sheet.accounting_date = sheet.account_move_id.date
+        to_post = self.filtered(lambda sheet: sheet.payment_mode == 'own_account' and sheet.expense_line_ids)
+        to_post.write({'state': 'post'})
+        (self - to_post).write({'state': 'done'})
         self.activity_update()
         return res
 
@@ -996,7 +1001,7 @@ class HrExpenseSheet(models.Model):
                 'hr_expense.mail_act_expense_approval',
                 user_id=expense_report.sudo()._get_responsible_for_approval().id or self.env.user.id)
         self.filtered(lambda hol: hol.state == 'approve').activity_feedback(['hr_expense.mail_act_expense_approval'])
-        self.filtered(lambda hol: hol.state == 'cancel').activity_unlink(['hr_expense.mail_act_expense_approval'])
+        self.filtered(lambda hol: hol.state in ('draft', 'cancel')).activity_unlink(['hr_expense.mail_act_expense_approval'])
 
     def action_register_payment(self):
         ''' Open the account.payment.register wizard to pay the selected journal entries.

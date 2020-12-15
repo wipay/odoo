@@ -3,56 +3,23 @@
 # 	* sale
 # 
 # Translators:
-# e2f <projects@e2f.com>, 2020
-# Antonio Trueba, 2020
-# Gelo Joga Landoo <gj@landoo.es>, 2020
-# renodoo <ren@odoo.com>, 2020
-# Cristian Salamea <ovnicraft@gmail.com>, 2020
-# Lina Maria Avendaño Carvajal <lina8823@gmail.com>, 2020
-# Rick Hunter <rick_hunter_ec@yahoo.com>, 2020
-# Rick Hunter <rick.hunter.ec@gmail.com>, 2020
-# 36700cd705c35e1852bdffcd0b296648, 2020
-# Edilianny Sanchez - https://www.vauxoo.com/ <esanchez@vauxoo.com>, 2020
-# Jimmy Ramos <jimmybanegas93@gmail.com>, 2020
-# Harald Panten <harald.panten@qubiq.es>, 2020
-# Juan Pablo Mora <jpm@odoo.com>, 2020
-# Ana Juaristi <ajuaristio@gmail.com>, 2020
-# Mateo Tibaquirá Palacios <nestormateo@gmail.com>, 2020
-# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2020
-# Christopher Ormaza <chris.ormaza@gmail.com>, 2020
-# José Vicente <txusev@gmail.com>, 2020
-# Miquel Torner <miq@odoo.com>, 2020
-# 715cd7e95e9ee8a7f9785bf3e53bc76f, 2020
-# Nicolás Broggi <rnbroggi@gmail.com>, 2020
-# Omar Torres <otorresgi18@gmail.com>, 2020
-# Sabina Batlle <sbb@odoo.com>, 2020
-# Jesse Garza <jga@odoo.com>, 2020
-# Jorge Luis Quinteros <quinterosorellana04@gmail.com>, 2020
-# Marco Alejandro Martinez <martinezsuarezmarcoalejandro@gmail.com>, 2020
-# Erick Herrera <erick.herrera@jarsa.com.mx>, 2020
-# Leonardo J. Caballero G. <leonardocaballero@gmail.com>, 2020
-# Martin Trigaux, 2020
-# Pedro M. Baeza <pedro.baeza@gmail.com>, 2020
-# Jesús Alan Ramos Rodríguez <alan.ramos@jarsa.com.mx>, 2020
-# Alejandro Santana <alejandrosantana@anubia.es>, 2020
-# Luis M. Ontalba <luis.martinez@tecnativa.com>, 2020
 # gabriumaa <gabriel.umana@delfixcr.com>, 2020
-# Miguel Orueta <mo@landoo.es>, 2020
-# 966ff43e6966712895a590e7320ca288, 2020
-# Cristopher Cravioto <ccr@odoo.com>, 2020
-# Pilar Marín <pilar@odooperu.pe>, 2020
+# Erick Herrera <erick.herrera@jarsa.com.mx>, 2020
+# Jesús Alan Ramos Rodríguez <alan.ramos@jarsa.com.mx>, 2020
+# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2020
 # Jon Perez <jop@odoo.com>, 2020
-# Mariana Santos Romo <msn@odoo.com>, 2020
 # VivianMontana23 <vivianpvm@gmail.com>, 2020
 # Osiris Román <osiris.roman@yachaytech.edu.ec>, 2020
+# Martin Trigaux, 2020
+# Pedro M. Baeza <pedro.baeza@gmail.com>, 2020
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server saas~13.5\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-07 07:33+0000\n"
+"POT-Creation-Date: 2020-10-29 15:48+0000\n"
 "PO-Revision-Date: 2020-09-07 08:17+0000\n"
-"Last-Translator: Osiris Román <osiris.roman@yachaytech.edu.ec>, 2020\n"
+"Last-Translator: Pedro M. Baeza <pedro.baeza@gmail.com>, 2020\n"
 "Language-Team: Spanish (https://www.transifex.com/odoo/teams/41243/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -129,6 +96,12 @@ msgid ""
 msgstr ""
 "(object.state in ('draft', 'sent') and 'Presupuesto - %s' % (object.name)) "
 "or 'Pedido - %s' % (object.name)"
+
+#. module: sale
+#: model:product.product,description_sale:sale.product_product_4e
+#: model:product.product,description_sale:sale.product_product_4f
+msgid "160x80cm, with large legs."
+msgstr "160x80cm, con patas grandes."
 
 #. module: sale
 #. openerp-web
@@ -789,7 +762,7 @@ msgstr "Estado de la actividad"
 #. module: sale
 #: model:ir.model.fields,field_description:sale.field_sale_order__activity_type_icon
 msgid "Activity Type Icon"
-msgstr ""
+msgstr "Ícono de tipo de actvidad"
 
 #. module: sale
 #: model:ir.actions.act_window,name:sale.mail_activity_type_action_config_sale
@@ -1251,6 +1224,12 @@ msgid "Currency Rate"
 msgstr "Tasa monetaria"
 
 #. module: sale
+#: model:product.attribute.value,name:sale.product_attribute_value_7
+#: model:product.template.attribute.value,name:sale.product_4_attribute_1_value_3
+msgid "Custom"
+msgstr "Personalizado"
+
+#. module: sale
 #: model:ir.model.fields,field_description:sale.field_sale_order_line__product_custom_attribute_value_ids
 msgid "Custom Values"
 msgstr "Valores personalizados"
@@ -1320,6 +1299,12 @@ msgstr "Impuestos cliente"
 #: model:ir.ui.menu,name:sale.res_partner_menu
 msgid "Customers"
 msgstr "Clientes"
+
+#. module: sale
+#: model:product.product,name:sale.product_product_4e
+#: model:product.product,name:sale.product_product_4f
+msgid "Customizable Desk (CONFIG)"
+msgstr "Escritorio personalizable (CONFIG)"
 
 #. module: sale
 #: model_terms:ir.ui.view,arch_db:sale.onboarding_quotation_layout_step
@@ -1466,6 +1451,12 @@ msgstr ""
 "pedido."
 
 #. module: sale
+#: model:product.product,name:sale.advance_product_0
+#: model:product.template,name:sale.advance_product_0_product_template
+msgid "Deposit"
+msgstr "Adelanto"
+
+#. module: sale
 #: model:ir.model.fields,field_description:sale.field_res_config_settings__deposit_default_product_id
 msgid "Deposit Product"
 msgstr "Producto para adelanto"
@@ -1562,8 +1553,8 @@ msgstr "Cantidad del Depósito"
 
 #. module: sale
 #: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv__fixed_amount
-msgid "Down Payment Amount(Fixed)"
-msgstr "Monto de anticipo (fijo)"
+msgid "Down Payment Amount (Fixed)"
+msgstr ""
 
 #. module: sale
 #: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv__product_id
@@ -2241,13 +2232,6 @@ msgstr "Deje que sus clientes inicien sesión para ver sus documentos"
 #. openerp-web
 #: code:addons/sale/static/src/js/tours/sale.js:0
 #, python-format
-msgid "Let's enter the address."
-msgstr ""
-
-#. module: sale
-#. openerp-web
-#: code:addons/sale/static/src/js/tours/sale.js:0
-#, python-format
 msgid "Let's send the quote."
 msgstr ""
 
@@ -2279,7 +2263,7 @@ msgstr "Bloqueado"
 #: code:addons/sale/static/src/js/tours/sale.js:0
 #, python-format
 msgid "Looks good. Let's continue."
-msgstr ""
+msgstr "Se ve bien. Continuemos."
 
 #. module: sale
 #: model_terms:ir.ui.view,arch_db:sale.onboarding_quotation_layout_step
@@ -3257,6 +3241,11 @@ msgstr "Avisos para pedido de venta"
 #: model:ir.model,name:sale.model_sale_payment_acquirer_onboarding_wizard
 msgid "Sale Payment acquire onboarding wizard"
 msgstr "Asistente de incorporación de pago de venta"
+
+#. module: sale
+#: model:utm.source,name:sale.utm_source_sale_order_0
+msgid "Sale Promotion 1"
+msgstr "Promoción de venta 1"
 
 #. module: sale
 #: model_terms:ir.ui.view,arch_db:sale.res_config_settings_view_form
@@ -4238,6 +4227,14 @@ msgid "Unit of Measure"
 msgstr "Unidad de medida"
 
 #. module: sale
+#: model:product.product,uom_name:sale.advance_product_0
+#: model:product.product,uom_name:sale.product_product_4e
+#: model:product.product,uom_name:sale.product_product_4f
+#: model:product.template,uom_name:sale.advance_product_0_product_template
+msgid "Units"
+msgstr "Unidades"
+
+#. module: sale
 #: model:ir.ui.menu,name:sale.menu_product_uom_form_action
 #: model:ir.ui.menu,name:sale.next_id_16
 #: model_terms:ir.ui.view,arch_db:sale.res_config_settings_view_form
@@ -4484,6 +4481,8 @@ msgid ""
 "Your quotation contains products from company %(product_company)s whereas your quotation belongs to company %(quote_company)s. \n"
 " Please change the company of your quotation or remove the products from other companies (%(bad_products)s)."
 msgstr ""
+"Su presupuesto contiene productos de la compañía %(product_company)s, mientras que el mismo pertenece a la compañía %(quote_company)s.\n"
+" Cambie la compañía de su presupuesto o elimine los productos de otras compañías (%(bad_products)s)."
 
 #. module: sale
 #: model:ir.model.fields,field_description:sale.field_res_config_settings__module_delivery_bpost

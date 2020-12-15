@@ -1159,6 +1159,15 @@ class ChromeBrowser():
         self.screencast_frames = []
         sl_id = self._websocket_send('Page.stopLoading')
         self._websocket_wait_id(sl_id)
+        clear_service_workers = """
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(
+                registrations => registrations.forEach(r => r.unregister())
+            )
+        }
+        """
+        cl_id = self._websocket_send('Runtime.evaluate', params={'expression': clear_service_workers, 'awaitPromise': True})
+        self._websocket_wait_id(cl_id)
         self._logger.info('Deleting cookies and clearing local storage')
         dc_id = self._websocket_send('Network.clearBrowserCache')
         self._websocket_wait_id(dc_id)
@@ -2108,7 +2117,9 @@ class Form(object):
             else:
                 ids = list(current[0][2])
             for command in value:
-                if command[0] == 3:
+                if command[0] == 1:
+                    ids.append(command[1])
+                elif command[0] == 3:
                     ids.remove(command[1])
                 elif command[0] == 4:
                     ids.append(command[1])

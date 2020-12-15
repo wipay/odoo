@@ -948,7 +948,7 @@ class Users(models.Model):
                     "and *might* be a proxy. If your Odoo is behind a proxy, "
                     "it may be mis-configured. Check that you are running "
                     "Odoo in Proxy Mode and that the proxy is properly configured, see "
-                    "https://www.odoo.com/documentation/13.0/setup/deploy.html#https for details.",
+                    "https://www.odoo.com/documentation/14.0/setup/deploy.html#https for details.",
                     source
                 )
             raise AccessDenied(_("Too many login failures, please wait a bit before trying again."))
@@ -1568,7 +1568,14 @@ class APIKeysUser(models.Model):
         return False
 
     def _check_credentials(self, password, user_agent_env):
-        if user_agent_env['interactive']:
+        user_agent_env = user_agent_env or {}
+        if user_agent_env.get('interactive', True):
+            if 'interactive' not in user_agent_env:
+                _logger.warning(
+                    "_check_credentials without 'interactive' env key, assuming interactive login. \
+                    Check calls and overrides to ensure the 'interactive' key is properly set in \
+                    all _check_credentials environments"
+                )
             return super()._check_credentials(password, user_agent_env)
 
         if not self.env.user._rpc_api_keys_only():

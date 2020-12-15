@@ -305,6 +305,10 @@ class SaleOrder(models.Model):
             else:
                 order.expected_date = False
 
+    @api.onchange('expected_date')
+    def _onchange_commitment_date(self):
+        self.commitment_date = self.expected_date
+
     @api.depends('transaction_ids')
     def _compute_authorized_transaction_ids(self):
         for trans in self:
@@ -327,6 +331,11 @@ class SaleOrder(models.Model):
             if order.state not in ('draft', 'cancel'):
                 raise UserError(_('You can not delete a sent quotation or a confirmed sales order. You must first cancel it.'))
         return super(SaleOrder, self).unlink()
+
+    def validate_taxes_on_sales_order(self):
+        # Override for correct taxcloud computation
+        # when using coupon and delivery
+        return True
 
     def _track_subtype(self, init_values):
         self.ensure_one()
@@ -352,6 +361,7 @@ class SaleOrder(models.Model):
         - Payment terms
         - Invoice address
         - Delivery address
+        - Sales Team
         """
         if not self.partner_id:
             self.update({
@@ -380,13 +390,17 @@ class SaleOrder(models.Model):
         if self.env['ir.config_parameter'].sudo().get_param('account.use_invoice_terms') and self.env.company.invoice_terms:
             values['note'] = self.with_context(lang=self.partner_id.lang).env.company.invoice_terms
         if not self.env.context.get('not_self_saleperson') or not self.team_id:
-            values['team_id'] = self.env['crm.team']._get_default_team_id(domain=['|', ('company_id', '=', self.company_id.id), ('company_id', '=', False)],user_id=user_id)
+            values['team_id'] = self.env['crm.team'].with_context(
+                default_team_id=self.partner_id.team_id.id
+            )._get_default_team_id(domain=['|', ('company_id', '=', self.company_id.id), ('company_id', '=', False)], user_id=user_id)
         self.update(values)
 
     @api.onchange('user_id')
     def onchange_user_id(self):
         if self.user_id:
-            self.team_id = self.env['crm.team']._get_default_team_id(user_id=self.user_id.id)
+            self.team_id = self.env['crm.team'].with_context(
+                default_team_id=self.team_id.id
+            )._get_default_team_id(user_id=self.user_id.id)
 
     @api.onchange('partner_id')
     def onchange_partner_id_warning(self):
@@ -450,7 +464,11 @@ class SaleOrder(models.Model):
             )
             price_unit = self.env['account.tax']._fix_tax_included_price_company(
                 line._get_display_price(product), line.product_id.taxes_id, line.tax_id, line.company_id)
-            lines_to_update.append((1, line.id, {'price_unit': price_unit}))
+            if self.pricelist_id.discount_policy == 'without_discount' and price_unit:
+                discount = max(0, (price_unit - product.price) * 100 / price_unit)
+            else:
+                discount = 0
+            lines_to_update.append((1, line.id, {'price_unit': price_unit, 'discount': discount}))
         self.update({'order_line': lines_to_update})
         self.show_update_pricelist = False
         self.message_post(body=_("Product prices have been recomputed according to pricelist <b>%s<b> ", self.pricelist_id.display_name))
@@ -701,9 +719,37 @@ Reason(s) of this behavior could be:
             invoice_vals_list = new_invoice_vals_list
 
         # 3) Create invoices.
+
+        # As part of the invoice creation, we make sure the sequence of multiple SO do not interfere
+        # in a single invoice. Example:
+        # SO 1:
+        # - Section A (sequence: 10)
+        # - Product A (sequence: 11)
+        # SO 2:
+        # - Section B (sequence: 10)
+        # - Product B (sequence: 11)
+        #
+        # If SO 1 & 2 are grouped in the same invoice, the result will be:
+        # - Section A (sequence: 10)
+        # - Section B (sequence: 10)
+        # - Product A (sequence: 11)
+        # - Product B (sequence: 11)
+        #
+        # Resequencing should be safe, however we resequence only if there are less invoices than
+        # orders, meaning a grouping might have been done. This could also mean that only a part
+        # of the selected SO are invoiceable, but resequencing in this case shouldn't be an issue.
+        if len(invoice_vals_list) < len(self):
+            SaleOrderLine = self.env['sale.order.line']
+            for invoice in invoice_vals_list:
+                sequence = 1
+                for line in invoice['invoice_line_ids']:
+                    line[2]['sequence'] = SaleOrderLine._get_invoice_line_sequence(new=sequence, old=line[2]['sequence'])
+                    sequence += 1
+
         # Manage the creation of invoices in sudo because a salesperson must be able to generate an invoice from a
         # sale order without "billing" access rights. However, he should not be able to create an invoice from scratch.
         moves = self.env['account.move'].sudo().with_context(default_move_type='out_invoice').create(invoice_vals_list)
+
         # 4) Some moves might actually be refunds: convert them if the total amount is negative
         # We do this after the moves have been created since we need taxes, etc. to know if the total
         # is actually negative or not
@@ -844,7 +890,13 @@ Reason(s) of this behavior could be:
         for order in self.filtered(lambda order: order.partner_id not in order.message_partner_ids):
             order.message_subscribe([order.partner_id.id])
         self.write(self._prepare_confirmation_values())
-        self._action_confirm()
+
+        # Context key 'default_name' is sometimes propagated up to here.
+        # We don't need it and it creates issues in the creation of linked records.
+        context = self._context.copy()
+        context.pop('default_name', None)
+
+        self.with_context(context)._action_confirm()
         if self.env.user.has_group('sale.group_auto_done_setting'):
             self.action_done()
         return True
@@ -973,7 +1025,7 @@ Reason(s) of this behavior could be:
             'currency_id': currency.id,
             'partner_id': partner.id,
             'sale_order_ids': [(6, 0, self.ids)],
-            'type': self[0]._get_payment_type(),
+            'type': self[0]._get_payment_type(vals.get('type')=='form_save'),
         })
 
         transaction = self.env['payment.transaction'].create(vals)
@@ -1030,9 +1082,9 @@ Reason(s) of this behavior could be:
             return self.get_portal_url(query_string='&%s' % auth_param)
         return super(SaleOrder, self)._get_share_url(redirect, signup_partner, pid)
 
-    def _get_payment_type(self):
+    def _get_payment_type(self, tokenize=False):
         self.ensure_one()
-        return 'form'
+        return 'form_save' if tokenize else 'form'
 
     def _get_portal_return_action(self):
         """ Return the action used to display orders when returning from customer portal. """
@@ -1130,6 +1182,7 @@ class SaleOrderLine(models.Model):
             else:
                 line.product_updatable = True
 
+    # no trigger product_id.invoice_policy to avoid retroactively changing SO
     @api.depends('qty_invoiced', 'qty_delivered', 'product_uom_qty', 'order_id.state')
     def _get_to_invoice_qty(self):
         """
@@ -1488,9 +1541,44 @@ class SaleOrderLine(models.Model):
                     price_subtotal = line.price_reduce * line.qty_delivered
                 else:
                     price_subtotal = line.price_reduce * line.product_uom_qty
+                if len(line.tax_id.filtered(lambda tax: tax.price_include)) > 0:
+                    # As included taxes are not excluded from the computed subtotal, `compute_all()` method
+                    # has to be called to retrieve the subtotal without them.
+                    # `price_reduce_taxexcl` cannot be used as it is computed from `price_subtotal` field. (see upper Note)
+                    price_subtotal = line.tax_id.compute_all(
+                        price_subtotal,
+                        currency=line.order_id.currency_id,
+                        quantity=line.product_uom_qty,
+                        product=line.product_id,
+                        partner=line.order_id.partner_shipping_id)['total_excluded']
 
-                amount_to_invoice = price_subtotal - line.untaxed_amount_invoiced
+                if any(line.invoice_lines.mapped(lambda l: l.discount != line.discount)):
+                    # In case of re-invoicing with different discount we try to calculate manually the
+                    # remaining amount to invoice
+                    amount = 0
+                    for l in line.invoice_lines:
+                        if len(l.tax_ids.filtered(lambda tax: tax.price_include)) > 0:
+                            amount += l.tax_ids.compute_all(l.currency_id._convert(l.price_unit, line.currency_id, line.company_id, l.date or fields.Date.today(), round=False) * l.quantity)['total_excluded']
+                        else:
+                            amount += l.currency_id._convert(l.price_unit, line.currency_id, line.company_id, l.date or fields.Date.today(), round=False) * l.quantity
+
+                    amount_to_invoice = max(price_subtotal - amount, 0)
+                else:
+                    amount_to_invoice = price_subtotal - line.untaxed_amount_invoiced
+
             line.untaxed_amount_to_invoice = amount_to_invoice
+
+    def _get_invoice_line_sequence(self, new=0, old=0):
+        """
+        Method intended to be overridden in third-party module if we want to prevent the resequencing
+        of invoice lines.
+
+        :param int new:   the new line sequence
+        :param int old:   the old line sequence
+
+        :return:          the sequence of the SO line, by default the new one.
+        """
+        return new or old
 
     def _prepare_invoice_line(self, **optional_values):
         """
@@ -1547,7 +1635,7 @@ class SaleOrderLine(models.Model):
             )
 
         if self.order_id.pricelist_id.discount_policy == 'with_discount':
-            return product.with_context(pricelist=self.order_id.pricelist_id.id).price
+            return product.with_context(pricelist=self.order_id.pricelist_id.id, uom=self.product_uom.id).price
         product_context = dict(self.env.context, partner_id=self.order_id.partner_id.id, date=self.order_id.date_order, uom=self.product_uom.id)
 
         final_price, rule_id = self.order_id.pricelist_id.with_context(product_context).get_product_price_rule(product or self.product_id, self.product_uom_qty or 1.0, self.order_id.partner_id)
@@ -1713,6 +1801,9 @@ class SaleOrderLine(models.Model):
             'tax_id', 'analytic_tag_ids'
         ]
 
+    def _onchange_product_id_set_customer_lead(self):
+        pass
+
     @api.onchange('product_id', 'price_unit', 'product_uom', 'product_uom_qty', 'tax_id')
     def _onchange_discount(self):
         if not (self.product_id and self.product_uom and
@@ -1784,8 +1875,10 @@ class SaleOrderLine(models.Model):
         for ptav in (no_variant_ptavs - custom_ptavs):
             name += "\n" + ptav.with_context(lang=self.order_id.partner_id.lang).display_name
 
+        # Sort the values according to _order settings, because it doesn't work for virtual records in onchange
+        custom_values = sorted(self.product_custom_attribute_value_ids, key=lambda r: (r.custom_product_template_attribute_value_id.id, r.id))
         # display the is_custom values
-        for pacv in self.product_custom_attribute_value_ids:
+        for pacv in custom_values:
             name += "\n" + pacv.with_context(lang=self.order_id.partner_id.lang).display_name
 
         return name

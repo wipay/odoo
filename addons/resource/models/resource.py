@@ -159,18 +159,33 @@ class ResourceCalendar(models.Model):
         if not res.get('name') and res.get('company_id'):
             res['name'] = _('Working Hours of %s', self.env['res.company'].browse(res['company_id']).name)
         if 'attendance_ids' in fields and not res.get('attendance_ids'):
-            res['attendance_ids'] = [
-                (0, 0, {'name': _('Monday Morning'), 'dayofweek': '0', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
-                (0, 0, {'name': _('Monday Afternoon'), 'dayofweek': '0', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
-                (0, 0, {'name': _('Tuesday Morning'), 'dayofweek': '1', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
-                (0, 0, {'name': _('Tuesday Afternoon'), 'dayofweek': '1', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
-                (0, 0, {'name': _('Wednesday Morning'), 'dayofweek': '2', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
-                (0, 0, {'name': _('Wednesday Afternoon'), 'dayofweek': '2', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
-                (0, 0, {'name': _('Thursday Morning'), 'dayofweek': '3', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
-                (0, 0, {'name': _('Thursday Afternoon'), 'dayofweek': '3', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
-                (0, 0, {'name': _('Friday Morning'), 'dayofweek': '4', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
-                (0, 0, {'name': _('Friday Afternoon'), 'dayofweek': '4', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'})
-            ]
+            company_id = res.get('company_id', self.env.company.id)
+            company = self.env['res.company'].browse(company_id)
+            company_attendance_ids = company.resource_calendar_id.attendance_ids
+            if company_attendance_ids:
+                res['attendance_ids'] = [
+                    (0, 0, {
+                        'name': attendance.name,
+                        'dayofweek': attendance.dayofweek,
+                        'hour_from': attendance.hour_from,
+                        'hour_to': attendance.hour_to,
+                        'day_period': attendance.day_period,
+                    })
+                    for attendance in company_attendance_ids
+                ]
+            else:
+                res['attendance_ids'] = [
+                    (0, 0, {'name': _('Monday Morning'), 'dayofweek': '0', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
+                    (0, 0, {'name': _('Monday Afternoon'), 'dayofweek': '0', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
+                    (0, 0, {'name': _('Tuesday Morning'), 'dayofweek': '1', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
+                    (0, 0, {'name': _('Tuesday Afternoon'), 'dayofweek': '1', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
+                    (0, 0, {'name': _('Wednesday Morning'), 'dayofweek': '2', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
+                    (0, 0, {'name': _('Wednesday Afternoon'), 'dayofweek': '2', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
+                    (0, 0, {'name': _('Thursday Morning'), 'dayofweek': '3', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
+                    (0, 0, {'name': _('Thursday Afternoon'), 'dayofweek': '3', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'}),
+                    (0, 0, {'name': _('Friday Morning'), 'dayofweek': '4', 'hour_from': 8, 'hour_to': 12, 'day_period': 'morning'}),
+                    (0, 0, {'name': _('Friday Afternoon'), 'dayofweek': '4', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'})
+                ]
         return res
 
     name = fields.Char(required=True)
@@ -181,13 +196,14 @@ class ResourceCalendar(models.Model):
         default=lambda self: self.env.company)
     attendance_ids = fields.One2many(
         'resource.calendar.attendance', 'calendar_id', 'Working Time',
-        copy=True)
+        compute='_compute_attendance_ids', store=True, readonly=False, copy=True)
     leave_ids = fields.One2many(
         'resource.calendar.leaves', 'calendar_id', 'Time Off')
     global_leave_ids = fields.One2many(
         'resource.calendar.leaves', 'calendar_id', 'Global Time Off',
+        compute='_compute_global_leave_ids', store=True, readonly=False,
         domain=[('resource_id', '=', False)], copy=True,
-        )
+    )
     hours_per_day = fields.Float("Average Hour per Day", default=HOURS_PER_DAY,
                                  help="Average hours per day a resource is supposed to work with this calendar.")
     tz = fields.Selection(
@@ -196,6 +212,26 @@ class ResourceCalendar(models.Model):
         help="This field is used in order to define in which timezone the resources will work.")
     two_weeks_calendar = fields.Boolean(string="Calendar in 2 weeks mode")
     two_weeks_explanation = fields.Char('Explanation', compute="_compute_two_weeks_explanation")
+
+    @api.depends('company_id')
+    def _compute_attendance_ids(self):
+        for calendar in self.filtered(lambda c: not c._origin or c._origin.company_id != c.company_id):
+            company_calendar = calendar.company_id.resource_calendar_id
+            calendar.write({
+                'two_weeks_calendar': company_calendar.two_weeks_calendar,
+                'hours_per_day': company_calendar.hours_per_day,
+                'tz': company_calendar.tz,
+                'attendance_ids': [(5, 0, 0)] + [
+                    (0, 0, attendance._copy_attendance_vals()) for attendance in company_calendar.attendance_ids if not attendance.resource_id]
+            })
+
+    @api.depends('company_id')
+    def _compute_global_leave_ids(self):
+        for calendar in self.filtered(lambda c: not c._origin or c._origin.company_id != c.company_id):
+            calendar.write({
+                'global_leave_ids': [(5, 0, 0)] + [
+                    (0, 0, leave._copy_leave_vals()) for leave in calendar.company_id.resource_calendar_id.global_leave_ids]
+            })
 
     @api.returns('self', lambda value: value.id)
     def copy(self, default=None):
@@ -743,6 +779,15 @@ class ResourceCalendar(models.Model):
         else:
             return revert(day_dt)
 
+    def _get_max_number_of_hours(self, start, end):
+        self.ensure_one()
+        if not self.attendance_ids:
+            return 0
+        mapped_data = defaultdict(lambda: 0)
+        for attendance in self.attendance_ids.filtered(lambda a: (not a.date_from or not a.date_to) or (a.date_from <= end.date() and a.date_to >= start.date())):
+            mapped_data[(attendance.week_type, attendance.dayofweek)] += attendance.hour_to - attendance.hour_from
+        return max(mapped_data.values())
+
 
 class ResourceCalendarAttendance(models.Model):
     _name = "resource.calendar.attendance"
@@ -789,6 +834,20 @@ class ResourceCalendarAttendance(models.Model):
         # avoid wrong order
         self.hour_to = max(self.hour_to, self.hour_from)
 
+    def _copy_attendance_vals(self):
+        self.ensure_one()
+        return {
+            'name': self.name,
+            'dayofweek': self.dayofweek,
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'hour_from': self.hour_from,
+            'hour_to': self.hour_to,
+            'day_period': self.day_period,
+            'week_type': self.week_type,
+            'display_type': self.display_type,
+            'sequence': self.sequence,
+        }
 
 class ResourceResource(models.Model):
     _name = "resource.resource"
@@ -931,11 +990,11 @@ class ResourceCalendarLeaves(models.Model):
     company_id = fields.Many2one(
         'res.company', related='calendar_id.company_id', string="Company",
         readonly=True, store=True)
-    calendar_id = fields.Many2one('resource.calendar', 'Working Hours')
+    calendar_id = fields.Many2one('resource.calendar', 'Working Hours', index=True)
     date_from = fields.Datetime('Start Date', required=True)
     date_to = fields.Datetime('End Date', required=True)
     resource_id = fields.Many2one(
-        "resource.resource", 'Resource',
+        "resource.resource", 'Resource', index=True,
         help="If empty, this is a generic time off for the company. If a resource is set, the time off is only for this resource")
     time_type = fields.Selection([('leave', 'Time Off'), ('other', 'Other')], default='leave',
                                  help="Whether this should be computed as a time off or as work time (eg: formation)")
@@ -943,9 +1002,18 @@ class ResourceCalendarLeaves(models.Model):
     @api.constrains('date_from', 'date_to')
     def check_dates(self):
         if self.filtered(lambda leave: leave.date_from > leave.date_to):
-            raise ValidationError(_('The start date of the time off must be earlier end date.'))
+            raise ValidationError(_('The start date of the time off must be earlier than the end date.'))
 
     @api.onchange('resource_id')
     def onchange_resource(self):
         if self.resource_id:
             self.calendar_id = self.resource_id.calendar_id
+
+    def _copy_leave_vals(self):
+        self.ensure_one()
+        return {
+            'name': self.name,
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'time_type': self.time_type,
+        }

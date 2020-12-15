@@ -6,6 +6,7 @@ const components = {
     MessageList: require('mail/static/src/components/message_list/message_list.js'),
 };
 const useStore = require('mail/static/src/component_hooks/use_store/use_store.js');
+const useUpdate = require('mail/static/src/component_hooks/use_update/use_update.js');
 
 const { Component } = owl;
 const { useRef } = owl.hooks;
@@ -18,6 +19,7 @@ class ThreadView extends Component {
     constructor(...args) {
         super(...args);
         useStore((...args) => this._useStoreSelector(...args));
+        useUpdate({ func: () => this._update() });
         /**
          * Reference of the composer. Useful to set focus on composer when
          * thread has the focus.
@@ -27,14 +29,6 @@ class ThreadView extends Component {
          * Reference of the message list. Useful to determine scroll positions.
          */
         this._messageListRef = useRef('messageList');
-    }
-
-    mounted() {
-        this._update();
-    }
-
-    patched() {
-        this._update();
     }
 
     //--------------------------------------------------------------------------
@@ -62,6 +56,18 @@ class ThreadView extends Component {
     }
 
     /**
+     * Get the scroll height in the message list.
+     *
+     * @returns {integer|undefined}
+     */
+    getScrollHeight() {
+        if (!this._messageListRef.comp) {
+            return undefined;
+        }
+        return this._messageListRef.comp.getScrollHeight();
+    }
+
+    /**
      * Get the scroll position in the message list.
      *
      * @returns {integer|undefined}
@@ -71,6 +77,17 @@ class ThreadView extends Component {
             return undefined;
         }
         return this._messageListRef.comp.getScrollTop();
+    }
+
+    /**
+     * @private
+     * @param {MouseEvent} ev
+     */
+    onScroll(ev) {
+        if (!this._messageListRef.comp) {
+            return;
+        }
+        this._messageListRef.comp.onScroll(ev);
     }
 
     /**
@@ -90,18 +107,7 @@ class ThreadView extends Component {
      * @private
      */
     _update() {
-        const messageList = this._messageListRef.comp;
         this.trigger('o-rendered');
-        /**
-         * Control panel may offset scrolling position of message list due to
-         * height of buttons. To prevent this, control panel re-render is
-         * triggered before message list. Correct way should be to adjust
-         * scroll positions after everything has been rendered, but OWL doesn't
-         * have such an API for the moment.
-         */
-        if (messageList) {
-            messageList.adjustFromComponentHints();
-        }
     }
 
     /**

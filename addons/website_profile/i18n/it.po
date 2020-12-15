@@ -382,6 +382,9 @@ msgid ""
 "                        you receive badges for being especially helpful.<br class=\"d-none d-lg-inline-block\"/>Badges\n"
 "                        appear on your profile page, and your posts."
 msgstr ""
+"Oltre a guadagnare reputazione con domande e risposte, è\n"
+"                        possibile ricevere riconoscimenti fornendo un aiuto sostanziale.<br class=\"d-none d-lg-inline-block\"/>Sono\n"
+"                        visibili nella pagina profilo e nei messaggi."
 
 #. module: website_profile
 #: model_terms:ir.ui.view,arch_db:website_profile.user_profile_content
@@ -577,7 +580,7 @@ msgstr "Questa settimana"
 #: model_terms:ir.ui.view,arch_db:website_profile.all_user_card
 #: model_terms:ir.ui.view,arch_db:website_profile.top3_user_card
 msgid "Unpublished"
-msgstr "Non pubblicato"
+msgstr "Non pubblicata"
 
 #. module: website_profile
 #: model_terms:ir.ui.view,arch_db:website_profile.user_profile_edit_content
@@ -653,7 +656,7 @@ msgstr "questo mese"
 #. module: website_profile
 #: model_terms:ir.ui.view,arch_db:website_profile.all_user_card
 msgid "this week"
-msgstr ""
+msgstr "questa settimana"
 
 #. module: website_profile
 #: model_terms:ir.ui.view,arch_db:website_profile.profile_next_rank_card

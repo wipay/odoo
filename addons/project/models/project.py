@@ -121,8 +121,7 @@ class Project(models.Model):
             project.task_count = result.get(project.id, 0)
 
     def attachment_tree_view(self):
-        attachment_action = self.env.ref('base.action_attachment')
-        action = attachment_action.read()[0]
+        action = self.env['ir.actions.act_window']._for_xml_id('base.action_attachment')
         action['domain'] = str([
             '|',
             '&',
@@ -202,10 +201,10 @@ class Project(models.Model):
         string='Visibility', required=True,
         default='portal',
         help="Defines the visibility of the tasks of the project:\n"
-                "- Invited employees: employees may only see the followed project and tasks.\n"
-                "- All employees: employees may see all project and tasks.\n"
-                "- Portal users and all employees: employees may see everything."
-                "   Portal users may see project and tasks followed by.\n"
+                "- Invited internal users: employees may only see the followed project and tasks.\n"
+                "- All internal users: employees may see all project and tasks.\n"
+                "- Invited portal and all internal users: employees may see everything."
+                "   Portal users may see project and tasks followed by\n"
                 "   them or by someone of their company.")
 
     allowed_user_ids = fields.Many2many('res.users', compute='_compute_allowed_users', inverse='_inverse_allowed_user')
@@ -520,7 +519,11 @@ class Project(models.Model):
     # This method should be called once a day by the scheduler
     @api.model
     def _send_rating_all(self):
-        projects = self.search([('rating_status', '=', 'periodic'), ('rating_request_deadline', '<=', fields.Datetime.now())])
+        projects = self.search([
+            ('rating_active', '=', True),
+            ('rating_status', '=', 'periodic'),
+            ('rating_request_deadline', '<=', fields.Datetime.now())
+        ])
         for project in projects:
             project.task_ids._send_task_rating_mail()
             project._compute_rating_request_deadline()
@@ -627,7 +630,7 @@ class Task(models.Model):
     parent_id = fields.Many2one('project.task', string='Parent Task', index=True)
     child_ids = fields.One2many('project.task', 'parent_id', string="Sub-tasks", context={'active_test': False})
     subtask_project_id = fields.Many2one('project.project', related="project_id.subtask_project_id", string='Sub-task Project', readonly=True)
-    allow_subtasks = fields.Boolean('project.project', related="project_id.allow_subtasks", readonly=True)
+    allow_subtasks = fields.Boolean(string="Allow Sub-tasks", related="project_id.allow_subtasks", readonly=True)
     subtask_count = fields.Integer("Sub-task count", compute='_compute_subtask_count')
     email_from = fields.Char(string='Email From', help="These people will receive email.", index=True,
         compute='_compute_email_from', store="True", readonly=False)
@@ -936,7 +939,7 @@ class Task(models.Model):
     @api.depends('child_ids')
     def _compute_subtask_count(self):
         for task in self:
-            task.subtask_count = len(self._get_all_subtasks())
+            task.subtask_count = len(task._get_all_subtasks())
 
     @api.onchange('company_id')
     def _onchange_task_company(self):
@@ -997,7 +1000,7 @@ class Task(models.Model):
         if partner_ids:
             new_allowed_users = self.env['res.partner'].browse(partner_ids).user_ids.filtered('share')
             tasks = self.filtered(lambda task: task.project_id.privacy_visibility == 'portal')
-            tasks.write({'allowed_user_ids': [(4, user.id) for user in new_allowed_users]})
+            tasks.sudo().write({'allowed_user_ids': [(4, user.id) for user in new_allowed_users]})
         return res
 
     # ----------------------------------------
@@ -1080,7 +1083,11 @@ class Task(models.Model):
                 rec_values['next_recurrence_date'] = fields.Datetime.today()
                 recurrence = self.env['project.task.recurrence'].create(rec_values)
                 vals['recurrence_id'] = recurrence.id
-        return super().create(vals_list)
+        tasks = super().create(vals_list)
+        for task in tasks:
+            if task.project_id.privacy_visibility == 'portal':
+                task._portal_ensure_token()
+        return tasks
 
     def write(self, vals):
         now = fields.Datetime.now()
@@ -1129,7 +1136,7 @@ class Task(models.Model):
         result = super(Task, tasks).write(vals)
         # rating on stage
         if 'stage_id' in vals and vals.get('stage_id'):
-            self.filtered(lambda x: x.project_id.rating_status == 'stage')._send_task_rating_mail(force_send=True)
+            self.filtered(lambda x: x.project_id.rating_active and x.project_id.rating_status == 'stage')._send_task_rating_mail(force_send=True)
         return result
 
     def update_date_end(self, stage_id):
@@ -1166,7 +1173,7 @@ class Task(models.Model):
     @api.depends('partner_id.email', 'parent_id.email_from')
     def _compute_email_from(self):
         for task in self:
-            task.email_from = task.partner_id.email or task.email_from or task.parent_id.email_from
+            task.email_from = task.partner_id.email or ((task.partner_id or task.parent_id) and task.email_from) or task.parent_id.email_from
 
     @api.depends('parent_id.project_id.subtask_project_id')
     def _compute_project_id(self):
@@ -1234,9 +1241,12 @@ class Task(models.Model):
                 {}
             ))
 
+        portal_privacy = self.project_id.privacy_visibility == 'portal'
         for group_name, group_method, group_data in groups:
-            if group_name in ('customer', 'portal_customer', 'user'):
+            if group_name in ('customer', 'user') or group_name == 'portal_customer' and not portal_privacy:
                 group_data['has_button_access'] = False
+            elif group_name == 'portal_customer' and portal_privacy:
+                group_data['has_button_access'] = True
 
         return groups
 

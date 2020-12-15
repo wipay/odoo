@@ -395,6 +395,7 @@ img, .media_iframe_video, .o_image {
 .oe_attachments .o_image_small {
     height: 40px;
     width: 50px;
+    background-repeat: no-repeat;
 }
 
 form label {
@@ -544,7 +545,9 @@ form label {
 
 // Copyright
 .o_footer_copyright {
-
+    .o_footer_copyright_name {
+        vertical-align: middle;
+    }
     .js_language_selector {
         display: inline-block;
     }

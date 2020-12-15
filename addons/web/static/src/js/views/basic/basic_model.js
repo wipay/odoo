@@ -231,7 +231,7 @@ var BasicModel = AbstractModel.extend({
      * @returns {Promise} resolved when the fieldInfo have been set on the given
      *   datapoint and all its children, and all rawChanges have been applied
      */
-    addFieldsInfo: function (dataPointID, viewInfo) {
+    addFieldsInfo: async function (dataPointID, viewInfo) {
         var dataPoint = this.localData[dataPointID];
         dataPoint.fields = _.extend({}, dataPoint.fields, viewInfo.fields);
         // complete the given fieldInfo with the fields of the main view, so
@@ -245,7 +245,9 @@ var BasicModel = AbstractModel.extend({
         // so we might have stored changes for them (e.g. coming from onchange
         // RPCs), that we haven't been able to process earlier (because those
         // fields were unknown at that time). So we now try to process them.
-        return this.applyRawChanges(dataPointID, viewInfo.viewType).then(() => {
+        if (dataPoint.type === 'record') {
+            await this.applyRawChanges(dataPointID, viewInfo.viewType);
+        }
             const proms = [];
             const fieldInfo = dataPoint.fieldsInfo[viewInfo.viewType];
             // recursively apply the new field info on sub datapoints
@@ -278,8 +280,6 @@ var BasicModel = AbstractModel.extend({
                 });
             }
             return Promise.all(proms);
-        });
-
     },
     /**
      * Onchange RPCs may return values for fields that are not in the current
@@ -1583,7 +1583,8 @@ var BasicModel = AbstractModel.extend({
 
         const field = record.fields[fieldName];
         const coModel = field.type === 'reference' ? data.model : field.relation;
-        if (field.type === 'many2one' && !data.id && data.display_name) {
+        const allowedTypes = ['many2one', 'reference'];
+        if (allowedTypes.includes(field.type) && !data.id && data.display_name) {
             // only display_name given -> do a name_create
             const result = await this._rpc({
                 model: coModel,
@@ -2625,7 +2626,7 @@ var BasicModel = AbstractModel.extend({
         var toFetch = {};
         _.each(list.data, function (groupIndex) {
             var group = self.localData[groupIndex];
-            _.extend(toFetch, self._getDataToFetchByModel(group, fieldName));
+            self._getDataToFetchByModel(group, fieldName, toFetch);
         });
 
         var defs = [];
@@ -3500,13 +3501,18 @@ var BasicModel = AbstractModel.extend({
      *
      * @param {Object} list a valid resource object
      * @param {string} fieldName
+     * @param {Object} [toFetchAcc] an object to store fetching data. Used when
+     *  batching reference across multiple groups.
+     *    [modelName: string]: {
+     *        [recordId: number]: datapointId[]
+     *    }
      * @returns {Object} each key represent a model and contain a sub-object
      * where each key represent an id (res_id) containing an array of
      * webclient id (referred to a datapoint, so not a res_id).
      */
-    _getDataToFetchByModel: function (list, fieldName) {
+    _getDataToFetchByModel: function (list, fieldName, toFetchAcc) {
         var self = this;
-        var toFetch = {};
+        var toFetch = toFetchAcc || {};
         _.each(list.data, function (dataPoint) {
             var record = self.localData[dataPoint];
             var value = record.data[fieldName];
@@ -4758,6 +4764,7 @@ var BasicModel = AbstractModel.extend({
                     fieldsInfo: element.fieldsInfo,
                     fields: element.fields,
                     viewType: element.viewType,
+                    allowWarning: true,
                 };
                 return this._makeDefaultRecord(element.model, params);
             }

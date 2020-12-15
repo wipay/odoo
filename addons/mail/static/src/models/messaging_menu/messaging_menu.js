@@ -16,11 +16,7 @@ function factory(dependencies) {
          * Close the messaging menu. Should reset its internal state.
          */
         close() {
-            this.update({
-                activeTabId: 'all',
-                isMobileNewMessageToggled: false,
-                isOpen: false,
-            });
+            this.update({ isOpen: false });
         }
 
         /**
@@ -50,16 +46,11 @@ function factory(dependencies) {
                 return;
             }
             const inbox = this.env.messaging.inbox;
-            if (
-                !inbox ||
-                !inbox.mainCache ||
-                inbox.mainCache.isLoaded ||
-                inbox.mainCache.isLoading
-            ) {
+            if (!inbox || !inbox.mainCache) {
                 return;
             }
             // populate some needaction messages on threads.
-            inbox.mainCache.update({ hasToLoadMessages: true });
+            inbox.mainCache.update({ isCacheRefreshRequested: true });
         }
 
         /**
@@ -73,7 +64,8 @@ function factory(dependencies) {
             const inboxMailbox = this.env.messaging.inbox;
             const unreadChannels = this.env.models['mail.thread'].all(thread =>
                 thread.localMessageUnreadCounter > 0 &&
-                thread.model === 'mail.channel'
+                thread.model === 'mail.channel' &&
+                thread.isPinned
             );
             let counter = unreadChannels.length;
             if (inboxMailbox) {
@@ -127,8 +119,6 @@ function factory(dependencies) {
                 'isOpen',
                 'messagingInbox',
                 'messagingInboxMainCache',
-                'messagingInboxMainCacheIsLoaded',
-                'messagingInboxMainCacheIsLoading',
             ],
         }),
         /**
@@ -151,12 +141,6 @@ function factory(dependencies) {
         }),
         messagingInboxMainCache: one2one('mail.thread_cache', {
             related: 'messagingInbox.mainCache',
-        }),
-        messagingInboxMainCacheIsLoaded: attr({
-            related: 'messagingInboxMainCache.isLoaded',
-        }),
-        messagingInboxMainCacheIsLoading: attr({
-            related: 'messagingInboxMainCache.isLoading',
         }),
     };
 

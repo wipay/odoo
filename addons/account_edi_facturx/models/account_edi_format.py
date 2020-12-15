@@ -75,7 +75,7 @@ class AccountEdiFormat(models.Model):
         # Invoice lines.
         for i, line in enumerate(invoice.invoice_line_ids.filtered(lambda l: not l.display_type)):
             price_unit_with_discount = line.price_unit * (1 - (line.discount / 100.0))
-            taxes_res = line.tax_ids.compute_all(
+            taxes_res = line.tax_ids.with_context(force_sign=line.move_id._get_tax_force_sign()).compute_all(
                 price_unit_with_discount,
                 currency=line.currency_id,
                 quantity=line.quantity,
@@ -275,12 +275,19 @@ class AccountEdiFormat(models.Model):
                         # Price Unit.
                         line_elements = element.xpath('.//ram:GrossPriceProductTradePrice/ram:ChargeAmount', namespaces=tree.nsmap)
                         if line_elements:
-                            invoice_line_form.price_unit = float(line_elements[0].text) / invoice_line_form.quantity
+                            quantity_elements = element.xpath('.//ram:GrossPriceProductTradePrice/ram:BasisQuantity', namespaces=tree.nsmap)
+                            if quantity_elements:
+                                invoice_line_form.price_unit = float(line_elements[0].text) / float(quantity_elements[0].text)
+                            else:
+                                invoice_line_form.price_unit = float(line_elements[0].text)
                         else:
                             line_elements = element.xpath('.//ram:NetPriceProductTradePrice/ram:ChargeAmount', namespaces=tree.nsmap)
                             if line_elements:
-                                invoice_line_form.price_unit = float(line_elements[0].text) / invoice_line_form.quantity
-
+                                quantity_elements = element.xpath('.//ram:NetPriceProductTradePrice/ram:BasisQuantity', namespaces=tree.nsmap)
+                                if quantity_elements:
+                                    invoice_line_form.price_unit = float(line_elements[0].text) / float(quantity_elements[0].text)
+                                else:
+                                    invoice_line_form.price_unit = float(line_elements[0].text)
                         # Discount.
                         line_elements = element.xpath('.//ram:AppliedTradeAllowanceCharge/ram:CalculationPercent', namespaces=tree.nsmap)
                         if line_elements:

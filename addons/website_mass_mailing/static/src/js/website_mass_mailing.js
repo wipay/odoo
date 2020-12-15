@@ -79,7 +79,7 @@ publicWidget.registry.subscribe = publicWidget.Widget.extend({
             return false;
         }
         this.$target.removeClass('o_has_error').find('.form-control').removeClass('is-invalid');
-        const tokenObj = await this._recaptcha.getToken('website_form');
+        const tokenObj = await this._recaptcha.getToken('website_mass_mailing_subscribe');
         if (tokenObj.error) {
             self.displayNotification({
                 type: 'danger',
@@ -97,7 +97,8 @@ publicWidget.registry.subscribe = publicWidget.Widget.extend({
                 recaptcha_token_response: tokenObj.token,
             },
         }).then(function (result) {
-            if (result.type === 'success') {
+            let toastType = result.toast_type;
+            if (toastType === 'success') {
                 self.$(".js_subscribe_btn").addClass('d-none');
                 self.$(".js_subscribed_btn").removeClass('d-none');
                 self.$('input.js_subscribe_email').prop('disabled', !!result);
@@ -106,8 +107,8 @@ publicWidget.registry.subscribe = publicWidget.Widget.extend({
                 }
             }
             self.displayNotification({
-                type: result.toast_type,
-                title: _t(`${result.toast_type === 'success' ? 'Success' : 'Error'}`),
+                type: toastType,
+                title: toastType === 'success' ? _t('Success') : _t('Error'),
                 message: result.toast_content,
                 sticky: true,
             });

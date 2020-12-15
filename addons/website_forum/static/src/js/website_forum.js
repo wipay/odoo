@@ -119,6 +119,8 @@ publicWidget.registry.websiteForum = publicWidget.Widget.extend({
             var editorKarma = $textarea.data('karma') || 0; // default value for backward compatibility
             var $form = $textarea.closest('form');
             var hasFullEdit = parseInt($("#karma").val()) >= editorKarma;
+            // Warning: Do not activate any option that adds inline style.
+            // Because the style is deleted after save.
             var toolbar = [
                 ['style', ['style']],
                 ['font', ['bold', 'italic', 'underline', 'clear']],
@@ -126,7 +128,7 @@ publicWidget.registry.websiteForum = publicWidget.Widget.extend({
                 ['table', ['table']],
             ];
             if (hasFullEdit) {
-                toolbar.push(['insert', ['linkPlugin', 'mediaPlugin']]);
+                toolbar.push(['insert', ['link', 'picture']]);
             }
             toolbar.push(['history', ['undo', 'redo']]);
 
@@ -141,6 +143,7 @@ publicWidget.registry.websiteForum = publicWidget.Widget.extend({
                     res_model: 'forum.post',
                     res_id: +window.location.pathname.split('-').pop(),
                 },
+                disableResizeImage: true,
             };
             if (!hasFullEdit) {
                 options.plugins = {

@@ -16,23 +16,25 @@
 # lucasdeliege <deliegelucas@gmail.com>, 2020
 # Vallen Delobel <edv@odoo.com>, 2020
 # Moka Tourisme <hello@mokatourisme.fr>, 2020
-# Martin Trigaux, 2020
 # Melanie Bernard <mbe@odoo.com>, 2020
 # Eloïse Stilmant <est@odoo.com>, 2020
 # Laura Piraux <lap@odoo.com>, 2020
-# Cécile Collart <cco@odoo.com>, 2020
 # Gilles Dupont <gid@odoo.com>, 2020
 # Celia Tydgat <cty@odoo.com>, 2020
 # Gilles Mangin <gilles.mangin@phidias.fr>, 2020
-# Priscilla Sanchez <prs@odoo.com>, 2020
+# Priscilla (prs) Odoo <prs@odoo.com>, 2020
+# Martin Trigaux, 2020
+# Cécile Collart <cco@odoo.com>, 2020
+# guillaume bauer <guillaume.bauer@syentys.fr>, 2020
+# Arnaud Willem <contact@arnaud-willem.eu>, 2020
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server saas~13.5\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 07:28+0000\n"
+"POT-Creation-Date: 2020-11-27 14:29+0000\n"
 "PO-Revision-Date: 2020-09-07 08:14+0000\n"
-"Last-Translator: Priscilla Sanchez <prs@odoo.com>, 2020\n"
+"Last-Translator: Arnaud Willem <contact@arnaud-willem.eu>, 2020\n"
 "Language-Team: French (https://www.transifex.com/odoo/teams/41243/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -302,8 +304,9 @@ msgstr "Gestion <strong>complète</strong> "
 
 #. module: mass_mailing
 #: model:ir.model.constraint,message:mass_mailing.constraint_mailing_contact_list_rel_unique_contact_list
-msgid "A contact cannot be subscribed multiple times to the same list!"
-msgstr "Un contact ne peut pas être inscrit plusieurs fois à la même liste!"
+msgid ""
+"A mailing contact cannot subscribe to the same mailing list multiple times."
+msgstr ""
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_mail_block_three_cols
@@ -355,7 +358,7 @@ msgstr "État de l'Activité"
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_mailing__activity_type_icon
 msgid "Activity Type Icon"
-msgstr ""
+msgstr "Icône de type d'activité"
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_mailing__unique_ab_testing
@@ -515,8 +518,8 @@ msgstr "Corps"
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_mailing__body_html
-msgid "Body converted to be send by mail"
-msgstr "Corps converti pour être envoyé par courrier"
+msgid "Body converted to be sent by mail"
+msgstr ""
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_contact__message_bounce
@@ -1767,6 +1770,11 @@ msgid "Messages"
 msgstr "Messages"
 
 #. module: mass_mailing
+#: model:mailing.mailing,subject:mass_mailing.mass_mail_1
+msgid "Monthly Newsletter"
+msgstr ""
+
+#. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_mail_block_comparison_table
 msgid "More"
 msgstr "Plus"
@@ -1810,6 +1818,17 @@ msgid "New Mailing List Name"
 msgstr "Nouveau nom de la liste de diffusion"
 
 #. module: mass_mailing
+#: model:utm.campaign,name:mass_mailing.mass_mail_campaign_1
+msgid "Newsletter"
+msgstr "Lettre d'information"
+
+#. module: mass_mailing
+#: model:mailing.mailing,name:mass_mailing.mass_mail_1
+#: model:utm.source,name:mass_mailing.utm_source_0
+msgid "Newsletter 1"
+msgstr "Newsletter 1"
+
+#. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_mailing__activity_date_deadline
 msgid "Next Activity Deadline"
 msgstr "Date limite de l'Activité à Venir"
@@ -1832,7 +1851,7 @@ msgstr "Pas de customisation"
 #. module: mass_mailing
 #: model_terms:ir.actions.act_window,help:mass_mailing.action_view_mail_mail_statistics_mailing
 msgid "No data yet!"
-msgstr ""
+msgstr "Pas de données"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_mail_block_comparison_table
@@ -2277,16 +2296,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:mass_mailing.view_mail_mass_mailing_kanban
 msgid "Scheduled on #{record.schedule_date.value}"
 msgstr ""
-
-#. module: mass_mailing
-#: code:addons/mass_mailing/models/mailing_contact.py:0
-#, python-format
-msgid ""
-"Search opt out cannot be executed without a unique and valid active mailing "
-"list context."
-msgstr ""
-"La désactivation de la recherche ne peut pas être exécutée sans un contexte "
-"de liste de diffusion active unique et valide."
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.email_designer_snippets

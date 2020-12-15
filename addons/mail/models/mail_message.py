@@ -9,7 +9,7 @@ from collections import defaultdict
 from operator import itemgetter
 
 from odoo import _, api, fields, models, modules, tools
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, UserError
 from odoo.http import request
 from odoo.osv import expression
 from odoo.tools import groupby
@@ -160,9 +160,9 @@ class Message(models.Model):
 
     @api.model
     def _search_needaction(self, operator, operand):
-        if operator == '=' and operand:
-            return ['&', ('notification_ids.res_partner_id', '=', self.env.user.partner_id.id), ('notification_ids.is_read', '=', False)]
-        return ['&', ('notification_ids.res_partner_id', '=', self.env.user.partner_id.id), ('notification_ids.is_read', '=', True)]
+        is_read = False if operator == '=' and operand else True
+        notification_ids = self.env['mail.notification']._search([('res_partner_id', '=', self.env.user.partner_id.id), ('is_read', '=', is_read)])
+        return [('notification_ids', 'in', notification_ids)]
 
     def _compute_has_error(self):
         error_from_notification = self.env['mail.notification'].sudo().search([
@@ -204,7 +204,7 @@ class Message(models.Model):
                     ('res_id', 'in', self.env.user.moderation_channel_ids.ids)]
 
         # no support for other operators
-        return ValueError(_('Unsupported search filter on moderation status'))
+        raise UserError(_('Unsupported search filter on moderation status'))
 
     # ------------------------------------------------------
     # CRUD / ORM

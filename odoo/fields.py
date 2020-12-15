@@ -356,8 +356,9 @@ class Field(MetaField('DummyField', (object,), {})):
 
     def _setup_attrs(self, model, name):
         """ Initialize the field parameter attributes. """
-        # validate extra arguments
-        for key in self.args:
+        attrs = self._get_attrs(model, name)
+        # validate arguments
+        for key in attrs:
             # TODO: improve filter as there are attributes on the class which
             #       are not valid on the field, probably
             if not (hasattr(self, key) or model._valid_field_parameter(self, key)):
@@ -368,8 +369,6 @@ class Field(MetaField('DummyField', (object,), {})):
                     " allow it",
                     model._name, name, key
                 )
-
-        attrs = self._get_attrs(model, name)
         self.__dict__.update(attrs)
 
         # prefetch only stored, column, non-manual and non-deprecated fields
@@ -630,7 +629,11 @@ class Field(MetaField('DummyField', (object,), {})):
                     # recomputations of fields on transient models
                     break
 
-                field = Model._fields[fname]
+                try:
+                    field = Model._fields[fname]
+                except KeyError:
+                    msg = "Field %s cannot find dependency %r on model %r."
+                    raise ValueError(msg % (self, fname, model_name))
                 if field is self and index:
                     self.recursive = True
 
@@ -926,6 +929,7 @@ class Field(MetaField('DummyField', (object,), {})):
         # only a single record may be accessed
         record.ensure_one()
 
+        recomputed = False
         if self.compute and (record.id in env.all.tocompute.get(self, ())) \
                 and not env.is_protected(self, record):
             # self must be computed on record
@@ -938,14 +942,36 @@ class Field(MetaField('DummyField', (object,), {})):
                 self.compute_value(recs)
             except (AccessError, MissingError):
                 self.compute_value(record)
+            recomputed = True
 
         try:
             value = env.cache.get(record, self)
 
         except KeyError:
+            # behavior in case of cache miss:
+            #
+            #   on a real record:
+            #       stored -> fetch from database (computation done above)
+            #       not stored and computed -> compute
+            #       not stored and not computed -> default
+            #
+            #   on a new record w/ origin:
+            #       stored and not (computed and readonly) -> fetch from origin
+            #       stored and computed and readonly -> compute
+            #       not stored and computed -> compute
+            #       not stored and not computed -> default
+            #
+            #   on a new record w/o origin:
+            #       stored and computed -> compute
+            #       stored and not computed -> new delegate or default
+            #       not stored and computed -> compute
+            #       not stored and not computed -> default
+            #
             if self.store and record.id:
                 # real record: fetch from database
                 recs = record._in_cache_without(self)
+                if recomputed and self.compute_sudo:
+                    recs = recs.sudo()
                 try:
                     recs._fetch_field(self)
                 except AccessError:
@@ -957,7 +983,7 @@ class Field(MetaField('DummyField', (object,), {})):
                     ]))
                 value = env.cache.get(record, self)
 
-            elif self.store and record._origin:
+            elif self.store and record._origin and not (self.compute and self.readonly):
                 # new record with origin: fetch from origin
                 value = self.convert_to_cache(record._origin[self.name], record)
                 env.cache.set(record, self, value)
@@ -2049,20 +2075,21 @@ class Binary(Field):
         cache.update(records, self, [cache_value] * len(records))
 
         # retrieve the attachments that store the values, and adapt them
-        if self.store:
+        if self.store and any(records._ids):
+            real_records = records.filtered('id')
             atts = records.env['ir.attachment'].sudo()
             if not_null:
                 atts = atts.search([
                     ('res_model', '=', self.model_name),
                     ('res_field', '=', self.name),
-                    ('res_id', 'in', records.ids),
+                    ('res_id', 'in', real_records.ids),
                 ])
             if value:
                 # update the existing attachments
                 atts.write({'datas': value})
                 atts_records = records.browse(atts.mapped('res_id'))
                 # create the missing attachments
-                missing = (records - atts_records).filtered('id')
+                missing = (real_records - atts_records)
                 if missing:
                     atts.create([{
                             'name': self.name,
@@ -2113,7 +2140,18 @@ class Image(Binary):
         super(Image, self).create(new_record_values)
 
     def write(self, records, value):
-        new_value = self._image_process(value)
+        try:
+            new_value = self._image_process(value)
+        except UserError:
+            if not any(records._ids):
+                # Some crap is assigned to a new record. This can happen in an
+                # onchange, where the client sends the "bin size" value of the
+                # field instead of its full value (this saves bandwidth). In
+                # this case, we simply don't assign the field: its value will be
+                # taken from the records' origin.
+                return
+            raise
+
         super(Image, self).write(records, new_value)
         cache_value = self.convert_to_cache(value if self.related else new_value, records)
         records.env.cache.update(records, self, [cache_value] * len(records))
@@ -2578,8 +2616,8 @@ class Many2one(_Relational):
         else:
             id_ = None
 
-        if self.delegate and record and not record.id:
-            # the parent record of a new record is a new record
+        if self.delegate and record and not any(record._ids):
+            # if all records are new, then so is the parent
             id_ = id_ and NewId(id_)
 
         return id_
@@ -3054,6 +3092,15 @@ class One2many(_RelationalMulti):
         if inverse_field.type == 'many2one_reference':
             domain = domain + [(inverse_field.model_field, '=', records._name)]
         return domain
+
+    def __get__(self, records, owner):
+        if records is not None and self.inverse_name is not None:
+            # force the computation of the inverse field to ensure that the
+            # cache value of self is consistent
+            inverse_field = records.pool[self.comodel_name]._fields[self.inverse_name]
+            if inverse_field.compute:
+                records.env[self.comodel_name].recompute([self.inverse_name])
+        return super().__get__(records, owner)
 
     def read(self, records):
         # retrieve the lines in the comodel

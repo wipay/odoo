@@ -107,8 +107,13 @@ class Meeting(models.Model):
         return {'start', 'stop', 'start_date', 'stop_date'}
 
     @api.model
+    def _get_custom_fields(self):
+        all_fields = self.fields_get(attributes=['manual'])
+        return {fname for fname in all_fields if all_fields[fname]['manual']}
+
+    @api.model
     def _get_public_fields(self):
-        return self._get_recurrent_fields() | self._get_time_fields() | {
+        return self._get_recurrent_fields() | self._get_time_fields() | self._get_custom_fields() | {
             'id', 'active', 'allday',
             'duration', 'user_id', 'interval',
             'count', 'rrule', 'recurrence_id', 'show_as'}
@@ -135,7 +140,7 @@ class Meeting(models.Model):
         time_str = to_text(date.strftime(format_time))
 
         if zallday:
-            display_time = _("AllDay , %(day)s", day=date_str)
+            display_time = _("All Day, %(day)s", day=date_str)
         elif zduration < 24:
             duration = date + timedelta(minutes=round(zduration*60))
             duration_time = to_text(duration.strftime(format_time))
@@ -475,12 +480,11 @@ class Meeting(models.Model):
                 added_partner_ids += [command[1]] if command[1] not in self.partner_ids.ids else []
             # commands 0 and 1 not supported
 
-        if removed_partner_ids:
-            attendees_to_unlink = self.env['calendar.attendee'].search([
-                ('event_id', 'in', self.ids),
-                ('partner_id', 'in', removed_partner_ids),
-            ])
-            attendee_commands += [[2, attendee.id] for attendee in attendees_to_unlink]  # Removes and delete
+        attendees_to_unlink = self.env['calendar.attendee'].search([
+            ('event_id', 'in', self.ids),
+            ('partner_id', 'in', removed_partner_ids),
+        ])
+        attendee_commands += [[2, attendee.id] for attendee in attendees_to_unlink]  # Removes and delete
 
         attendee_commands += [
             [0, 0, dict(partner_id=partner_id)]
@@ -669,7 +673,10 @@ class Meeting(models.Model):
         if 'partner_ids' in values:
             (current_attendees - previous_attendees)._send_mail_to_attendees('calendar.calendar_template_meeting_invitation')
         if 'start' in values:
-            (current_attendees & previous_attendees)._send_mail_to_attendees('calendar.calendar_template_meeting_changedate', ignore_recurrence=not update_recurrence)
+            start_date = fields.Datetime.to_datetime(values.get('start'))
+            # Only notify on future events
+            if start_date and start_date >= fields.Datetime.now():
+                (current_attendees & previous_attendees)._send_mail_to_attendees('calendar.calendar_template_meeting_changedate', ignore_recurrence=not update_recurrence)
 
         return True
 
@@ -700,9 +707,8 @@ class Meeting(models.Model):
                                 activity_vals['user_id'] = user_id
                             values['activity_ids'] = [(0, 0, activity_vals)]
 
-        self_partner_id = [(4, self.env.user.partner_id.id)]
         vals_list = [
-            dict(vals, attendee_ids=self._attendees_values(vals.get('partner_ids', self_partner_id)))
+            dict(vals, attendee_ids=self._attendees_values(vals['partner_ids'])) if 'partner_ids' in vals else vals
             for vals in vals_list
         ]
         recurrence_fields = self._get_recurrent_fields()
@@ -720,7 +726,7 @@ class Meeting(models.Model):
                 detached_events = event._apply_recurrence_values(recurrence_values)
                 detached_events.active = False
 
-        events.attendee_ids._send_mail_to_attendees('calendar.calendar_template_meeting_invitation')
+        events.filtered(lambda event: event.start > fields.Datetime.now()).attendee_ids._send_mail_to_attendees('calendar.calendar_template_meeting_invitation')
         events._sync_activities(fields={f for vals in vals_list for f in vals.keys() })
 
         # Notify attendees if there is an alarm on the created event, as it might have changed their

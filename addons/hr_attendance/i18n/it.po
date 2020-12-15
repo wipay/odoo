@@ -11,7 +11,6 @@
 # Léonie Bouchat <lbo@odoo.com>, 2020
 # Federico Zanuttini <fza@odoo.com>, 2020
 # Loris Balsamo <et94@live.it>, 2020
-# Fabio Benedetti <benedetti.fabio@gmail.com>, 2020
 # Sergio Zanchetta <primes2h@gmail.com>, 2020
 # 
 msgid ""
@@ -76,7 +75,7 @@ msgid ""
 "                        </span>"
 msgstr ""
 "<span class=\"o_stat_text\">\n"
-"                             Mese Scorso\n"
+"                             Mese scorso\n"
 "                        </span>"
 
 #. module: hr_attendance
@@ -89,13 +88,13 @@ msgstr "<span class=\"o_stat_text\">Presenza</span>"
 #: model_terms:ir.ui.view,arch_db:hr_attendance.hr_user_view_form
 #: model_terms:ir.ui.view,arch_db:hr_attendance.view_employee_form_inherit_hr_attendance
 msgid "<span class=\"o_stat_text\">Attended Since</span>"
-msgstr "<span class=\"o_stat_text\">Presente dal</span>"
+msgstr "<span class=\"o_stat_text\">Presente da</span>"
 
 #. module: hr_attendance
 #: model_terms:ir.ui.view,arch_db:hr_attendance.hr_user_view_form
 #: model_terms:ir.ui.view,arch_db:hr_attendance.view_employee_form_inherit_hr_attendance
 msgid "<span class=\"o_stat_text\">Not Attended Since</span>"
-msgstr "<span class=\"o_stat_text\">Non presente dal</span>"
+msgstr "<span class=\"o_stat_text\">Non presente da</span>"
 
 #. module: hr_attendance
 #: model_terms:ir.ui.view,arch_db:hr_attendance.hr_employees_view_kanban
@@ -114,6 +113,8 @@ msgid ""
 "<span id=\"oe_hr_attendance_status\" class=\"fa fa-circle oe_hr_attendance_status_orange\" role=\"img\" aria-label=\"Not available\" title=\"Not available\">\n"
 "                                    </span>"
 msgstr ""
+"<span id=\"oe_hr_attendance_status\" class=\"fa fa-circle oe_hr_attendance_status_orange\" role=\"img\" aria-label=\"Not available\" title=\"Non disponibile\">\n"
+"                                    </span>"
 
 #. module: hr_attendance
 #: model_terms:ir.actions.act_window,help:hr_attendance.hr_employee_attendance_action_kanban
@@ -380,7 +381,7 @@ msgstr "Dipendenti"
 #. module: hr_attendance
 #: model:res.groups,name:hr_attendance.group_hr_attendance_use_pin
 msgid "Enable PIN use"
-msgstr "Abilita uso del PIN"
+msgstr "Abilitare uso del PIN"
 
 #. module: hr_attendance
 #. openerp-web
@@ -675,9 +676,7 @@ msgstr "Scansiona tesserino"
 #. module: hr_attendance
 #: model_terms:ir.ui.view,arch_db:hr_attendance.res_config_settings_view_form
 msgid "Set PIN codes in the employee detail form (in HR Settings tab)."
-msgstr ""
-"Imposta il codice PIN nella pagina di dettaglio del dipendente (nel tab "
-"impostazioni HR)"
+msgstr "Imposta codici PIN nel modulo del dipendente (scheda impostazioni RU)"
 
 #. module: hr_attendance
 #: model:ir.actions.act_window,name:hr_attendance.action_hr_attendance_settings
@@ -758,7 +757,7 @@ msgstr "Ore di lavoro odierne:"
 #. module: hr_attendance
 #: model_terms:ir.ui.view,arch_db:hr_attendance.res_config_settings_view_form
 msgid "Use PIN codes to check in in Kiosk Mode"
-msgstr "Usa i codici PIN per effettuare l'accesso nella modalità chiosco"
+msgstr "Utilizzo di codici PIN per accedere in modalità chiosco"
 
 #. module: hr_attendance
 #: model:ir.model,name:hr_attendance.model_res_users
@@ -796,7 +795,7 @@ msgstr "Benvenuto"
 #: code:addons/hr_attendance/static/src/xml/attendance.xml:0
 #, python-format
 msgid "Welcome to"
-msgstr "Benvenuto a"
+msgstr "Benvenuto in"
 
 #. module: hr_attendance
 #. openerp-web
@@ -857,11 +856,11 @@ msgstr "uscire"
 #: model:ir.model.fields,help:hr_attendance.field_hr_employee_base__attendance_ids
 #: model:ir.model.fields,help:hr_attendance.field_hr_employee_public__attendance_ids
 msgid "list of attendances for the employee"
-msgstr "lista delle presenze per il dipendente"
+msgstr "elenco presenze del dipendente"
 
 #. module: hr_attendance
 #. openerp-web
 #: code:addons/hr_attendance/static/src/xml/attendance.xml:0
 #, python-format
 msgid "or"
-msgstr "o"
+msgstr "oppure"

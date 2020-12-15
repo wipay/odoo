@@ -4,7 +4,8 @@ odoo.define('mail/static/src/models/message/message.js', function (require) {
 const emojis = require('mail.emojis');
 const { registerNewModel } = require('mail/static/src/model/model_core.js');
 const { attr, many2many, many2one, one2many } = require('mail/static/src/model/model_field.js');
-const { addLink, htmlToTextContentInline, parseAndTransform } = require('mail.utils');
+const { clear } = require('mail/static/src/model/model_field_command.js');
+const { addLink, htmlToTextContentInline, parseAndTransform, timeFromNow } = require('mail.utils');
 
 const { str_to_datetime } = require('web.time');
 
@@ -230,8 +231,8 @@ function factory(dependencies) {
                         continue;
                     }
                     this.env.models['mail.message_seen_indicator'].insert({
+                        channelId: thread.id,
                         messageId: message.id,
-                        threadId: thread.id,
                     });
                 }
             }
@@ -315,6 +316,13 @@ function factory(dependencies) {
         }
 
         /**
+         * Refreshes the value of `dateFromNow` field to the "current now".
+         */
+        refreshDateFromNow() {
+            this.update({ dateFromNow: this._computeDateFromNow() });
+        }
+
+        /**
          * Action to initiate reply to current message in Discuss Inbox. Assumes
          * that Discuss and Inbox are already opened.
          */
@@ -361,6 +369,16 @@ function factory(dependencies) {
         }
 
         /**
+         * @returns {string}
+         */
+        _computeDateFromNow() {
+            if (!this.date) {
+                return clear();
+            }
+            return timeFromNow(this.date);
+        }
+
+        /**
          * @returns {boolean}
          */
         _computeFailureNotifications() {
@@ -399,6 +417,18 @@ function factory(dependencies) {
             }
             const inlineBody = htmlToTextContentInline(this.body);
             return inlineBody.toLowerCase() === this.subtype_description.toLowerCase();
+        }
+
+        /**
+         * @private
+         */
+        _computeIsEmpty() {
+            return (
+                (!this.body || htmlToTextContentInline(this.body) === '') &&
+                this.attachments.length === 0 &&
+                this.tracking_value_ids.length === 0 &&
+                !this.subtype_description
+            );
         }
 
         /**
@@ -504,6 +534,15 @@ function factory(dependencies) {
         date: attr({
             default: moment(),
         }),
+        /**
+         * States the time elapsed since date up to now.
+         */
+        dateFromNow: attr({
+            compute: '_computeDateFromNow',
+            dependencies: [
+                'date',
+            ],
+        }),
         email_from: attr(),
         failureNotifications: one2many('mail.notification', {
             compute: '_computeFailureNotifications',
@@ -549,6 +588,19 @@ function factory(dependencies) {
             dependencies: [
                 'body',
                 'subtype_description',
+            ],
+        }),
+        /**
+         * Determine whether the message has to be considered empty or not.
+         *
+         * An empty message has no text, no attachment and no tracking value.
+         */
+        isEmpty: attr({
+            compute: '_computeIsEmpty',
+            dependencies: [
+                'attachments',
+                'body',
+                'tracking_value_ids',
             ],
         }),
         isModeratedByCurrentPartner: attr({
@@ -627,7 +679,9 @@ function factory(dependencies) {
         /**
          * Origin thread of this message (if any).
          */
-        originThread: many2one('mail.thread'),
+        originThread: many2one('mail.thread', {
+            inverse: 'messagesAsOriginThread',
+        }),
         originThreadIsModeratedByCurrentPartner: attr({
             default: false,
             related: 'originThread.isModeratedByCurrentPartner',

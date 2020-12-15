@@ -45,7 +45,7 @@ class AccountAccount(models.Model):
                 raise ValidationError(_('You cannot have a receivable/payable account that is not reconcilable. (account code: %s)', account.code))
 
     @api.constrains('user_type_id')
-    def _check_user_type_id(self):
+    def _check_user_type_id_unique_current_year_earning(self):
         data_unaffected_earnings = self.env.ref('account.data_unaffected_earnings')
         result = self.read_group([('user_type_id', '=', data_unaffected_earnings.id)], ['company_id'], ['company_id'])
         for res in result:
@@ -59,7 +59,7 @@ class AccountAccount(models.Model):
         help="Forces all moves for this account to have this account currency.")
     code = fields.Char(size=64, required=True, index=True)
     deprecated = fields.Boolean(index=True, default=False)
-    used = fields.Boolean(store=False, search='_search_used')
+    used = fields.Boolean(compute='_compute_used', search='_search_used')
     user_type_id = fields.Many2one('account.account.type', string='Type', required=True,
         help="Account Type is used for information purpose, to generate country-specific legal reports, and set the rules to close a fiscal year and generate opening entries.")
     internal_type = fields.Selection(related='user_type_id.type', string="Internal Type", store=True, readonly=True)
@@ -169,7 +169,7 @@ class AccountAccount(models.Model):
             raise UserError(_("You can't change the company of your account since there are some journal items linked to it."))
 
     @api.constrains('user_type_id')
-    def _check_user_type_id(self):
+    def _check_user_type_id_sales_purchase_journal(self):
         if not self:
             return
 
@@ -214,6 +214,11 @@ class AccountAccount(models.Model):
         """)
         return [('id', 'in' if value else 'not in', [r[0] for r in self._cr.fetchall()])]
 
+    def _compute_used(self):
+        ids = set(self._search_used('=', True)[0][2])
+        for record in self:
+            record.used = record.id in ids
+
     @api.model
     def _search_new_account_code(self, company, digits, prefix):
         for num in range(1, 10000):
@@ -224,7 +229,10 @@ class AccountAccount(models.Model):
         raise UserError(_('Cannot generate an unused account code.'))
 
     def _compute_opening_debit_credit(self):
-        if not self:
+        self.opening_debit = 0
+        self.opening_credit = 0
+        self.opening_balance = 0
+        if not self.ids:
             return
         self.env.cr.execute("""
             SELECT line.account_id,

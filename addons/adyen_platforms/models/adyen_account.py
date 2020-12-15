@@ -19,7 +19,7 @@ TIMEOUT = 60
 
 class AdyenAddressMixin(models.AbstractModel):
     _name = 'adyen.address.mixin'
-    _description = 'Adyen for Plaforms Address Mixin'
+    _description = 'Adyen for Platforms Address Mixin'
 
     country_id = fields.Many2one('res.country', string='Country', domain=[('code', 'in', ADYEN_AVAILABLE_COUNTRIES)], required=True)
     country_code = fields.Char(related='country_id.code')
@@ -47,21 +47,28 @@ class AdyenIDMixin(models.AbstractModel):
 
     def write(self, vals):
         res = super(AdyenIDMixin, self).write(vals)
-        if vals.get('id_front'):
-            document_type = self.id_type
-            if self.id_type in ['ID_CARD', 'DRIVING_LICENSE']:
-                document_type += '_FRONT'
-            self._check_file_requirements(self.id_front, self.id_front_filename)
-            self._upload_photo_id(document_type, self.id_front, self.id_front_filename)
-        if vals.get('id_back'):
-            document_type = self.id_type + '_BACK'
-            self._check_file_requirements(self.id_back, self.id_back_filename)
-            self._upload_photo_id(document_type, self.id_back, self.id_back_filename)
-        return res
 
+        # Check file formats
+        if vals.get('id_front'):
+            self._check_file_requirements(vals.get('id_front'), vals.get('id_front_filename'))
+        if vals.get('id_back'):
+            self._check_file_requirements(vals.get('id_back'), vals.get('id_back_filename'))
+
+        for adyen_account in self:
+            if vals.get('id_front'):
+                document_type = adyen_account.id_type
+                if adyen_account.id_type in ['ID_CARD', 'DRIVING_LICENSE']:
+                    document_type += '_FRONT'
+                adyen_account._upload_photo_id(document_type, adyen_account.id_front, adyen_account.id_front_filename)
+            if vals.get('id_back') and adyen_account.id_type in ['ID_CARD', 'DRIVING_LICENSE']:
+                document_type = adyen_account.id_type + '_BACK'
+                adyen_account._upload_photo_id(document_type, adyen_account.id_back, adyen_account.id_back_filename)
+            return res
+
+    @api.model
     def _check_file_requirements(self, content, filename):
         file_extension = os.path.splitext(filename)[1]
-        file_size = len(content)
+        file_size = int(len(content) * 3/4) # Compute file_size in bytes
         if file_extension not in ['.jpeg', '.jpg', '.pdf', '.png']:
             raise ValidationError(_('Allowed file formats for photo IDs are jpeg, jpg, pdf or png'))
         if file_size >> 20 > 4 or (file_size >> 10 < 1 and file_extension == '.pdf') or (file_size >> 10 < 100 and file_extension != '.pdf') :
@@ -78,7 +85,7 @@ class AdyenAccount(models.Model):
     _name = 'adyen.account'
     _inherit = ['mail.thread', 'adyen.id.mixin', 'adyen.address.mixin']
 
-    _description = 'Adyen for Plaforms Account'
+    _description = 'Adyen for Platforms Account'
     _rec_name = 'full_name'
 
     # Credentials
@@ -222,7 +229,7 @@ class AdyenAccount(models.Model):
                 'documentType': document_type,
                 'filename': filename,
             },
-            'documentContent': content,
+            'documentContent': content.decode(),
         })
 
     def _format_data(self):
@@ -294,7 +301,7 @@ class AdyenAccount(models.Model):
             req = requests.post(url_join(url, operation), json=payload, auth=auth, timeout=TIMEOUT)
             req.raise_for_status()
         except requests.exceptions.Timeout:
-            raise UserError(_('A timeout occured whil trying to reach the Adyen proxy.'))
+            raise UserError(_('A timeout occured while trying to reach the Adyen proxy.'))
         except Exception as e:
             raise UserError(_('The Adyen proxy is not reachable, please try again later.'))
         response = req.json()
@@ -306,7 +313,11 @@ class AdyenAccount(models.Model):
             else:
                 raise UserError(_("We had troubles reaching Adyen, please retry later or contact the support if the problem persists"))
 
-        return response.get('result')
+        result = response.get('result')
+        if 'verification' in result:
+            self._update_kyc_status(result['verification'])
+
+        return result
 
     @api.model
     def _sync_adyen_cron(self):
@@ -408,7 +419,7 @@ class AdyenAccount(models.Model):
 class AdyenShareholder(models.Model):
     _name = 'adyen.shareholder'
     _inherit = ['adyen.id.mixin', 'adyen.address.mixin']
-    _description = 'Adyen for Plaforms Shareholder'
+    _description = 'Adyen for Platforms Shareholder'
     _rec_name = 'full_name'
 
     adyen_account_id = fields.Many2one('adyen.account', ondelete='cascade')
@@ -471,7 +482,7 @@ class AdyenShareholder(models.Model):
                 'documentType': document_type,
                 'filename': filename,
             },
-            'documentContent': content,
+            'documentContent': content.decode(),
         })
 
     def _format_data(self):
@@ -514,7 +525,7 @@ class AdyenShareholder(models.Model):
 
 class AdyenBankAccount(models.Model):
     _name = 'adyen.bank.account'
-    _description = 'Adyen for Plaforms Bank Account'
+    _description = 'Adyen for Platforms Bank Account'
 
     adyen_account_id = fields.Many2one('adyen.account', ondelete='cascade')
     bank_account_reference = fields.Char('Reference', default=lambda self: uuid.uuid4().hex)
@@ -626,7 +637,7 @@ class AdyenBankAccount(models.Model):
 
 class AdyenPayout(models.Model):
     _name = 'adyen.payout'
-    _description = 'Adyen for Plaforms Payout'
+    _description = 'Adyen for Platforms Payout'
 
     @api.depends('payout_schedule')
     def _compute_next_scheduled_payout(self):

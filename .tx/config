@@ -62,6 +62,11 @@ file_filter = addons/account_tax_python/i18n/<lang>.po
 source_file = addons/account_tax_python/i18n/account_tax_python.pot
 source_lang = en
 
+[odoo-14.adyen_platforms]
+file_filter = addons/adyen_platforms/i18n/<lang>.po
+source_file = addons/adyen_platforms/i18n/adyen_platforms.pot
+source_lang = en
+
 [odoo-14.analytic]
 file_filter = addons/analytic/i18n/<lang>.po
 source_file = addons/analytic/i18n/analytic.pot
@@ -125,11 +130,6 @@ source_lang = en
 [odoo-14.base_automation]
 file_filter = addons/base_automation/i18n/<lang>.po
 source_file = addons/base_automation/i18n/base_automation.pot
-source_lang = en
-
-[odoo-14.base_gengo]
-file_filter = addons/base_gengo/i18n/<lang>.po
-source_file = addons/base_gengo/i18n/base_gengo.pot
 source_lang = en
 
 [odoo-14.base_geolocalize]
@@ -570,6 +570,11 @@ source_lang = en
 [odoo-14.payment_adyen]
 file_filter = addons/payment_adyen/i18n/<lang>.po
 source_file = addons/payment_adyen/i18n/payment_adyen.pot
+source_lang = en
+
+[odoo-14.payment_odoo_by_adyen]
+file_filter = addons/payment_odoo_by_adyen/i18n/<lang>.po
+source_file = addons/payment_odoo_by_adyen/i18n/payment_odoo_by_adyen.pot
 source_lang = en
 
 [odoo-14.payment_alipay]
@@ -1045,11 +1050,6 @@ source_lang = en
 [odoo-14.website_forum]
 file_filter = addons/website_forum/i18n/<lang>.po
 source_file = addons/website_forum/i18n/website_forum.pot
-source_lang = en
-
-[odoo-14.website_gengo]
-file_filter = addons/website_gengo/i18n/<lang>.po
-source_file = addons/website_gengo/i18n/website_gengo.pot
 source_lang = en
 
 [odoo-14.website_hr_recruitment]

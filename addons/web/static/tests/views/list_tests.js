@@ -245,8 +245,40 @@ QUnit.module('Views', {
         list.destroy();
     });
 
+    QUnit.test('export feature in list for users not in base.group_allow_export', async function (assert) {
+        assert.expect(5);
+
+        const list = await createView({
+            View: ListView,
+            model: 'foo',
+            data: this.data,
+            viewOptions: { hasActionMenus: true },
+            arch: '<tree><field name="foo"/></tree>',
+            session: {
+                async user_has_group(group) {
+                    if (group === 'base.group_allow_export') {
+                        return false;
+                    }
+                    return this._super(...arguments);
+                },
+            },
+        });
+
+        assert.containsNone(list.el, 'div.o_control_panel .o_cp_action_menus');
+        assert.ok(list.$('tbody td.o_list_record_selector').length, 'should have at least one record');
+        assert.containsNone(list.el, 'div.o_control_panel .o_cp_buttons .o_list_export_xlsx');
+
+        await testUtils.dom.click(list.$('tbody td.o_list_record_selector:first input'));
+        assert.containsOnce(list.el, 'div.o_control_panel .o_cp_action_menus');
+        await cpHelpers.toggleActionMenu(list);
+        assert.deepEqual(cpHelpers.getMenuItemTexts(list), ['Delete'],
+            'action menu should not contain the Export button');
+
+        list.destroy();
+    });
+
     QUnit.test('list with export button', async function (assert) {
-        assert.expect(4);
+        assert.expect(5);
 
         const list = await createView({
             View: ListView,
@@ -266,6 +298,7 @@ QUnit.module('Views', {
 
         assert.containsNone(list.el, 'div.o_control_panel .o_cp_action_menus');
         assert.ok(list.$('tbody td.o_list_record_selector').length, 'should have at least one record');
+        assert.containsOnce(list.el, 'div.o_control_panel .o_cp_buttons .o_list_export_xlsx');
 
         await testUtils.dom.click(list.$('tbody td.o_list_record_selector:first input'));
         assert.containsOnce(list.el, 'div.o_control_panel .o_cp_action_menus');
@@ -287,6 +320,14 @@ QUnit.module('Views', {
             model: 'foo',
             data: this.data,
             arch: '<tree><field name="foo"/></tree>',
+            session: {
+                async user_has_group(group) {
+                    if (group === 'base.group_allow_export') {
+                        return true;
+                    }
+                    return this._super(...arguments);
+                },
+            },
         });
 
         assert.containsN(list, '.o_data_row', 4);
@@ -312,6 +353,14 @@ QUnit.module('Views', {
             data: this.data,
             arch: '<tree><field name="foo"/></tree>',
             domain: [["id", "<", 0]], // such that no record matches the domain
+            session: {
+                async user_has_group(group) {
+                    if (group === 'base.group_allow_export') {
+                        return true;
+                    }
+                    return this._super(...arguments);
+                },
+            },
         });
 
         assert.isNotVisible(list.el.querySelector('.o_list_export_xlsx'));
@@ -6112,6 +6161,8 @@ QUnit.module('Views', {
 
         // Press 'Tab' -> should get out of the one to many and go to the next field of the form
         await testUtils.fields.triggerKeydown(form.$('.o_field_widget[name=o2m] .o_selected_row input'), 'tab');
+        // use of owlCompatibilityNextTick because the x2many control panel is updated twice
+        await testUtils.owlCompatibilityNextTick();
         assert.strictEqual(document.activeElement, form.$('input[name="foo"]')[0],
             "the next field should be selected");
 
@@ -7121,6 +7172,57 @@ QUnit.module('Views', {
         assert.verifySteps(['bar', 'res_currency'], "should have done 1 name_get by model in reference values");
         assert.strictEqual(list.$('tbody td:not(.o_list_record_selector)').text(), "Value 1USDEUREUR",
             "should have the display_name of the reference");
+        list.destroy();
+    });
+
+    QUnit.test('reference field batched in grouped list', async function (assert) {
+        assert.expect(7);
+
+        this.data.foo.records= [
+            // group 1
+            {id: 1, foo: '1', reference: 'bar,1'},
+            {id: 2, foo: '1', reference: 'bar,2'},
+            {id: 3, foo: '1', reference: 'res_currency,1'},
+            //group 2
+            {id: 4, foo: '2', reference: 'bar,2'},
+            {id: 5, foo: '2', reference: 'bar,3'},
+        ];
+        const list = await createView({
+            View: ListView,
+            model: 'foo',
+            data: this.data,
+            arch: `<tree expand="1">
+                       <field name="foo" invisible="1"/>
+                       <field name="reference"/>
+                   </tree>`,
+            groupBy: ['foo'],
+            mockRPC: function (route, args) {
+                assert.step(args.method || route);
+                if (args.method === 'name_get') {
+                    if (args.model === 'bar') {
+                        assert.deepEqual(args.args[0], [1, 2 ,3]);
+                    }
+                    if (args.model === "res.currency") {
+                        assert.deepEqual(args.args[0], [1]);
+                    }
+                }
+                return this._super.apply(this, arguments);
+            },
+        });
+        assert.verifySteps([
+            'web_read_group',
+            'name_get',
+            'name_get',
+        ]);
+        assert.containsN(list, '.o_group_header', 2);
+        const allNames = Array.from(list.el.querySelectorAll('.o_data_cell'), node => node.textContent);
+        assert.deepEqual(allNames, [
+            'Value 1',
+            'Value 2',
+            'USD',
+            'Value 2',
+            'Value 3',
+        ]);
         list.destroy();
     });
 
@@ -10768,6 +10870,52 @@ QUnit.module('Views', {
         list.destroy();
         unpatchDate();
         testUtils.mock.unpatch(BasicModel);
+    });
+
+    QUnit.test("update control panel while list view is mounting", async function (assert) {
+        const ControlPanel = require('web.ControlPanel');
+        const ListController = require('web.ListController');
+
+        let mountedCounterCall = 0;
+
+        ControlPanel.patch('test.ControlPanel', T => {
+            class ControlPanelPatchTest extends T {
+                mounted() {
+                    mountedCounterCall = mountedCounterCall + 1;
+                    assert.step(`mountedCounterCall-${mountedCounterCall}`);
+                    super.mounted(...arguments);
+                }
+            }
+            return ControlPanelPatchTest;
+        });
+
+        const MyListView = ListView.extend({
+            config: Object.assign({}, ListView.prototype.config, {
+                Controller: ListController.extend({
+                    async start() {
+                        await this._super(...arguments);
+                        this.renderer._updateSelection();
+                    },
+                }),
+            }),
+        });
+
+        assert.expect(2);
+
+        const list = await createView({
+            View: MyListView,
+            model: 'event',
+            data: this.data,
+            arch: '<tree><field name="name"/></tree>',
+        });
+
+        assert.verifySteps([
+            'mountedCounterCall-1',
+        ]);
+
+        ControlPanel.unpatch('test.ControlPanel');
+
+        list.destroy();
     });
 });
 

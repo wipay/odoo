@@ -3,6 +3,7 @@
 
 from contextlib import contextmanager
 from dateutil.relativedelta import relativedelta
+from psycopg2 import OperationalError
 
 from odoo import api, fields, models
 
@@ -168,6 +169,11 @@ class HrWorkEntry(models.Model):
                 ])
                 work_entries._reset_conflicting_state()
             yield
+        except OperationalError:
+            # the cursor is dead, do not attempt to use it or we will shadow the root exception
+            # with a "psycopg2.InternalError: current transaction is aborted, ..."
+            skip = True
+            raise
         finally:
             if not skip and start and stop:
                 # New work entries are handled in the create method,
@@ -179,7 +185,7 @@ class HrWorkEntryType(models.Model):
     _name = 'hr.work.entry.type'
     _description = 'HR Work Entry Type'
 
-    name = fields.Char(required=True)
+    name = fields.Char(required=True, translate=True)
     code = fields.Char(required=True)
     color = fields.Integer(default=0)
     sequence = fields.Integer(default=25)

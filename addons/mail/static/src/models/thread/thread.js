@@ -108,6 +108,11 @@ function factory(dependencies) {
             for (const timer of this._otherMembersLongTypingTimers.values()) {
                 timer.clear();
             }
+            if (this.isTemporary) {
+                for (const message of this.messages) {
+                    message.delete();
+                }
+            }
             return super._willDelete(...arguments);
         }
 
@@ -164,13 +169,6 @@ function factory(dependencies) {
             }
             if ('is_pinned' in data) {
                 data2.isServerPinned = data.is_pinned;
-                // FIXME: The following is admittedly odd.
-                // Fixing it should entail a deeper reflexion on the group_based_subscription
-                // and is_pinned functionalities, especially in python.
-                // task-2284357
-                if ('group_based_subscription' in data && data.group_based_subscription) {
-                    data2.isServerPinned = true;
-                }
             }
             if ('last_message' in data && data.last_message) {
                 data2.messagesAsServerChannel.push(['insert', { id: data.last_message.id }]);
@@ -199,7 +197,7 @@ function factory(dependencies) {
                 data2.public = data.public;
             }
             if ('seen_message_id' in data) {
-                data2.lastSeenByCurrentPartnerMessageId = data.seen_message_id;
+                data2.lastSeenByCurrentPartnerMessageId = data.seen_message_id || 0;
             }
             if ('uuid' in data) {
                 data2.uuid = data.uuid;
@@ -289,6 +287,9 @@ function factory(dependencies) {
                 }
                 return list;
             }, []);
+            if (channelIds.length === 0) {
+                return;
+            }
             const channelPreviews = await this.env.services.rpc({
                 model: 'mail.channel',
                 method: 'channel_fetch_preview',
@@ -331,7 +332,7 @@ function factory(dependencies) {
                 model: 'mail.channel',
                 method: 'channel_info',
                 args: [ids],
-            });
+            }, { shadow: true });
             const channels = this.env.models['mail.thread'].insert(
                 channelInfos.map(channelInfo => this.env.models['mail.thread'].convertData(channelInfo))
             );
@@ -339,7 +340,6 @@ function factory(dependencies) {
             this.env.messaging.messagingMenu.update();
             return channels;
         }
-
 
         /**
          * Performs the `channel_seen` RPC on `mail.channel`.
@@ -356,6 +356,25 @@ function factory(dependencies) {
                 args: [ids],
                 kwargs: {
                     last_message_id: lastMessageId,
+                },
+            }, { shadow: true });
+        }
+
+        /**
+         * Performs the `channel_pin` RPC on `mail.channel`.
+         *
+         * @static
+         * @param {Object} param0
+         * @param {boolean} [param0.pinned=false]
+         * @param {string} param0.uuid
+         */
+        static async performRpcChannelPin({ pinned = false, uuid }) {
+            return this.env.services.rpc({
+                model: 'mail.channel',
+                method: 'channel_pin',
+                kwargs: {
+                    uuid,
+                    pinned,
                 },
             }, { shadow: true });
         }
@@ -452,6 +471,43 @@ function factory(dependencies) {
         }
 
         /**
+         * Performs the `execute_command` RPC on `mail.channel`.
+         *
+         * @static
+         * @param {Object} param0
+         * @param {integer} param0.channelId
+         * @param {string} param0.command
+         * @param {Object} [param0.postData={}]
+         */
+        static async performRpcExecuteCommand({ channelId, command, postData = {} }) {
+            return this.env.services.rpc({
+                model: 'mail.channel',
+                method: 'execute_command',
+                args: [[channelId]],
+                kwargs: Object.assign({ command }, postData),
+            });
+        }
+
+        /**
+         * Performs the `message_post` RPC on given threadModel.
+         *
+         * @static
+         * @param {Object} param0
+         * @param {Object} param0.postData
+         * @param {integer} param0.threadId
+         * @param {string} param0.threadModel
+         * @return {integer} the posted message id
+         */
+        static async performRpcMessagePost({ postData, threadId, threadModel }) {
+            return this.env.services.rpc({
+                model: threadModel,
+                method: 'message_post',
+                args: [threadId],
+                kwargs: postData,
+            });
+        }
+
+        /**
          * Performs RPC on the route `/mail/get_suggested_recipients`.
          *
          * @static
@@ -466,7 +522,7 @@ function factory(dependencies) {
                     model,
                     res_ids,
                 },
-            });
+            }, { shadow: true });
             for (const id in data) {
                 const recipientInfoList = data[id].map(recipientInfoData => {
                     const [partner_id, emailInfo, reason] = recipientInfoData;
@@ -515,7 +571,7 @@ function factory(dependencies) {
                 ],
                 fields: ['id', 'name', 'mimetype'],
                 orderBy: [{ name: 'id', asc: false }],
-            }));
+            }, { shadow: true }));
             this.update({
                 originThreadAttachments: [['insert-and-replace',
                     attachmentsData.map(data =>
@@ -577,31 +633,39 @@ function factory(dependencies) {
         /**
          * Mark the specified conversation as read/seen.
          *
-         * @param {integer} messageId the message to be considered as last seen
+         * @param {mail.message} message the message to be considered as last seen.
          */
-        async markAsSeen(messageId) {
+        async markAsSeen(message) {
             if (this.model !== 'mail.channel') {
                 return;
             }
-            if (this.pendingSeenMessageId && messageId <= this.pendingSeenMessageId) {
+            if (this.pendingSeenMessageId && message.id <= this.pendingSeenMessageId) {
                 return;
             }
             if (
                 this.lastSeenByCurrentPartnerMessageId &&
-                messageId <= this.lastSeenByCurrentPartnerMessageId
+                message.id <= this.lastSeenByCurrentPartnerMessageId
             ) {
                 return;
             }
-            this.update({ pendingSeenMessageId: messageId });
+            this.update({ pendingSeenMessageId: message.id });
             return this.env.models['mail.thread'].performRpcChannelSeen({
                 ids: [this.id],
-                // commands have fake message id that is not integer
-                lastMessageId: Math.floor(messageId),
+                lastMessageId: message.id,
             });
         }
 
         /**
-         * Mark all needaction messages of this thread as read.
+         * Marks as read all needaction messages with this thread as origin.
+         */
+        async markNeedactionMessagesAsOriginThreadAsRead() {
+            await this.async(() =>
+                this.env.models['mail.message'].markAsRead(this.needactionMessagesAsOriginThread)
+            );
+        }
+
+        /**
+         * Mark as read all needaction messages of this thread.
          */
         async markNeedactionMessagesAsRead() {
             await this.async(() =>
@@ -632,23 +696,17 @@ function factory(dependencies) {
          *
          * Only makes sense if isPendingPinned is set to the desired value.
          */
-        notifyPinStateToServer() {
-            // method is called from _updateAfter so it cannot be async
+        async notifyPinStateToServer() {
             if (this.isPendingPinned) {
-                this.env.services.rpc({
-                    model: 'mail.channel',
-                    method: 'channel_pin',
-                    kwargs: {
-                        uuid: this.uuid,
-                        pinned: true,
-                    },
-                }, { shadow: true });
+                await this.env.models['mail.thread'].performRpcChannelPin({
+                    pinned: true,
+                    uuid: this.uuid,
+                });
             } else {
-                this.env.services.rpc({
-                    model: 'mail.channel',
-                    method: 'execute_command',
-                    args: [[this.id], 'leave']
-                }, { shadow: true });
+                this.env.models['mail.thread'].performRpcExecuteCommand({
+                    channelId: this.id,
+                    command: 'leave',
+                });
             }
         }
 
@@ -700,6 +758,14 @@ function factory(dependencies) {
         }
 
         /**
+         * Pin this thread and notify server of the change.
+         */
+        async pin() {
+            this.update({ isPendingPinned: true });
+            await this.notifyPinStateToServer();
+        }
+
+        /**
          * Open a dialog to add channels as followers.
          */
         promptAddChannelFollower() {
@@ -711,6 +777,40 @@ function factory(dependencies) {
          */
         promptAddPartnerFollower() {
             this._promptAddFollower({ mail_invite_follower_channel_only: false });
+        }
+
+        async refresh() {
+            if (this.isTemporary) {
+                return;
+            }
+            this.loadNewMessages();
+            this.update({ isLoadingAttachments: true });
+            await this.async(() => this.fetchAttachments());
+            this.update({ isLoadingAttachments: false });
+        }
+
+        async refreshActivities() {
+            if (!this.hasActivities) {
+                return;
+            }
+            if (this.isTemporary) {
+                return;
+            }
+            // A bit "extreme", may be improved
+            const [{ activity_ids: newActivityIds }] = await this.async(() => this.env.services.rpc({
+                model: this.model,
+                method: 'read',
+                args: [this.id, ['activity_ids']]
+            }, { shadow: true }));
+            const activitiesData = await this.async(() => this.env.services.rpc({
+                model: 'mail.activity',
+                method: 'activity_format',
+                args: [newActivityIds]
+            }, { shadow: true }));
+            const activities = this.env.models['mail.activity'].insert(activitiesData.map(
+                activityData => this.env.models['mail.activity'].convertData(activityData)
+            ));
+            this.update({ activities: [['replace', activities]] });
         }
 
         /**
@@ -727,7 +827,8 @@ function factory(dependencies) {
                     res_id: this.id,
                     res_model: this.model,
                 },
-            }));
+            }, { shadow: true }));
+            this.update({ areFollowersLoaded: true });
             if (followers.length > 0) {
                 this.update({
                     followers: [['insert-and-replace', followers.map(data =>
@@ -833,6 +934,14 @@ function factory(dependencies) {
         }
 
         /**
+         * Unpin this thread and notify server of the change.
+         */
+        async unpin() {
+            this.update({ isPendingPinned: false });
+            await this.notifyPinStateToServer();
+        }
+
+        /**
          * Called when current partner has explicitly stopped inserting some
          * input in composer. Useful to notify current partner has currently
          * stopped typing something in the composer of this thread to all other
@@ -886,7 +995,7 @@ function factory(dependencies) {
          */
         unsubscribe() {
             this.env.messaging.chatWindowManager.closeThread(this);
-            this.update({ isPendingPinned: false });
+            this.unpin();
         }
 
         //----------------------------------------------------------------------
@@ -960,6 +1069,14 @@ function factory(dependencies) {
 
         /**
          * @private
+         * @returns {mail.activity[]}
+         */
+        _computeFutureActivities() {
+            return [['replace', this.activities.filter(activity => activity.state === 'planned')]];
+        }
+
+        /**
+         * @private
          */
         _computeHasSeenIndicators() {
             if (this.model !== 'mail.channel') {
@@ -1016,9 +1133,6 @@ function factory(dependencies) {
          * @returns {mail.message}
          */
         _computeLastCurrentPartnerMessageSeenByEveryone() {
-            if (!this.partnerSeenInfos || !this.orderedMessages) {
-                return [['unlink-all']];
-            }
             const otherPartnerSeenInfos =
                 this.partnerSeenInfos.filter(partnerSeenInfo =>
                     partnerSeenInfo.partner !== this.messagingCurrentPartner);
@@ -1037,7 +1151,7 @@ function factory(dependencies) {
                 ...otherPartnersLastSeenMessageIds
             );
             const currentPartnerOrderedSeenMessages =
-                this.orderedMessages.filter(message =>
+                this.orderedNonTransientMessages.filter(message =>
                     message.author === this.messagingCurrentPartner &&
                     message.id <= lastMessageSeenByAllId);
 
@@ -1069,6 +1183,56 @@ function factory(dependencies) {
          * @private
          * @returns {mail.message|undefined}
          */
+        _computeLastNonTransientMessage() {
+            const {
+                length: l,
+                [l - 1]: lastMessage,
+            } = this.orderedNonTransientMessages;
+            if (lastMessage) {
+                return [['link', lastMessage]];
+            }
+            return [['unlink']];
+        }
+
+        /**
+         * Adjusts the last seen message received from the server to consider
+         * the following messages also as read if they are either transient
+         * messages or messages from the current partner.
+         *
+         * @private
+         * @returns {integer}
+         */
+        _computeLastSeenByCurrentPartnerMessageId() {
+            const firstMessage = this.orderedMessages[0];
+            if (
+                firstMessage &&
+                this.lastSeenByCurrentPartnerMessageId &&
+                this.lastSeenByCurrentPartnerMessageId < firstMessage.id
+            ) {
+                // no deduction can be made if there is a gap
+                return this.lastSeenByCurrentPartnerMessageId;
+            }
+            let lastSeenByCurrentPartnerMessageId = this.lastSeenByCurrentPartnerMessageId;
+            for (const message of this.orderedMessages) {
+                if (message.id <= this.lastSeenByCurrentPartnerMessageId) {
+                    continue;
+                }
+                if (
+                    message.author === this.env.messaging.currentPartner ||
+                    message.isTransient
+                ) {
+                    lastSeenByCurrentPartnerMessageId = message.id;
+                    continue;
+                }
+                return lastSeenByCurrentPartnerMessageId;
+            }
+            return lastSeenByCurrentPartnerMessageId;
+        }
+
+        /**
+         * @private
+         * @returns {mail.message|undefined}
+         */
         _computeLastNeedactionMessage() {
             const orderedNeedactionMessages = this.needactionMessages.sort(
                 (m1, m2) => m1.id < m2.id ? -1 : 1
@@ -1079,6 +1243,24 @@ function factory(dependencies) {
             } = orderedNeedactionMessages;
             if (lastNeedactionMessage) {
                 return [['link', lastNeedactionMessage]];
+            }
+            return [['unlink']];
+        }
+
+        /**
+         * @private
+         * @returns {mail.message|undefined}
+         */
+        _computeLastNeedactionMessageAsOriginThread() {
+            const orderedNeedactionMessagesAsOriginThread = this.needactionMessagesAsOriginThread.sort(
+                (m1, m2) => m1.id < m2.id ? -1 : 1
+            );
+            const {
+                length: l,
+                [l - 1]: lastNeedactionMessageAsOriginThread,
+            } = orderedNeedactionMessagesAsOriginThread;
+            if (lastNeedactionMessageAsOriginThread) {
+                return [['link', lastNeedactionMessageAsOriginThread]];
             }
             return [['unlink']];
         }
@@ -1096,41 +1278,35 @@ function factory(dependencies) {
          * @returns {integer}
          */
         _computeLocalMessageUnreadCounter() {
-            // the only situations where serverMessageUnreadCounter can/have to be
-            // trusted are:
-            // - we have no last message (and then no messages at all)
-            // - the message it used to compute is the last message we know
-            if (this.orderedMessages.length === 0) {
-                return this.serverMessageUnreadCounter;
+            if (this.model !== 'mail.channel') {
+                // unread counter only makes sense on channels
+                return clear();
             }
-            // from here serverLastMessageId is not undefined because
-            // orderedMessages contain at least one message.
-            if (!this.lastSeenByCurrentPartnerMessageId) {
-                return this.serverMessageUnreadCounter;
-            }
-            // if server knows more messages than the client knows then we just
-            // need to trust him
-            if (this.serverLastMessageId > this.lastSeenByCurrentPartnerMessageId) {
-                return this.serverMessageUnreadCounter;
-            }
+            // By default trust the server up to the last message it used
+            // because it's not possible to do better.
+            let baseCounter = this.serverMessageUnreadCounter;
+            let countFromId = this.serverLastMessageId;
+            // But if the client knows the last seen message that the server
+            // returned (and by assumption all the messages that come after),
+            // the counter can be computed fully locally, ignoring potentially
+            // obsolete values from the server.
             const firstMessage = this.orderedMessages[0];
-            // if the lastSeenByCurrentPartnerMessageId is not known (not fetched), then we
-            // need to rely on server value to determine the amount of unread
-            // messages until the last message it knew when computing the
-            // serverMessageUnreadCounter
-            if (this.lastSeenByCurrentPartnerMessageId < firstMessage.id) {
-                const fetchedNotSeenMessages = this.orderedMessages.filter(message =>
-                    message.id > this.serverLastMessageId && message.author !== this.env.messaging.currentPartner
-                );
-                return this.serverMessageUnreadCounter + fetchedNotSeenMessages.length;
+            if (
+                firstMessage &&
+                this.lastSeenByCurrentPartnerMessageId &&
+                this.lastSeenByCurrentPartnerMessageId >= firstMessage.id
+            ) {
+                baseCounter = 0;
+                countFromId = this.lastSeenByCurrentPartnerMessageId;
             }
-            // lastSeenByCurrentPartnerMessageId is a known message,
-            // then we can forget serverMessageUnreadCounter
-            const maxId = this.lastSeenByCurrentPartnerMessageId;
-            return this.orderedMessages.reduce(
-                (acc, message) => acc + ((message.id > maxId && message.author !== this.env.messaging.currentPartner) ? 1 : 0),
-                0
-            );
+            // Include all the messages that are known locally but the server
+            // didn't take into account.
+            return this.orderedMessages.reduce((total, message) => {
+                if (message.id <= countFromId) {
+                    return total;
+                }
+                return total + 1;
+            }, baseCounter);
         }
 
         /**
@@ -1153,8 +1329,45 @@ function factory(dependencies) {
          * @private
          * @returns {mail.message[]}
          */
+        _computeNeedactionMessagesAsOriginThread() {
+            return [['replace', this.messagesAsOriginThread.filter(message => message.isNeedaction)]];
+        }
+
+        /**
+         * @private
+         * @returns {mail.message|undefined}
+         */
+        _computeMessageAfterNewMessageSeparator() {
+            if (this.model !== 'mail.channel') {
+                return [['unlink']];
+            }
+            if (this.localMessageUnreadCounter === 0) {
+                return [['unlink']];
+            }
+            const index = this.orderedMessages.findIndex(message =>
+                message.id === this.lastSeenByCurrentPartnerMessageId
+            );
+            const message = this.orderedMessages[index + 1];
+            if (!message) {
+                return [['unlink']];
+            }
+            return [['link', message]];
+        }
+
+        /**
+         * @private
+         * @returns {mail.message[]}
+         */
         _computeOrderedMessages() {
             return [['replace', this.messages.sort((m1, m2) => m1.id < m2.id ? -1 : 1)]];
+        }
+
+        /**
+         * @private
+         * @returns {mail.message[]}
+         */
+        _computeOrderedNonTransientMessages() {
+            return [['replace', this.orderedMessages.filter(m => !m.isTransient)]];
         }
 
         /**
@@ -1181,6 +1394,22 @@ function factory(dependencies) {
                     .map(localId => this.env.models['mail.partner'].get(localId))
                     .filter(member => !!member),
             ]];
+        }
+
+        /**
+         * @private
+         * @returns {mail.activity[]}
+         */
+        _computeOverdueActivities() {
+            return [['replace', this.activities.filter(activity => activity.state === 'overdue')]];
+        }
+
+        /**
+         * @private
+         * @returns {mail.activity[]}
+         */
+        _computeTodayActivities() {
+            return [['replace', this.activities.filter(activity => activity.state === 'today')]];
         }
 
         /**
@@ -1212,6 +1441,20 @@ function factory(dependencies) {
         }
 
         /**
+         * Compute an url string that can be used inside a href attribute
+         *
+         * @private
+         * @returns {string}
+         */
+        _computeUrl() {
+            const baseHref = this.env.session.url('/web');
+            if (this.model === 'mail.channel') {
+                return `${baseHref}#action=mail.action_discuss&active_id=${this.model}_${this.id}`;
+            }
+            return `${baseHref}#model=${this.model}&id=${this.id}`;
+        }
+
+        /**
          * @private
          * @param {Object} param0
          * @param {boolean} param0.isTyping
@@ -1235,6 +1478,67 @@ function factory(dependencies) {
             }
             this._forceNotifyNextCurrentPartnerTypingStatus = false;
             this._currentPartnerLastNotifiedIsTyping = isTyping;
+        }
+
+        /**
+         * Cleans followers of current thread. In particular, chats are supposed
+         * to work with "members", not with "followers". This clean up is only
+         * necessary to remove illegitimate followers in stable version, it can
+         * be removed in master after proper migration to clean the database.
+         *
+         * @private
+         */
+        _onChangeFollowersPartner() {
+            if (this.channel_type !== 'chat') {
+                return;
+            }
+            for (const follower of this.followers) {
+                if (follower.partner) {
+                    follower.remove();
+                }
+            }
+        }
+
+        /**
+         * @private
+         */
+        _onChangeLastSeenByCurrentPartnerMessageId() {
+            this.env.messagingBus.trigger('o-thread-last-seen-by-current-partner-message-id-changed', {
+                thread: this,
+            });
+        }
+
+        /**
+         * Fetches followers of chats when they are displayed for the first
+         * time. This is necessary to clean the followers.
+         * @see `_onChangeFollowersPartner` for more information.
+         *
+         * @private
+         */
+        _onChangeThreadViews() {
+            if (this.channel_type !== 'chat') {
+                return;
+            }
+            if (this.threadViews.length === 0) {
+                return;
+            }
+            if (this.areFollowersLoaded) {
+                return;
+            }
+            this.refreshFollowers();
+        }
+
+        /**
+         * Handles change of pinned state coming from the server. Useful to
+         * clear pending state once server acknowledged the change.
+         *
+         * @private
+         * @see isPendingPinned
+         */
+        _onIsServerPinnedChanged() {
+            if (this.isServerPinned === this.isPendingPinned) {
+                this.update({ isPendingPinned: clear() });
+            }
         }
 
         /**
@@ -1291,34 +1595,6 @@ function factory(dependencies) {
             });
         }
 
-        /**
-         * @override
-         */
-        _updateAfter(previous) {
-            if (this.model !== 'mail.channel') {
-                // pin state only makes sense on channels
-                return;
-            }
-            if (
-                this.isPendingPinned !== undefined &&
-                previous.isPendingPinned !== this.isPendingPinned
-            ) {
-                this.notifyPinStateToServer();
-            }
-            if (this.isServerPinned === this.isPendingPinned) {
-                this.update({ isPendingPinned: clear() });
-            }
-        }
-
-        /**
-         * @override
-         */
-        _updateBefore() {
-            return {
-                isPendingPinned: this.isPendingPinned,
-            };
-        }
-
         //----------------------------------------------------------------------
         // Handlers
         //----------------------------------------------------------------------
@@ -1359,6 +1635,19 @@ function factory(dependencies) {
     }
 
     Thread.fields = {
+        /**
+         * Determines the `mail.activity` that belong to `this`, assuming `this`
+         * has activities (@see hasActivities).
+         */
+        activities: one2many('mail.activity', {
+            inverse: 'thread',
+        }),
+        /**
+         * Serves as compute dependency.
+         */
+        activitiesState: attr({
+            related: 'activities.state',
+        }),
         allAttachments: many2many('mail.attachment', {
             compute: '_computeAllAttachments',
             dependencies: [
@@ -1367,6 +1656,13 @@ function factory(dependencies) {
             ],
         }),
         areAttachmentsLoaded: attr({
+            default: false,
+        }),
+        /**
+         * States whether followers have been loaded at least once for this
+         * thread.
+         */
+        areFollowersLoaded: attr({
             default: false,
         }),
         attachments: many2many('mail.attachment', {
@@ -1429,7 +1725,21 @@ function factory(dependencies) {
         followers: one2many('mail.follower', {
             inverse: 'followedThread',
         }),
+        /**
+         * States the `mail.activity` that belongs to `this` and that are
+         * planned in the future (due later than today).
+         */
+        futureActivities: one2many('mail.activity', {
+            compute: '_computeFutureActivities',
+            dependencies: ['activitiesState'],
+        }),
         group_based_subscription: attr({
+            default: false,
+        }),
+        /**
+         * States whether `this` has activities (`mail.activity.mixin` server side).
+         */
+        hasActivities: attr({
             default: false,
         }),
         /**
@@ -1466,6 +1776,12 @@ function factory(dependencies) {
                 'followersPartner',
                 'messagingCurrentPartner',
             ],
+        }),
+        /**
+         * States whether `this` is currently loading attachments.
+         */
+        isLoadingAttachments: attr({
+            default: false,
         }),
         isModeratedByCurrentPartner: attr({
             compute: '_computeIsModeratedByCurrentPartner',
@@ -1515,11 +1831,14 @@ function factory(dependencies) {
         lastCurrentPartnerMessageSeenByEveryone: many2one('mail.message', {
             compute: '_computeLastCurrentPartnerMessageSeenByEveryone',
             dependencies: [
-                'partnerSeenInfos',
-                'orderedMessages',
                 'messagingCurrentPartner',
+                'orderedNonTransientMessages',
+                'partnerSeenInfos',
             ],
         }),
+        /**
+         * Last message of the thread, could be a transient one.
+         */
         lastMessage: many2one('mail.message', {
             compute: '_computeLastMessage',
             dependencies: ['orderedMessages'],
@@ -1529,17 +1848,39 @@ function factory(dependencies) {
             dependencies: ['needactionMessages'],
         }),
         /**
+         * States the last known needaction message having this thread as origin.
+         */
+        lastNeedactionMessageAsOriginThread: many2one('mail.message', {
+            compute: '_computeLastNeedactionMessageAsOriginThread',
+            dependencies: [
+                'needactionMessagesAsOriginThread',
+            ],
+        }),
+        /**
+         * Last non-transient message.
+         */
+        lastNonTransientMessage: many2one('mail.message', {
+            compute: '_computeLastNonTransientMessage',
+            dependencies: ['orderedNonTransientMessages'],
+        }),
+        /**
          * Last seen message id of the channel by current partner.
-         *
-         * If there is a pending seen message id change, it is immediately applied
-         * on the interface to avoid a feeling of unresponsiveness. Otherwise the
-         * last known message id of the server is used.
          *
          * Also, it needs to be kept as an id because it's considered like a "date" and could stay
          * even if corresponding message is deleted. It is basically used to know which
          * messages are before or after it.
          */
-        lastSeenByCurrentPartnerMessageId: attr(),
+        lastSeenByCurrentPartnerMessageId: attr({
+            compute: '_computeLastSeenByCurrentPartnerMessageId',
+            default: 0,
+            dependencies: [
+                'lastSeenByCurrentPartnerMessageId',
+                'messagingCurrentPartner',
+                'orderedMessages',
+                'orderedMessagesIsTransient',
+                // FIXME missing dependency 'orderedMessages.author', (task-2261221)
+            ],
+        }),
         /**
          * Local value of message unread counter, that means it is based on initial server value and
          * updated with interface updates.
@@ -1547,7 +1888,6 @@ function factory(dependencies) {
         localMessageUnreadCounter: attr({
             compute: '_computeLocalMessageUnreadCounter',
             dependencies: [
-                'lastMessage',
                 'lastSeenByCurrentPartnerMessageId',
                 'messagingCurrentPartner',
                 'orderedMessages',
@@ -1564,6 +1904,19 @@ function factory(dependencies) {
         members: many2many('mail.partner', {
             inverse: 'memberThreads',
         }),
+        /**
+         * Determines the message before which the "new message" separator must
+         * be positioned, if any.
+         */
+        messageAfterNewMessageSeparator: many2one('mail.message', {
+            compute: '_computeMessageAfterNewMessageSeparator',
+            dependencies: [
+                'lastSeenByCurrentPartnerMessageId',
+                'localMessageUnreadCounter',
+                'model',
+                'orderedMessages',
+            ],
+        }),
         message_needaction_counter: attr({
             default: 0,
         }),
@@ -1576,11 +1929,29 @@ function factory(dependencies) {
             inverse: 'threads',
         }),
         /**
+         * All messages that have been originally posted in this thread.
+         */
+        messagesAsOriginThread: one2many('mail.message', {
+            inverse: 'originThread',
+        }),
+        /**
+         * Serves as compute dependency.
+         */
+        messagesAsOriginThreadIsNeedaction: attr({
+            related: 'messagesAsOriginThread.isNeedaction',
+        }),
+        /**
          * All messages that are contained on this channel on the server.
          * Equivalent to the inverse of python field `channel_ids`.
          */
         messagesAsServerChannel: many2many('mail.message', {
             inverse: 'serverChannels',
+        }),
+        /**
+         * Serves as compute dependency.
+         */
+        messagesIsNeedaction: attr({
+            related: 'messages.isNeedaction',
         }),
         messageSeenIndicators: one2many('mail.message_seen_indicator', {
             inverse: 'thread',
@@ -1607,7 +1978,60 @@ function factory(dependencies) {
         name: attr(),
         needactionMessages: many2many('mail.message', {
             compute: '_computeNeedactionMessages',
-            dependencies: ['messages'],
+            dependencies: [
+                'messages',
+                'messagesIsNeedaction',
+            ],
+        }),
+        /**
+         * States all known needaction messages having this thread as origin.
+         */
+        needactionMessagesAsOriginThread: many2many('mail.message', {
+            compute: '_computeNeedactionMessagesAsOriginThread',
+            dependencies: [
+                'messagesAsOriginThread',
+                'messagesAsOriginThreadIsNeedaction',
+            ],
+        }),
+        /**
+         * Not a real field, used to trigger `_onChangeFollowersPartner` when one of
+         * the dependencies changes.
+         */
+        onChangeFollowersPartner: attr({
+            compute: '_onChangeFollowersPartner',
+            dependencies: [
+                'followersPartner',
+            ],
+        }),
+        /**
+         * Not a real field, used to trigger `_onChangeLastSeenByCurrentPartnerMessageId` when one of
+         * the dependencies changes.
+         */
+        onChangeLastSeenByCurrentPartnerMessageId: attr({
+            compute: '_onChangeLastSeenByCurrentPartnerMessageId',
+            dependencies: [
+                'lastSeenByCurrentPartnerMessageId',
+            ],
+        }),
+        /**
+         * Not a real field, used to trigger `_onChangeThreadViews` when one of
+         * the dependencies changes.
+         */
+        onChangeThreadView: attr({
+            compute: '_onChangeThreadViews',
+            dependencies: [
+                'threadViews',
+            ],
+        }),
+        /**
+         * Not a real field, used to trigger `_onIsServerPinnedChanged` when one of
+         * the dependencies changes.
+         */
+        onIsServerPinnedChanged: attr({
+            compute: '_onIsServerPinnedChanged',
+            dependencies: [
+                'isServerPinned',
+            ],
         }),
         /**
          * Not a real field, used to trigger `_onServerFoldStateChanged` when one of
@@ -1619,9 +2043,29 @@ function factory(dependencies) {
                 'serverFoldState',
             ],
         }),
+        /**
+         * All messages ordered like they are displayed.
+         */
         orderedMessages: many2many('mail.message', {
             compute: '_computeOrderedMessages',
             dependencies: ['messages'],
+        }),
+        /**
+         * Serves as compute dependency. (task-2261221)
+         */
+        orderedMessagesIsTransient: attr({
+            related: 'orderedMessages.isTransient',
+        }),
+        /**
+         * All messages ordered like they are displayed. This field does not
+         * contain transient messages which are not "real" records.
+         */
+        orderedNonTransientMessages: many2many('mail.message', {
+            compute: '_computeOrderedNonTransientMessages',
+            dependencies: [
+                'orderedMessages',
+                'orderedMessagesIsTransient',
+            ],
         }),
         /**
          * Ordered typing members on this thread, excluding the current partner.
@@ -1650,6 +2094,14 @@ function factory(dependencies) {
         }),
         originThreadAttachments: one2many('mail.attachment', {
             inverse: 'originThread',
+        }),
+        /**
+         * States the `mail.activity` that belongs to `this` and that are
+         * overdue (due earlier than today).
+         */
+        overdueActivities: one2many('mail.activity', {
+            compute: '_computeOverdueActivities',
+            dependencies: ['activitiesState'],
         }),
         partnerSeenInfos: one2many('mail.thread_partner_seen_info', {
             inverse: 'thread',
@@ -1703,6 +2155,17 @@ function factory(dependencies) {
         suggestedRecipientInfoList: one2many('mail.suggested_recipient_info', {
             inverse: 'thread',
         }),
+        threadViews: one2many('mail.thread_view', {
+            inverse: 'thread',
+        }),
+        /**
+         * States the `mail.activity` that belongs to `this` and that are due
+         * specifically today.
+         */
+        todayActivities: one2many('mail.activity', {
+            compute: '_computeTodayActivities',
+            dependencies: ['activitiesState'],
+        }),
         /**
          * Members that are currently typing something in the composer of this
          * thread, including current partner.
@@ -1716,10 +2179,18 @@ function factory(dependencies) {
             default: '',
             dependencies: ['orderedOtherTypingMembers'],
         }),
-        uuid: attr(),
-        threadViews: one2many('mail.thread_view', {
-            inverse: 'thread',
+        /**
+         * URL to access to the conversation.
+         */
+        url: attr({
+            compute: '_computeUrl',
+            default: '',
+            dependencies: [
+                'id',
+                'model',
+            ]
         }),
+        uuid: attr(),
     };
 
     Thread.modelName = 'mail.thread';

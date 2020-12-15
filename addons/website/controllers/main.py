@@ -276,6 +276,13 @@ class Website(Home):
         )
         return dynamic_filter and dynamic_filter.render(template_key, limit, search_domain) or ''
 
+    @http.route('/website/snippet/options_filters', type='json', auth='user', website=True)
+    def get_dynamic_snippet_filters(self):
+        dynamic_filter = request.env['website.snippet.filter'].sudo().search_read(
+            request.website.website_domain(), ['id', 'name', 'limit']
+        )
+        return dynamic_filter
+
     @http.route('/website/snippet/filter_templates', type='json', auth='public', website=True)
     def get_dynamic_snippet_templates(self, filter_id=False):
         # todo: if filter_id.model -> filter template
@@ -468,8 +475,8 @@ class Website(Home):
         :param enable: list of views' keys to enable
         :param disable: list of views' keys to disable
         """
-        self._get_customize_views(disable).write({'active': False})
-        self._get_customize_views(enable).write({'active': True})
+        self._get_customize_views(disable).filtered('active').write({'active': False})
+        self._get_customize_views(enable).filtered(lambda x: not x.active).write({'active': True})
 
     @http.route(['/website/theme_customize_bundle_reload'], type='json', auth='user', website=True)
     def theme_customize_bundle_reload(self):
@@ -502,15 +509,6 @@ class Website(Home):
         request.env['web_editor.assets'].make_scss_customization(url, values)
         return True
 
-    @http.route(['/website/update_visitor_timezone'], type='json', auth="public", website=True)
-    def update_visitor_timezone(self, timezone):
-        visitor_sudo = request.env['website.visitor']._get_visitor_from_request()
-        if visitor_sudo:
-            if timezone in pytz.all_timezones:
-                visitor_sudo.write({'timezone': timezone})
-                return True
-        return False
-
     # ------------------------------------------------------
     # Server actions
     # ------------------------------------------------------
@@ -525,22 +523,22 @@ class Website(Home):
 
         # find the action_id: either an xml_id, the path, or an ID
         if isinstance(path_or_xml_id_or_id, str) and '.' in path_or_xml_id_or_id:
-            action = request.env.ref(path_or_xml_id_or_id, raise_if_not_found=False)
+            action = request.env.ref(path_or_xml_id_or_id, raise_if_not_found=False).sudo()
         if not action:
-            action = ServerActions.search([('website_path', '=', path_or_xml_id_or_id), ('website_published', '=', True)], limit=1)
+            action = ServerActions.sudo().search(
+                [('website_path', '=', path_or_xml_id_or_id), ('website_published', '=', True)], limit=1)
         if not action:
             try:
                 action_id = int(path_or_xml_id_or_id)
+                action = ServerActions.sudo().browse(action_id).exists()
             except ValueError:
                 pass
 
-        # check it effectively exists
-        if action_id:
-            action = ServerActions.browse(action_id).exists()
         # run it, return only if we got a Response object
         if action:
             if action.state == 'code' and action.website_published:
-                action_res = action.run()
+                # use main session env for execution
+                action_res = ServerActions.browse(action.id).run()
                 if isinstance(action_res, werkzeug.wrappers.Response):
                     return action_res
 
@@ -578,5 +576,5 @@ class WebsiteBinary(http.Controller):
     def favicon(self, **kw):
         website = request.website
         response = request.redirect(website.image_url(website, 'favicon'), code=301)
-        response.headers['Cache-Control'] = 'public, max-age=%s' % (365 * 24 * 60)
+        response.headers['Cache-Control'] = 'public, max-age=%s' % http.STATIC_CACHE_LONG
         return response

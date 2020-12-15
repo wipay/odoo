@@ -4,17 +4,18 @@
 # 
 # Translators:
 # Martin Trigaux, 2020
-# Erwin van der Ploeg <erwin@odooexperts.nl>, 2020
-# Yenthe Van Ginneken <yenthespam@gmail.com>, 2020
 # Cas Vissers <casvissers@brahoo.nl>, 2020
+# Yenthe Van Ginneken <yenthespam@gmail.com>, 2020
+# Erwin van der Ploeg <erwin@odooexperts.nl>, 2020
+# Odoo Experts Consultants <consultants@odooexperts.nl>, 2020
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server saas~13.5\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 07:28+0000\n"
+"POT-Creation-Date: 2020-11-27 11:24+0000\n"
 "PO-Revision-Date: 2020-09-07 08:11+0000\n"
-"Last-Translator: Cas Vissers <casvissers@brahoo.nl>, 2020\n"
+"Last-Translator: Odoo Experts Consultants <consultants@odooexperts.nl>, 2020\n"
 "Language-Team: Dutch (https://www.transifex.com/odoo/teams/41243/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -26,13 +27,13 @@ msgstr ""
 #: code:addons/coupon/models/coupon_reward.py:0
 #, python-format
 msgid "%(amount)s %(currency)s discount on total amount"
-msgstr ""
+msgstr "%(amount)s %(currency)s korting op totaalbedrag"
 
 #. module: coupon
 #: code:addons/coupon/models/coupon_reward.py:0
 #, python-format
 msgid "%(percentage)s%% discount on %(product_name)s"
-msgstr ""
+msgstr "%(percentage)s%% korting op %(product_name)s"
 
 #. module: coupon
 #: code:addons/coupon/models/coupon_reward.py:0
@@ -56,6 +57,17 @@ msgstr "%s %% korting op totale bedrag"
 #: model_terms:ir.ui.view,arch_db:coupon.report_coupon
 msgid "*Valid for following products:"
 msgstr "*Geldig voor volgende producten:"
+
+#. module: coupon
+#: model:coupon.program,name:coupon.10_percent_coupon
+msgid "10% Discount"
+msgstr "10% korting"
+
+#. module: coupon
+#: model:product.product,name:coupon.product_product_10_percent_discount
+#: model:product.template,name:coupon.product_product_10_percent_discount_product_template
+msgid "10.0% discount on total amount"
+msgstr "10.0% koring op totaalbedrag"
 
 #. module: coupon
 #: model_terms:ir.ui.view,arch_db:coupon.coupon_program_view_coupon_program_form
@@ -83,12 +95,12 @@ msgstr ""
 #. module: coupon
 #: model_terms:ir.ui.view,arch_db:coupon.report_coupon
 msgid "<span>Minimum purchase of</span>"
-msgstr "<span>Minimale aankoop van</span>"
+msgstr "<span>Minimale inkoop van</span>"
 
 #. module: coupon
 #: model_terms:ir.ui.view,arch_db:coupon.report_coupon
 msgid "<span>Valid for purchase above</span>"
-msgstr "<span>Geldig voor aankoop boven</span>"
+msgstr "<span>Geldig voor inkopen boven</span>"
 
 #. module: coupon
 #: model_terms:ir.ui.view,arch_db:coupon.report_coupon
@@ -100,6 +112,8 @@ msgstr "<span>producten</span>"
 msgid ""
 "<strong style=\"font-size: 55px; color: #875A7B\">get free shipping</strong>"
 msgstr ""
+"<strong style=\"font-size: 55px; color: #875A7B\">geef gratis "
+"verzenden</strong>"
 
 #. module: coupon
 #: model_terms:ir.ui.view,arch_db:coupon.view_coupon_program_kanban
@@ -202,6 +216,93 @@ msgid ""
 "</tbody></table>\n"
 "            "
 msgstr ""
+"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"width:100%; margin:0px auto;\"><tbody>\n"
+"    <tr><td valign=\"top\" style=\"text-align: center; font-size: 14px;\">\n"
+"        % if object.partner_id.name:\n"
+"        Gefeliciteerd ${object.partner_id.name},<br/>\n"
+"        % endif\n"
+"\n"
+"        Hier is je beloning van ${object.program_id.company_id.name}.<br/>\n"
+"\n"
+"        % if object.program_id.reward_type == 'discount':\n"
+"            % if object.program_id.discount_type == 'fixed_amount':\n"
+"            <span style=\"font-size: 50px; color: #875A7B; font-weight: bold;\">\n"
+"                ${'%s' % format_amount(object.program_id.discount_fixed_amount, object.program_id.currency_id)}\n"
+"            </span><br/>\n"
+"            <strong style=\"font-size: 24px;\">korting op uw volgende bestelling</strong><br/>\n"
+"            %else\n"
+"            <span style=\"font-size: 50px; color: #875A7B; font-weight: bold;\">\n"
+"                ${object.program_id.discount_percentage} %\n"
+"            </span>\n"
+"            % if object.program_id.discount_apply_on == 'specific_products'\n"
+"                <br/>\n"
+"                % if len(object.program_id.discount_specific_product_ids) != 1\n"
+"                % set display_specific_products = True\n"
+"                <strong style=\"font-size: 24px;\">\n"
+"                    op sommige producten*\n"
+"                </strong>\n"
+"                % else\n"
+"                <strong style=\"font-size: 24px;\">\n"
+"                    ${'on %s' % object.program_id.discount_specific_product_ids.name}\n"
+"                </strong>\n"
+"                % endif\n"
+"            % elif object.program_id.discount_apply_on == 'cheapest_product':\n"
+"            <br/><strong style=\"font-size: 24px;\">\n"
+"                korting op het goedkoopste product\n"
+"            </strong>\n"
+"            % else\n"
+"            <br/><strong style=\"font-size: 24px;\">\n"
+"                korting op uw volgende bestelling\n"
+"            </strong>\n"
+"            % endif\n"
+"            <br/>\n"
+"            % endif\n"
+"        % elif object.program_id.reward_type == 'product':\n"
+"            <span style=\"font-size: 36px; color: #875A7B; font-weight: bold;\">\n"
+"                ${'get %s free %s' % (object.program_id.reward_product_quantity, object.program_id.reward_product_id.name)}\n"
+"            </span><br/>\n"
+"            <strong style=\"font-size: 24px;\">bij uw volgende bestelling</strong><br/>\n"
+"        % elif object.program_id.reward_type == 'free_shipping':\n"
+"            <span style=\"font-size: 36px; color: #875A7B; font-weight: bold;\">\n"
+"                krijg gratis verzending\n"
+"            </span><br/>\n"
+"            <strong style=\"font-size: 24px;\">bij uw volgende bestelling</strong><br/>\n"
+"        % endif\n"
+"    </td></tr>\n"
+"    <tr style=\"margin-top: 16px\"><td valign=\"top\" style=\"text-align: center; font-size: 14px;\">\n"
+"        Gebruik deze promotiecode\n"
+"        % if object.expiration_date:\n"
+"            voor ${object.expiration_date}\n"
+"        % endif\n"
+"        <p style=\"margin-top: 16px;\">\n"
+"            <strong style=\"padding: 16px 8px 16px 8px; border-radius: 3px; background-color: #F1F1F1;\">\n"
+"                ${object.code}\n"
+"            </strong>\n"
+"        </p>\n"
+"        % if object.program_id.rule_min_quantity not in [0, 1]\n"
+"        <span style=\"font-size: 14px;\">\n"
+"            Minimale afname van ${object.program_id.rule_min_quantity} producten\n"
+"        </span><br/>\n"
+"        % endif\n"
+"        % if object.program_id.rule_minimum_amount != 0.00\n"
+"        <span style=\"font-size: 14px;\">\n"
+"            Geldig voor aankoop hierboven ${object.program_id.company_id.currency_id.symbol}${'%0.2f' % object.program_id.rule_minimum_amount |float}\n"
+"        </span><br/>\n"
+"        % endif\n"
+"        % if display_specific_products\n"
+"        <span>\n"
+"            *Geldig voor de volgende producten: ${', '.join(object.program_id.discount_specific_product_ids.mapped('name'))}\n"
+"        </span><br/>\n"
+"        % endif\n"
+"        <br/>\n"
+"        Bedankt,\n"
+"        % if object.order_id.user_id.signature:\n"
+"            <br/>\n"
+"            ${object.order_id.user_id.signature | safe}\n"
+"        % endif\n"
+"    </td></tr>\n"
+"</tbody></table>\n"
+"            "
 
 #. module: coupon
 #: model:ir.model.fields,help:coupon.field_coupon_program__active
@@ -217,7 +318,7 @@ msgid ""
 msgstr ""
 "Een promotiecode is een code die gekoppeld is aan een marketingkorting. Een "
 "verkoper kan bijvoorbeeld frequente klanten vertellen om de promotiecode "
-"'THX001' in te voeren om 10 %% korting op hun hele bestelling te ontvangen."
+"'THX001' in te voeren om 10 %% korting op hun hele order te ontvangen."
 
 #. module: coupon
 #: model:ir.model.fields,help:coupon.field_coupon_program__program_type
@@ -231,8 +332,8 @@ msgid ""
 msgstr ""
 "Een promotieprogramma kan een beperkte promotie-aanbieding zonder code zijn (automatisch toegepast)\n"
 "of met een code zijn (weergegeven op een tijdschrift bijvoorbeeld), die een korting op de huidige order kan genereren\n"
-"bestelt of maakt een kortingsbon voor een volgende bestelling.\n"
-"Een kortingsbonprogramma genereert kortingsbonnen met een code die kunnen worden gebruikt om een korting op de huidige order te genereren of maakt een kortingsbon voor een volgende bestelling."
+"bestelt of maakt een kortingsbon voor een volgende order.\n"
+"Een kortingsbonprogramma genereert kortingsbonnen met een code die kunnen worden gebruikt om een korting op de huidige order te genereren of maakt een kortingsbon voor een volgende order."
 
 #. module: coupon
 #: model:ir.model.fields,field_description:coupon.field_coupon_program__active
@@ -307,6 +408,11 @@ msgstr ""
 "U kunt promotiecodes delen of de promoties automatisch toestaan als aan een aantal voorwaarden is voldaan."
 
 #. module: coupon
+#: model:coupon.program,name:coupon.3_cabinets_plus_1_free
+msgid "Buy 3 large cabinets, get one for free"
+msgstr "Koop 3 grote kasten, krijg er 1 gratis"
+
+#. module: coupon
 #: model_terms:ir.ui.view,arch_db:coupon.coupon_generate_view_form
 #: model_terms:ir.ui.view,arch_db:coupon.coupon_view_form
 msgid "Cancel"
@@ -321,6 +427,11 @@ msgstr "Geannuleerd"
 #: model:ir.model.fields,field_description:coupon.field_coupon_coupon__code
 msgid "Code"
 msgstr "Code"
+
+#. module: coupon
+#: model:coupon.program,name:coupon.10_percent_auto_applied
+msgid "Code for 10% on orders"
+msgstr "Code voor 10% op orders"
 
 #. module: coupon
 #: model:ir.model.fields,field_description:coupon.field_coupon_program__company_id
@@ -383,7 +494,7 @@ msgstr "Kortingsbonnenprogramma's"
 #. module: coupon
 #: model:ir.model,name:coupon.model_coupon_reward
 msgid "Coupon Reward"
-msgstr ""
+msgstr "Kortingsbon beloning"
 
 #. module: coupon
 #: model:ir.model,name:coupon.model_coupon_rule
@@ -424,7 +535,7 @@ msgstr "Kortingsprogramma werkt enkel voor geselecteerde klanten"
 #: model:ir.cron,cron_name:coupon.expire_coupon_cron
 #: model:ir.cron,name:coupon.expire_coupon_cron
 msgid "Coupon: expire coupon based on date"
-msgstr ""
+msgstr "Kortingsbon: Vervaldatum gebaseerd op datum"
 
 #. module: coupon
 #: model:ir.actions.act_window,name:coupon.coupon_action
@@ -587,6 +698,12 @@ msgid "Free Product - %s"
 msgstr "Gratis product - %s"
 
 #. module: coupon
+#: model:product.product,name:coupon.product_product_free_large_cabinet
+#: model:product.template,name:coupon.product_product_free_large_cabinet_product_template
+msgid "Free Product - Large Cabinet"
+msgstr "Gratis product - grote kast"
+
+#. module: coupon
 #: model_terms:ir.ui.view,arch_db:coupon.coupon_generate_view_form
 msgid "Generate"
 msgstr "Genereren"
@@ -624,7 +741,7 @@ msgstr "Type generatie"
 #. module: coupon
 #: model:ir.model.fields,field_description:coupon.field_coupon_generate_wizard__has_partner_email
 msgid "Has Partner Email"
-msgstr ""
+msgstr "Heeft relatie e-mail"
 
 #. module: coupon
 #: model_terms:ir.ui.view,arch_db:coupon.report_coupon
@@ -977,7 +1094,7 @@ msgstr "Selecteer beloningsproduct"
 #. module: coupon
 #: model:ir.model.fields.selection,name:coupon.selection__coupon_program__promo_applicability__on_next_order
 msgid "Send a Coupon"
-msgstr ""
+msgstr "Verzend een kortingsbon"
 
 #. module: coupon
 #: model_terms:ir.ui.view,arch_db:coupon.coupon_view_form
@@ -1000,6 +1117,8 @@ msgid ""
 "Some selected customers do not have an email address and will not receive "
 "the coupon."
 msgstr ""
+"Sommige geselecteerde klanten hebben geen e-mailadres en zullen de "
+"kortingsbon niet ontvangen."
 
 #. module: coupon
 #: model:ir.model.fields,field_description:coupon.field_coupon_program__rule_date_from
@@ -1010,7 +1129,7 @@ msgstr "Startdatum"
 #. module: coupon
 #: model:ir.model.fields,field_description:coupon.field_coupon_coupon__state
 msgid "State"
-msgstr "Staat / Provincie"
+msgstr "Status"
 
 #. module: coupon
 #: model:ir.model.fields.selection,name:coupon.selection__coupon_rule__rule_minimum_amount_tax_inclusion__tax_excluded
@@ -1041,8 +1160,8 @@ msgstr "De korting in vast bedrag"
 #. module: coupon
 #: model:ir.model.fields,help:coupon.field_coupon_program__discount_percentage
 #: model:ir.model.fields,help:coupon.field_coupon_reward__discount_percentage
-msgid "The discount in percentage, between 1 to 100"
-msgstr "De korting in percentage, tussen 1 en 100"
+msgid "The discount in percentage, between 1 and 100"
+msgstr "De korting in procenten, tussen de 1 en 100"
 
 #. module: coupon
 #: code:addons/coupon/models/coupon_program.py:0
@@ -1061,6 +1180,14 @@ msgstr "De startdatum moet voor de einddatum liggen"
 #: model:ir.model.fields,field_description:coupon.field_coupon_reward__reward_product_uom_id
 msgid "Unit of Measure"
 msgstr "Maateenheid"
+
+#. module: coupon
+#: model:product.product,uom_name:coupon.product_product_10_percent_discount
+#: model:product.product,uom_name:coupon.product_product_free_large_cabinet
+#: model:product.template,uom_name:coupon.product_product_10_percent_discount_product_template
+#: model:product.template,uom_name:coupon.product_product_free_large_cabinet_product_template
+msgid "Units"
+msgstr "Stuks"
 
 #. module: coupon
 #: model:ir.model.fields.selection,name:coupon.selection__coupon_program__promo_code_usage__code_needed
@@ -1117,7 +1244,7 @@ msgstr "Uw beloningskortingsbon van ${object.program_id.company_id.name} "
 #. module: coupon
 #: model_terms:ir.ui.view,arch_db:coupon.report_coupon
 msgid "off %s"
-msgstr ""
+msgstr "korting %s"
 
 #. module: coupon
 #: model_terms:ir.ui.view,arch_db:coupon.report_coupon

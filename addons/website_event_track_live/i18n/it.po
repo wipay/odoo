@@ -25,6 +25,8 @@ msgid ""
 "<i class=\"fa fa-spin fa-spinner position-relative\"/>\n"
 "                <span class=\"pl-2\">Loading Video...</span>"
 msgstr ""
+"<i class=\"fa fa-spin fa-spinner position-relative\"/>\n"
+"                <span class=\"pl-2\">Caricamento video...</span>"
 
 #. module: website_event_track_live
 #: model_terms:ir.ui.view,arch_db:website_event_track_live.event_track_aside
@@ -37,6 +39,8 @@ msgid ""
 "Check this option if the video is already available on Youtube to avoid "
 "showing 'Direct' options (Chat, ...)"
 msgstr ""
+"Spuntare questa opzione se il video è già disponibile su YouTube, evita di "
+"mostrare l'opzione \"Diretto\" (Chat ecc...)"
 
 #. module: website_event_track_live
 #: model:ir.model.fields,help:website_event_track_live.field_event_track__youtube_video_url
@@ -69,12 +73,12 @@ msgstr "ID"
 #. module: website_event_track_live
 #: model:ir.model.fields,field_description:website_event_track_live.field_event_track__is_youtube_chat_available
 msgid "Is Chat Available"
-msgstr ""
+msgstr "È disponibile la chat"
 
 #. module: website_event_track_live
 #: model:ir.model.fields,field_description:website_event_track_live.field_event_track__is_youtube_replay
 msgid "Is Youtube Replay"
-msgstr ""
+msgstr "È una replica YouTube"
 
 #. module: website_event_track_live
 #: model:ir.model.fields,field_description:website_event_track_live.field_event_track____last_update
@@ -122,4 +126,4 @@ msgstr "URL video YouTube"
 #. module: website_event_track_live
 #: model:ir.model.fields,field_description:website_event_track_live.field_event_track__youtube_video_id
 msgid "Youtube video ID"
-msgstr ""
+msgstr "ID video YouTube"

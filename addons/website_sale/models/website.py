@@ -246,15 +246,27 @@ class Website(models.Model):
         self.ensure_one()
         partner = self.env.user.partner_id
         sale_order_id = request.session.get('sale_order_id')
+        check_fpos = False
         if not sale_order_id and not self.env.user._is_public():
             last_order = partner.last_website_so_id
             if last_order:
                 available_pricelists = self.get_pricelist_available()
                 # Do not reload the cart of this user last visit if the cart uses a pricelist no longer available.
                 sale_order_id = last_order.pricelist_id in available_pricelists and last_order.id
+                check_fpos = True
 
         # Test validity of the sale_order_id
         sale_order = self.env['sale.order'].with_company(request.website.company_id.id).sudo().browse(sale_order_id).exists() if sale_order_id else None
+
+        # Do not reload the cart of this user last visit if the Fiscal Position has changed.
+        if check_fpos and sale_order:
+            fpos_id = (
+                self.env['account.fiscal.position'].sudo()
+                .with_company(sale_order.company_id.id)
+                .get_fiscal_position(sale_order.partner_id.id, delivery_id=sale_order.partner_shipping_id.id)
+            ).id
+            if sale_order.fiscal_position_id.id != fpos_id:
+                sale_order = None
 
         if not (sale_order or force_create or code):
             if request.session.get('sale_order_id'):
@@ -372,6 +384,18 @@ class Website(models.Model):
         suggested_controllers.append((_('eCommerce'), url_for('/shop'), 'website_sale'))
         return suggested_controllers
 
+    def _bootstrap_snippet_filters(self):
+        super(Website, self)._bootstrap_snippet_filters()
+        action = self.env.ref('website_sale.dynamic_snippet_products_action', raise_if_not_found=False)
+        if action:
+            self.env['website.snippet.filter'].create({
+                'action_server_id': action.id,
+                'field_names': 'display_name,description_sale,image_512,list_price',
+                'limit': 16,
+                'name': _('Products'),
+                'website_id': self.id,
+            })
+
 
 class WebsiteSaleExtraField(models.Model):
     _name = 'website.sale.extra.field'
@@ -382,7 +406,7 @@ class WebsiteSaleExtraField(models.Model):
     sequence = fields.Integer(default=10)
     field_id = fields.Many2one(
         'ir.model.fields',
-        domain=[('model_id.model', '=', 'product.template')]
+        domain=[('model_id.model', '=', 'product.template'), ('ttype', 'in', ['char', 'binary'])]
     )
     label = fields.Char(related='field_id.field_description')
     name = fields.Char(related='field_id.name')

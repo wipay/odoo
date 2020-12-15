@@ -474,9 +474,11 @@ QUnit.module('relational_fields', {
         await testUtils.form.clickEdit(form);
         // add a line (virtual record)
         await testUtils.dom.click(form.$('.o_field_x2many_list_row_add a'));
+        await testUtils.owlCompatibilityNextTick();
         await testUtils.fields.editInput(form.$('.o_input'), 'pi');
         // delete the line above it
         await testUtils.dom.click(form.$('.o_list_record_remove').first());
+        await testUtils.owlCompatibilityNextTick();
         // the next line should be displayed below the newly added one
         assert.strictEqual(form.$('.o_data_row').length, 2, "should have 2 records");
         assert.strictEqual(form.$('.o_data_row .o_data_cell:first-child').text(), 'pikawa',
@@ -2535,6 +2537,7 @@ QUnit.module('relational_fields', {
         });
 
         await testUtils.dom.click(form.$('.o_field_x2many_list_row_add a'));
+        await testUtils.owlCompatibilityNextTick();
         await testUtils.fields.many2one.searchAndClickItem('product_id',
             {selector: '.modal', search: 'new record'});
 
@@ -2544,6 +2547,37 @@ QUnit.module('relational_fields', {
     });
 
     QUnit.module('FieldReference');
+
+    QUnit.test('Reference field can quick create models', async function (assert) {
+        assert.expect(8);
+
+        const form = await createView({
+            View: FormView,
+            model: 'partner',
+            data: this.data,
+            arch: `<form><field name="reference"/></form>`,
+            mockRPC(route, args) {
+                assert.step(args.method || route);
+                return this._super(...arguments);
+            },
+        });
+
+        await testUtils.fields.editSelect(form.$('select'), 'partner');
+        await testUtils.fields.many2one.searchAndClickItem('reference', {search: 'new partner'});
+        await testUtils.form.clickSave(form);
+
+        assert.verifySteps([
+            'onchange',
+            'name_search', // for the select
+            'name_search', // for the spawned many2one
+            'name_create',
+            'create',
+            'read',
+            'name_get'
+        ], "The name_create method should have been called");
+
+        form.destroy();
+    });
 
     QUnit.test('Reference field in modal readonly mode', async function (assert) {
         assert.expect(4);
@@ -3039,13 +3073,16 @@ QUnit.module('relational_fields', {
         await testUtils.form.clickEdit(form);
         await testUtils.fields.many2one.clickOpenDropdown("product_id");
         await testUtils.fields.many2one.clickHighlightedItem("product_id");
+        await testUtils.owlCompatibilityNextTick();
         assert.containsOnce(form, 'th:not(.o_list_record_remove_header)',
             "should be 1 column when the product_id is set");
         await testUtils.fields.editAndTrigger(form.$('.o_field_many2one[name="product_id"] input'),
             '', 'keyup');
+        await testUtils.owlCompatibilityNextTick();
         assert.containsN(form, 'th:not(.o_list_record_remove_header)', 2,
             "should be 2 columns in the one2many when product_id is not set");
         await testUtils.dom.click(form.$('.o_field_boolean[name="bar"] input'));
+        await testUtils.owlCompatibilityNextTick();
         assert.containsOnce(form, 'th:not(.o_list_record_remove_header)',
             "should be 1 column after the value change");
         form.destroy();
@@ -3133,13 +3170,16 @@ QUnit.module('relational_fields', {
         await testUtils.form.clickEdit(form);
         await testUtils.dom.click(form.$('.o_field_many2one[name="product_id"] input'));
         await testUtils.fields.many2one.clickHighlightedItem("product_id");
+        await testUtils.owlCompatibilityNextTick();
         assert.containsOnce(form, 'th:not(.o_list_record_remove_header)',
             "should be 1 column when the product_id is set");
         await testUtils.fields.editAndTrigger(form.$('.o_field_many2one[name="product_id"] input'),
             '', 'keyup');
+        await testUtils.owlCompatibilityNextTick();
         assert.containsN(form, 'th:not(.o_list_record_remove_header)', 2,
             "should be 2 columns in the one2many when product_id is not set");
         await testUtils.dom.click(form.$('.o_field_boolean[name="bar"] input'));
+        await testUtils.owlCompatibilityNextTick();
         assert.containsOnce(form, 'th:not(.o_list_record_remove_header)',
             "should be 1 column after the value change");
         form.destroy();
@@ -3199,6 +3239,13 @@ QUnit.module('relational_fields', {
         assert.containsN(form.$('.o_field_one2many'), 'div.o_optional_columns div.dropdown-item:visible', 2,
             "dropdown is still open");
         await testUtils.dom.click(form.$('.o_field_x2many_list_row_add a'));
+        // use of owlCompatibilityNextTick because the x2many field is reset, meaning that
+        // 1) its list renderer is updated (updateState is called): this is async and as it
+        // contains a FieldBoolean, which is written in Owl, it completes in the nextAnimationFrame
+        // 2) when this is done, the control panel is updated: as it is written in owl, this is
+        // done in the nextAnimationFrame
+        // -> we need to wait for 2 nextAnimationFrame to ensure that everything is fine
+        await testUtils.owlCompatibilityNextTick();
         assert.containsN(form.$('.o_field_one2many'), 'div.o_optional_columns div.dropdown-item:visible', 0,
             "dropdown is closed");
         var $selectedRow = form.$('.o_field_one2many tr.o_selected_row');
@@ -3298,6 +3345,7 @@ QUnit.module('relational_fields', {
            which: $.ui.keyCode.TAB,
            keyCode: $.ui.keyCode.TAB,
        }));
+       await testUtils.owlCompatibilityNextTick();
        await testUtils.dom.click(document.activeElement);
        assert.strictEqual(assert.strictEqual(form.$el.find('input[name="turtle_foo"]')[0],
                            document.activeElement,
