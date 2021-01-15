@@ -28,6 +28,9 @@ class ActivityMarkDonePopover extends Component {
 
     mounted() {
         this._feedbackTextareaRef.el.focus();
+        if (this.activity.feedbackBackup) {
+            this._feedbackTextareaRef.el.value = this.activity.feedbackBackup;
+        }
     }
 
     /**
@@ -62,6 +65,15 @@ class ActivityMarkDonePopover extends Component {
     /**
      * @private
      */
+    _onBlur() {
+        this.activity.update({
+            feedbackBackup: this._feedbackTextareaRef.el.value,
+        });
+    }
+
+    /**
+     * @private
+     */
     _onClickDiscard() {
         this._close();
     }
@@ -69,11 +81,11 @@ class ActivityMarkDonePopover extends Component {
     /**
      * @private
      */
-    async  _onClickDone() {
+    async _onClickDone() {
         await this.activity.markAsDone({
             feedback: this._feedbackTextareaRef.el.value,
         });
-        this.trigger('reload');
+        this.trigger('reload', { keepChanges: true });
     }
 
     /**
