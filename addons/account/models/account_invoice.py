@@ -111,7 +111,8 @@ class AccountInvoice(models.Model):
     def _get_outstanding_info_JSON(self):
         self.outstanding_credits_debits_widget = json.dumps(False)
         if self.state == 'open':
-            domain = [('account_id', '=', self.account_id.id), ('partner_id', '=', self.env['res.partner']._find_accounting_partner(self.partner_id).id), ('reconciled', '=', False), ('amount_residual', '!=', 0.0)]
+            #metodo _get_partner_reconcile agregado por trescloud
+            domain = [('account_id', '=', self.account_id.id), ('partner_id', '=', self.env['res.partner']._find_accounting_partner(self._get_partner_reconcile()).id), ('reconciled', '=', False), ('amount_residual', '!=', 0.0)]
             if self.type in ('out_invoice', 'in_refund'):
                 domain.extend([('credit', '>', 0), ('debit', '=', 0)])
                 type_payment = _('Outstanding credits')
@@ -141,6 +142,10 @@ class AccountInvoice(models.Model):
                 info['title'] = type_payment
                 self.outstanding_credits_debits_widget = json.dumps(info)
                 self.has_outstanding = True
+
+    # Metodo agregado por Trescloud
+    def _get_partner_reconcile(self):
+        return self.partner_id
 
     @api.one
     @api.depends('payment_move_line_ids.amount_residual')
