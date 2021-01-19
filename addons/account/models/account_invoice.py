@@ -112,8 +112,7 @@ class AccountInvoice(models.Model):
         self.outstanding_credits_debits_widget = json.dumps(False)
         if self.state == 'open':
             #metodo _get_partner_reconcile agregado por trescloud
-            domain = [('account_id', '=', self.account_id.id), ('partner_id', '=', self.env['res.partner']._find_accounting_partner(
-                self._get_partner_reconcile()).id), ('reconciled', '=', False), ('amount_residual', '!=', 0.0)]
+            domain = [('account_id', '=', self.account_id.id), ('partner_id', '=', self.env['res.partner']._find_accounting_partner(self._get_partner_reconcile()).id), ('reconciled', '=', False), ('amount_residual', '!=', 0.0)]
             if self.type in ('out_invoice', 'in_refund'):
                 domain.extend([('credit', '>', 0), ('debit', '=', 0)])
                 type_payment = _('Outstanding credits')
