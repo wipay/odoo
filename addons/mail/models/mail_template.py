@@ -542,9 +542,16 @@ class MailTemplate(models.Model):
                     if not report_name.endswith(ext):
                         report_name += ext
                     attachments.append((report_name, result))
+                    # siguiente linea agreda por Trescloud
+                    self.extra_attachments_template(template, attachments)
                     results[res_id]['attachments'] = attachments
 
         return multi_mode and results or results[res_ids[0]]
+
+    #Metodo agregado por trescloud
+    def extra_attachments_template(self, template, attachments):
+        '''Hook'''
+        pass
 
     @api.multi
     def send_mail(self, res_id, force_send=False, raise_exception=False, email_values=None):
