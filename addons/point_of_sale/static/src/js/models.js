@@ -2734,7 +2734,6 @@ exports.Order = Backbone.Model.extend({
             pricelist_id: this.pricelist ? this.pricelist.id : false,
             partner_id: this.get_client() ? this.get_client().id : false,
             user_id: this.pos.user.id,
-            employee_id: this.pos.get_cashier().id,
             uid: this.uid,
             sequence_number: this.sequence_number,
             creation_date: this.validation_date || this.creation_date, // todo: rename creation_date in master
@@ -2955,7 +2954,7 @@ exports.Order = Backbone.Model.extend({
             return ! line.price_manually_set;
         });
         _.each(lines_to_recompute, function (line) {
-            line.set_unit_price(line.product.get_price(self.pricelist, line.get_quantity()));
+            line.set_unit_price(line.product.get_price(self.pricelist, line.get_quantity()) + line.get_price_extra());
             self.fix_tax_included_price(line);
         });
         this.trigger('change');
