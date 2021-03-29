@@ -57,6 +57,20 @@ class TestEmailParsing(BaseFunctionalTest, MockEmails):
         mail = self.format(test_mail_data.MAIL_EML_ATTACHMENT, email_from='"Sylvie Lelitre" <test.sylvie.lelitre@agrolait.com>', to='generic@test.com')
         self.env['mail.thread'].message_parse(email.message_from_string(pycompat.to_text(mail)))
 
+    def test_message_parse_eml_bounce_headers(self):
+        # Test Text/RFC822-Headers MIME content-type
+        msg_id = '<861878175823148.1577183525.736005783081055-openerp-19177-account.invoice@mycompany.example.com>'
+        mail = self.format(
+            test_mail_data.MAIL_EML_ATTACHMENT_BOUNCE_HEADERS,
+            email_from='MAILER-DAEMON@example.com (Mail Delivery System)',
+            to='test_bounce+82240-account.invoice-19177@mycompany.example.com',
+            # msg_id goes to the attachment's Message-Id header
+            msg_id=msg_id,
+        )
+        res = self.env['mail.thread'].message_parse(email.message_from_string(pycompat.to_text(mail), policy=email.policy.SMTP))
+
+        self.assertEqual(res['bounced_msg_id'], [msg_id], "Message-Id is not extracted from Text/RFC822-Headers attachment")
+
     def test_message_parse_attachment_bad_encoding(self):
         # Test that the parsing of mail with bad encoding attachment content-id, can be processed.
         mail = self.format(test_mail_data.MAIL_ATTACHMENT_BAD_ENCODING, email_from='"Sylvie Lelitre" <test.sylvie.lelitre@agrolait.com>', to='generic@test.com')
@@ -750,6 +764,27 @@ class TestMailgateway(BaseFunctionalTest, MockEmails):
         self.format_and_process(
             MAIL_TEMPLATE, self.email_from, 'erroneous@test.com',
             extra='References: <2233@a.com>\r\n\t<3edss_dsa@b.com> %s' % self.fake_email.message_id)
+
+        self.assertEqual(len(self.test_record.message_ids), init_msg_count + 1)
+        self.assertEqual(self.fake_email.child_ids, self.test_record.message_ids[0])
+
+    @mute_logger('odoo.addons.mail.models.mail_thread')
+    def test_message_process_references_external_buggy_message_id(self):
+        """
+        Incoming email being a reply to an external email processed by
+        odoo should update thread accordingly. Special case when the
+        external mail service wrongly folds the message_id on several
+        lines.
+        """
+        new_message_id = '<ThisIsTooMuchFake.MonsterEmail.789@agrolait.com>'
+        buggy_message_id = new_message_id.replace('MonsterEmail', 'Monster\r\n  Email')
+        self.fake_email.write({
+            'message_id': new_message_id
+        })
+        init_msg_count = len(self.test_record.message_ids)
+        self.format_and_process(
+            MAIL_TEMPLATE, self.email_from, 'erroneous@test.com',
+            extra='References: <2233@a.com>\r\n\t<3edss_dsa@b.com> %s' % buggy_message_id)
 
         self.assertEqual(len(self.test_record.message_ids), init_msg_count + 1)
         self.assertEqual(self.fake_email.child_ids, self.test_record.message_ids[0])

@@ -347,6 +347,7 @@ class MrpProduction(models.Model):
                 if (
                     production.bom_id.consumption == 'flexible'
                     and float_compare(production.qty_produced, production.product_qty, precision_rounding=production.product_uom_id.rounding) == -1
+                    and production.state != 'done'
                 ):
                     production.state = 'progress'
                 else:
@@ -658,6 +659,7 @@ class MrpProduction(models.Model):
                 return self.env['stock.move'], old_qty, quantity
         else:
             move_values = self._get_move_raw_values(bom_line, line_data)
+            move_values['state'] = 'confirmed'
             move = self.env['stock.move'].create(move_values)
             return move, 0, quantity
 
