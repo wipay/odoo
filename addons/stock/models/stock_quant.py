@@ -199,6 +199,11 @@ class Quant(models.Model):
         quants_move_sudo = self.get_sudo_stock_quant()
         #fin de la modificacion
         check_lot = False
+        # siguiente linea Agregada por Trescloud
+        i = 1
+        total = len(quants)
+        show_info_log = self._context.get('show_info_log', False)
+        #Fin lineas agregadas
         for quant, qty in quants:
             if not quant:
                 #If quant is None, we will create a quant to move (and potentially a negative counterpart too)
@@ -209,11 +214,32 @@ class Quant(models.Model):
                 quant._quant_split(qty)
                 quants_move_sudo |= quant
             quants_reconcile_sudo |= quant
+            #siguiente linea Agregada por Trescloud
+            if show_info_log:
+                _logger.info('Ajuste de Inventario, crea o fracciona los quants, move.id: %s,  %s de %s' % (
+                    str(move.id),
+                    str(i),
+                    str(total)
+                ))
+                i += 1
+            # Fin lineas agregadas
 
         if quants_move_sudo:
+            # siguiente linea Agregada por Trescloud
+            if show_info_log:
+                _logger.info('Ajuste de Inventario, Actualizando datos de los quants, move.id: %s' % (
+                    str(move.id)
+                ))
+            # Fin lineas agregadas
             moves_recompute = quants_move_sudo.filtered(lambda self: self.reservation_id != move).mapped('reservation_id')
             quants_move_sudo._quant_update_from_move(move, location_to, dest_package_id, lot_id=lot_id, entire_pack=entire_pack)
             moves_recompute.recalculate_move_state()
+            # siguiente linea Agregada por Trescloud
+            if show_info_log:
+                _logger.info('Ajuste de Inventario, Datos de los quants actualizados, move.id: %s' % (
+                    str(move.id)
+                ))
+            # Fin lineas agregadas
 
         if location_to.usage == 'internal':
             # Do manual search for quant to avoid full table scan (order by id)
@@ -476,6 +502,8 @@ class Quant(models.Model):
             meta_domains = preferred_domain_list
 
         res_qty = qty
+        # siguiente linea agregada por trescloud
+        show_info_log = self._context.get('show_info_log', False)
         while (float_compare(res_qty, 0, precision_rounding=move.product_id.uom_id.rounding) and meta_domains):
             additional_domain = meta_domains.pop(0)
             reservations.pop()
@@ -488,6 +516,14 @@ class Quant(models.Model):
                 if quant[0]:
                     res_qty -= quant[1]
             reservations += new_reservations
+            #siguiente linea agregada por trescloud
+            if show_info_log:
+                _logger.info('Ajuste de Inventario, reservando quants, move.id: %s, cant. a reservar %s, pendiente %s' % (
+                    str(move.id),
+                    str(qty),
+                    str(res_qty)
+                    ))
+            #fin
 
         return reservations
 
@@ -547,6 +583,9 @@ class Quant(models.Model):
 
         remaining_quantity = quantity
         quants = self.search(domain, order=order, limit=10, offset=offset)
+        # siguiente linea agregada por trescloud
+        show_info_log = self._context.get('show_info_log', False)
+        # Fin modificacion por trescloud
         while float_compare(remaining_quantity, 0, precision_rounding=rounding) > 0 and quants:
             for quant in quants:
                 if float_compare(remaining_quantity, abs(quant.qty), precision_rounding=rounding) >= 0:
@@ -559,6 +598,14 @@ class Quant(models.Model):
                     remaining_quantity = 0
             offset += 10
             quants = self.search(domain, order=order, limit=10, offset=offset)
+            # siguiente linea agregada por trescloud
+            if show_info_log:
+                _logger.info('Ajuste de Inventario, obteniendo quants, move.id: %s, cant. a reservar %s, pendiente %s' % (
+                    str(move.id),
+                    str(quantity),
+                    str(remaining_quantity)
+                ))
+            # Fin modificacion por trescloud
 
         if float_compare(remaining_quantity, 0, precision_rounding=rounding) > 0:
             res.append((None, remaining_quantity))
