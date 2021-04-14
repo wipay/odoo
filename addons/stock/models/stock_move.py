@@ -827,6 +827,8 @@ class StockMove(models.Model):
         total = len(operations)
         i = 1
         show_info_log = self._context.get('show_info_log', False)
+        if show_info_log:
+            Quant = Quant.with_context(show_info_log=show_info_log)
         # Fin del codigo modificado por TRESCLOUD
 
         for operation in operations:
