@@ -104,7 +104,7 @@ class Inventory(models.Model):
     def unlink(self):
         for inventory in self:
             if inventory.state == 'done':
-                raise UserError(_('You cannot delete a  validated inventory adjustement.'))
+                raise UserError(_('You cannot delete a validated inventory adjustement.'))
         return super(Inventory, self).unlink()
 
     @api.model
@@ -477,34 +477,36 @@ class InventoryLine(models.Model):
         location will allow the negative quant to be compensated.
         """
         self.ensure_one()
+        # Siguientes lineas agregadas por Trescloud
         _logger.info('Ajuste de Inventario, obteniendo quants.')
-        #Siguientes lineas agregadas por Trescloud
-        get_quant = self._get_quants().filtered(lambda q: q.propagated_from_id.location_id.id == self.location_id.id)
-        total = len(get_quant)
+        quant_ids = self._get_quants().filtered(lambda q: q.propagated_from_id.location_id.id == self.location_id.id)
+        total = len(quant_ids)
         i = 1
         #linea modificada por Trescloud
         #for quant in self._get_quants().filtered(lambda q: q.propagated_from_id.location_id.id == self.location_id.id):
-        for quant in get_quant:
+        for quant in quant_ids:
             # send the quantity to the inventory adjustment location
-            _logger.info('Ajuste de Inventario, creando move on quants. %s '%(quant.id))
             move_out_vals = self._get_move_values(quant.qty, self.location_id.id, self.product_id.property_stock_inventory.id)
             move_out = self.env['stock.move'].create(move_out_vals)
             self.env['stock.quant'].quants_reserve([(quant, quant.qty)], move_out)
             move_out.action_done()
 
-            _logger.info('Ajuste de Inventario, creando move in quants %s'%(quant.id))
             # get back the quantity from the inventory adjustment location
             move_in_vals = self._get_move_values(quant.qty, self.product_id.property_stock_inventory.id, self.location_id.id)
             move_in = self.env['stock.move'].create(move_in_vals)
             move_in.action_done()
+            #siguiente linea agregada por Trescloud
             _logger.info('Ajuste de Inventario, creando moves por quant %s de %s'%(i, total))
             i += 1
+            #Fin
 
     def _generate_moves(self):
         moves = self.env['stock.move']
         Quant = self.env['stock.quant']
+        #siguiente contexto agregado por Trescloud para auditoria.
         Quant = Quant.with_context(show_info_log=True)
         for line in self:
+            #siguiente log agregado por Trescloud
             _logger.info('Ajuste de Inventario, generando stock moves.')
             line._fixup_negative_quants()
 
