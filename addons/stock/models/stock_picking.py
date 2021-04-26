@@ -399,12 +399,18 @@ class Picking(models.Model):
                     'message': partner.picking_warn_msg
                 }}
 
+    def _sequence_create_stock_picking(self, vals, defaults):
+        # Método hook para obtener la secuencia del stock picking
+        return self.env['stock.picking.type'].browse(vals.get('picking_type_id', defaults.get('picking_type_id'))).sequence_id.next_by_id()
+
     @api.model
     def create(self, vals):
         # TDE FIXME: clean that brol
         defaults = self.default_get(['name', 'picking_type_id'])
         if vals.get('name', '/') == '/' and defaults.get('name', '/') == '/' and vals.get('picking_type_id', defaults.get('picking_type_id')):
-            vals['name'] = self.env['stock.picking.type'].browse(vals.get('picking_type_id', defaults.get('picking_type_id'))).sequence_id.next_by_id()
+            vals['name'] = self._sequence_create_stock_picking(vals, defaults)
+            # Esta línea es modificada por TresCloud
+            # vals['name'] = self.env['stock.picking.type'].browse(vals.get('picking_type_id', defaults.get('picking_type_id'))).sequence_id.next_by_id()
 
         # TDE FIXME: what ?
         # As the on_change in one2many list is WIP, we will overwrite the locations on the stock moves here
