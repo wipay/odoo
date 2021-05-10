@@ -278,6 +278,7 @@ class Message(models.Model):
         customer_email_data = []
         for notification in message.notification_ids.filtered(lambda notif: notif.res_partner_id.partner_share and notif.res_partner_id.active):
             customer_email_data.append((partner_tree[notification.res_partner_id.id][0], partner_tree[notification.res_partner_id.id][1], notification.email_status))
+        return customer_email_data
 
     @api.model
     def _message_read_dict_postprocess(self, messages, message_tree):
