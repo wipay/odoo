@@ -270,6 +270,14 @@ class Message(models.Model):
     #------------------------------------------------------
     # Message loading for web interface
     #------------------------------------------------------
+    
+    def _email_hover_notification_hook(self, message, partner_tree):
+        '''
+        Método hook para poder modificar el nombre que se muestra del destinatario, al hacer hover sobre el ícono de mensaje, al enviar un correo
+        '''
+        customer_email_data = []
+        for notification in message.notification_ids.filtered(lambda notif: notif.res_partner_id.partner_share and notif.res_partner_id.active):
+            customer_email_data.append((partner_tree[notification.res_partner_id.id][0], partner_tree[notification.res_partner_id.id][1], notification.email_status))
 
     @api.model
     def _message_read_dict_postprocess(self, messages, message_tree):
@@ -337,9 +345,12 @@ class Message(models.Model):
                 partner_ids = [partner_tree[partner.id] for partner in message.partner_ids
                                 if partner.id in partner_tree]
 
-            customer_email_data = []
-            for notification in message.notification_ids.filtered(lambda notif: notif.res_partner_id.partner_share and notif.res_partner_id.active):
-                customer_email_data.append((partner_tree[notification.res_partner_id.id][0], partner_tree[notification.res_partner_id.id][1], notification.email_status))
+            # CÓDIGO MODIFICADO POR TRESCLOUD
+            customer_email_data = self._email_hover_notification_hook(message, partner_tree)
+            # customer_email_data = []
+            # for notification in message.notification_ids.filtered(lambda notif: notif.res_partner_id.partner_share and notif.res_partner_id.active):
+            #     customer_email_data.append((partner_tree[notification.res_partner_id.id][0], partner_tree[notification.res_partner_id.id][1], notification.email_status))
+            # FIN CODIGO MODIFICADO POR TRESCLOUD
 
             attachment_ids = []
             for attachment in message.attachment_ids:
