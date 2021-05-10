@@ -272,6 +272,7 @@ class Message(models.Model):
     #------------------------------------------------------
     
     def _email_hover_notification_hook(self, message, partner_tree):
+        # Este método fue agregado por trescloud
         '''
         Método hook para poder modificar el nombre que se muestra del destinatario, al hacer hover sobre el ícono de mensaje, al enviar un correo
         '''
