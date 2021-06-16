@@ -12,14 +12,16 @@
 # Wolfgang Taferner, 2020
 # Henry Mineehen <info@mineehen.de>, 2020
 # Niki Waibel, 2020
-# JEK Odoo <jek@odoo.com>, 2020
+# Jérôme JEK <jek@odoo.com>, 2020
 # Florian Pose <fp@igh.de>, 2020
 # f91684c3ff9ec3e650d5c8461e534581_686eae3 <449b96d9f63071f94d89e129677b83de_366193>, 2020
 # Martin Trigaux, 2020
 # Ermin Trevisan <trevi@twanda.com>, 2020
 # Leon Grill <leg@odoo.com>, 2020
-# Chris Egal <sodaswed@web.de>, 2020
 # EugenBrodskiSAMSAIT <eugen.brodski@samsa-it.de>, 2021
+# Robert Förster <hello@suppliot.eu>, 2021
+# Chris Egal <sodaswed@web.de>, 2021
+# Andreas Schmidt <schmigo@gmail.com>, 2021
 # 
 msgid ""
 msgstr ""
@@ -27,7 +29,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-27 13:50+0000\n"
 "PO-Revision-Date: 2020-09-07 08:09+0000\n"
-"Last-Translator: EugenBrodskiSAMSAIT <eugen.brodski@samsa-it.de>, 2021\n"
+"Last-Translator: Andreas Schmidt <schmigo@gmail.com>, 2021\n"
 "Language-Team: German (https://www.transifex.com/odoo/teams/41243/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -110,6 +112,19 @@ msgid ""
 "\n"
 "    "
 msgstr ""
+"\n"
+"\n"
+"Österreichische Kontenrahmen (Einheitskontenrahmen 2010).\n"
+"==========================================================\n"
+"\n"
+"* Definiert die folgenden Kontenplan vorlagen:\n"
+"* Österreichischer Einheitskontenrahmen 2010\n"
+"* Definiert Vorlagen für die Umsatzsteuer bei Verkäufen und Einkäufen\n"
+"* Definiert Steuer-Templates\n"
+"* Definiert Steuerpositionen für die österreichische Steuergesetzgebung\n"
+"* Definiert die Steuerberichte U1/U30\n"
+"\n"
+"   "
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_hu
@@ -224,6 +239,88 @@ msgid ""
 "Copyright 2018 Odoo House ApS\n"
 "    "
 msgstr ""
+"\n"
+"\n"
+"Lokalisierungsmodul für Dänemark\n"
+"===============================\n"
+"\n"
+"Dies ist das Modul zur Verwaltung des **Buchungskreises für Dänemark**. Abdeckung sowohl von Einzelunternehmen als auch von I/S, IVS, ApS und A/S\n"
+"\n"
+"**Das Modul richtet ein:**\n"
+"\n"
+"- **Dänischer Kontenplan**\n"
+"\n"
+"- dänische Mehrwertsteuer\n"
+"- 25% MWST.\n"
+"- Restaurierung Mehrwertsteuer 6,25%\n"
+"- Umgekehrte Ladung\n"
+"\n"
+"- Kontogruppen\n"
+"- EU (Business)\n"
+"- EU (privat)\n"
+"- 3.Länder\n"
+"\n"
+"- Finanz-Reporter\n"
+"- Gewinn- und Verlustrechnung\n"
+"- Bilanz\n"
+"- Mehrwertsteuer-Abrechnung\n"
+"- Abrechnung\n"
+"- Überschriften A, B und C\n"
+"\n"
+"- **Anglosächsische Bilanzierungsmethode**\n"
+"\n"
+".\n"
+"\n"
+"Produkt-Setup:\n"
+"==============\n"
+"\n"
+"**Produkt**\n"
+"\n"
+"**Umsatzsteuer:** Umsatzsteuer 25\n"
+"\n"
+"**Verkaufskonto:** 1010 Verkauf von Waren, ohne MwSt.\n"
+"\n"
+"**Verkaufsumsatzsteuer:** Verkaufsumsatzsteuer 25%\n"
+"\n"
+"**Einkaufskonto:** 2010 Direkte Kosten der Waren, ohne MwSt.\n"
+"\n"
+".\n"
+"\n"
+"**Service**\n"
+"\n"
+"**Verkaufsumsatzsteuer:** Verkaufsumsatzsteuer 25%, Dienstleistungen\n"
+"\n"
+"**Verkaufskonto:** 1011 Verkauf von Dienstleistungen, ohne MwSt.\n"
+"\n"
+"**Verkaufsumsatzsteuer:** Verkaufsumsatzsteuer 25%, Dienstleistungen\n"
+"\n"
+"**Einkaufskonto:** 2011 Direkte Kosten für Dienstleistungen, ohne MwSt.\n"
+"\n"
+".\n"
+"\n"
+"**Rohstoffe mit Reverse Charge**\n"
+"\n"
+"**Umsatzsteuer:** Umkehrung der Steuerschuldnerschaft beim Verkauf\n"
+"\n"
+"**Verkaufskonto:** 1012 Verkauf von Waren, ohne MwSt.\n"
+"\n"
+"**Mehrwertsteuer auf Käufe:** Kauf-Reverse-Charge\n"
+"\n"
+"**Einkaufskonto:** 2012 Direkte Kosten der Waren, ohne MwSt.\n"
+"\n"
+"\n"
+".\n"
+"\n"
+"**Restaurierung**\n"
+"\n"
+"**Einkaufsumsatzsteuer:** Restaurationsumsatzsteuer 6,25%, Kaufumsatzsteuer\n"
+"\n"
+"**Einkaufskonto:** 4010 Restaurationsbesuche\n"
+"\n"
+".\n"
+"\n"
+"Copyright 2018 Odoo House ApS\n"
+"    "
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_do
@@ -565,6 +662,11 @@ msgid ""
 "        Contains Balance Sheet, Profit/Loss reports\n"
 "    "
 msgstr ""
+"\n"
+"Buchhaltungsberichte für Litauen\n"
+"\n"
+"Enthält Bilanz, Gewinn/Verlust-Berichte\n"
+"    "
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_nl_reports
@@ -593,6 +695,9 @@ msgid ""
 "        Accounting reports for Sweden\n"
 "    "
 msgstr ""
+"\n"
+"        Buchhaltungsberichte für Schweden\n"
+"    "
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_ch_reports
@@ -614,6 +719,12 @@ msgid ""
 "        MTD-VAT API to HMRC.\n"
 "    "
 msgstr ""
+"\n"
+"        Buchhaltungsberichte für UK\n"
+"\n"
+"Ermöglicht das Senden des Steuerberichts über die\n"
+"MTD-VAT API an HMRC.\n"
+"    "
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_us_reports
@@ -633,6 +744,10 @@ msgid ""
 "        the questions and answers linked to the registrations.\n"
 "    "
 msgstr ""
+"\n"
+"        Fügen Sie Informationen hinzu, wenn wir die Beschreibung eines Leads erstellen, um\n"
+"die Fragen und Antworten, die mit den Registrierungen verknüpft sind.\n"
+"    "
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_mx_reports_closing
@@ -8567,12 +8682,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:base.view_partner_form
 msgid ""
 "<span class=\"o_form_label o_td_label\" name=\"address_name\">\n"
-"                                <b attrs=\"{'invisible': [('type', '!=', 'contact')]}\">Company Address</b>\n"
-"                                <b attrs=\"{'invisible': [('type', '!=', 'invoice')]}\">Invoice Address</b>\n"
-"                                <b attrs=\"{'invisible': [('type', '!=', 'delivery')]}\">Delivery Address</b>\n"
-"                                <b attrs=\"{'invisible': [('type', '!=', 'other')]}\">Other Address</b>\n"
-"                                <b attrs=\"{'invisible': [('type', '!=', 'private')]}\">Private Address</b>\n"
-"                                <b attrs=\"{'invisible': [('type', '!=', False)]}\">Address</b>\n"
+"                                <b attrs=\"{'invisible': [('company_type', '!=', 'company')]}\">Company Address</b>\n"
+"                                <b attrs=\"{'invisible': ['|', ('type', '!=', 'invoice'), ('company_type', '=', 'company')]}\">Invoice Address</b>\n"
+"                                <b attrs=\"{'invisible': ['|', ('type', '!=', 'delivery'), ('company_type', '=', 'company')]}\">Delivery Address</b>\n"
+"                                <b attrs=\"{'invisible': ['|', ('type', '!=', 'other'), ('company_type', '=', 'company')]}\">Other Address</b>\n"
+"                                <b attrs=\"{'invisible': ['|', ('type', '!=', 'private'), ('company_type', '=', 'company')]}\">Private Address</b>\n"
+"                                <b attrs=\"{'invisible': ['|', ('type', 'not in', (False, 'contact')), ('company_type', '=', 'company')]}\">Address</b>\n"
 "                            </span>"
 msgstr ""
 
@@ -9319,7 +9434,7 @@ msgstr "Kontoinhaber"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_partner_bank__acc_holder_name
 msgid "Account Holder Name"
-msgstr "Kontoinhaber Name"
+msgstr "Abweichender Kontoinhaber"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_invoice_extract
@@ -9344,7 +9459,7 @@ msgstr "Die Kontonummer muss eindeutig sein"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_users_form_simple_modif
 msgid "Account Security"
-msgstr ""
+msgstr "Account Sicherheit"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_taxcloud
@@ -9622,7 +9737,7 @@ msgstr "Hinzufügen"
 #. module: base
 #: model:ir.actions.act_window,name:base.action_view_base_language_install
 msgid "Add Language"
-msgstr ""
+msgstr "Sprache hinzufügen"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_mail_bot
@@ -15448,7 +15563,7 @@ msgstr "Dateiinhalt (base64)"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_attachment__raw
 msgid "File Content (raw)"
-msgstr ""
+msgstr "Dateiinhalt (roh)"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_base_language_export__format
@@ -15718,7 +15833,7 @@ msgstr ""
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.identity_check_wizard
 msgid "Forgot password?"
-msgstr ""
+msgstr "Passwort vergessen?"
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_actions_act_window_view__view_mode__form
@@ -21666,7 +21781,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,description:base.module_payment_odoo_by_adyen
 msgid "Odoo Payments by Adyen"
-msgstr ""
+msgstr "Odoo-Zahlungen von Adyen"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_payment_odoo_by_adyen
@@ -22204,6 +22319,16 @@ msgstr ""
 msgid ""
 "Odoo is currently processing a scheduled action.\n"
 "Module operations are not possible at this time, please try again later or contact your system administrator."
+msgstr ""
+
+#. module: base
+#: code:addons/base/models/ir_actions_report.py:0
+#, python-format
+msgid ""
+"Odoo is unable to merge the PDFs attached to the following records:\n"
+"%s\n"
+"\n"
+"Please exclude them from the selection to continue. It's possible to still retrieve those PDFs by selecting each of the affected records individually, which will avoid merging."
 msgstr ""
 
 #. module: base
@@ -22815,7 +22940,7 @@ msgstr "Ausgehende Mail Server"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_microsoft_calendar
 msgid "Outlook Calendar"
-msgstr ""
+msgstr "Outlook-Kalender"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_report_paperformat__dpi
@@ -26957,6 +27082,12 @@ msgid "The internal user in charge of this contact."
 msgstr "Der interne Benutzer, der für diesen Kontakt verantwortlich ist."
 
 #. module: base
+#: code:addons/base/models/res_country.py:106
+#, python-format
+msgid "The layout contains an invalid format key"
+msgstr ""
+
+#. module: base
 #: model:ir.model.fields,help:base.field_ir_model__inherited_model_ids
 msgid "The list of models that extends the current model."
 msgstr "Die Liste der Modelle, die das aktuelle Modell erweitern."
@@ -27058,7 +27189,7 @@ msgstr "Die einzigen vordefinierten Variablen sind"
 #: code:addons/model.py:0
 #, python-format
 msgid "The operation cannot be completed:"
-msgstr "The operation cannot be completed:"
+msgstr "Der gewünschte Vorgang kann nicht ausgeführt werden:"
 
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_model_fields__domain
@@ -28022,6 +28153,8 @@ msgid ""
 "Turn emails received in your Outlook mailbox into leads and log their "
 "content as internal notes."
 msgstr ""
+"Machen Sie in Ihrem Outlook-Postfach empfangene E-Mails zu Leads und "
+"protokollieren Sie deren Inhalt als interne Notizen."
 
 #. module: base
 #: model:res.country,name:base.tv
@@ -28474,7 +28607,7 @@ msgstr "URL"
 #. module: base
 #: model:ir.model.fields,help:base.field_res_country__image_url
 msgid "Url of static flag image"
-msgstr ""
+msgstr "Url des statischen Flaggenbildes"
 
 #. module: base
 #: model:res.country,name:base.uy
@@ -29650,8 +29783,8 @@ msgstr "Sie können den Superuser nicht aktivieren."
 #. module: base
 #: code:addons/base/models/res_partner.py:0
 #, python-format
-msgid "You cannot archive a contact linked to an internal user."
-msgstr "You cannot archive a contact linked to an internal user."
+msgid "You cannot archive a contact linked to a portal or internal user."
+msgstr ""
 
 #. module: base
 #: code:addons/base/models/res_partner.py:0

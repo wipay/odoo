@@ -208,7 +208,13 @@ class Website(models.Model):
             self.env['ir.qweb'].clear_caches()
 
         if 'cookies_bar' in values:
-            if values['cookies_bar']:
+            existing_policy_page = self.env['website.page'].search([
+                ('website_id', '=', self.id),
+                ('url', '=', '/cookie-policy'),
+            ])
+            if not values['cookies_bar']:
+                existing_policy_page.unlink()
+            elif not existing_policy_page:
                 cookies_view = self.env.ref('website.cookie_policy', raise_if_not_found=False)
                 if cookies_view:
                     cookies_view.with_context(website_id=self.id).write({'website_id': self.id})
@@ -220,11 +226,6 @@ class Website(models.Model):
                         'website_id': self.id,
                         'view_id': specific_cook_view.id,
                     })
-            else:
-                self.env['website.page'].search([
-                    ('website_id', '=', self.id),
-                    ('url', '=', '/cookie-policy'),
-                ]).unlink()
 
         return result
 
@@ -941,15 +942,19 @@ class Website(models.Model):
 
     def _get_http_domain(self):
         """Get the domain of the current website, prefixed by http if no
-        scheme is specified.
+        scheme is specified and withtout trailing /.
 
         Empty string if no domain is specified on the website.
         """
         self.ensure_one()
         if not self.domain:
             return ''
-        res = urls.url_parse(self.domain)
-        return 'http://' + self.domain if not res.scheme else self.domain
+
+        domain = self.domain
+        if not self.domain.startswith('http'):
+            domain = 'http://%s' % domain
+
+        return domain.rstrip('/')
 
     def get_base_url(self):
         self.ensure_one()
@@ -970,7 +975,7 @@ class Website(models.Model):
             for key, val in list(arguments.items()):
                 if isinstance(val, models.BaseModel):
                     if val.env.context.get('lang') != lang.code:
-                        arguments[key] = val.with_context(lang=lang.url_code)
+                        arguments[key] = val.with_context(lang=lang.code)
             path = router.build(request.endpoint, arguments)
         else:
             # The build method returns a quoted URL so convert in this case for consistency.

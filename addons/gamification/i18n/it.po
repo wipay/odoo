@@ -271,7 +271,7 @@ msgid ""
 "                                <span class=\"o_stat_text\">Goals</span>"
 msgstr ""
 "<span class=\"o_stat_text\">Obiettivi</span>\n"
-"                                <span class=\"o_stat_text\">collegati</span>"
+"                                <span class=\"o_stat_text\">correlati</span>"
 
 #. module: gamification
 #: model_terms:ir.ui.view,arch_db:gamification.gamification_karma_rank_view_form
@@ -1007,7 +1007,7 @@ msgstr "Bozza"
 #. module: gamification
 #: model_terms:gamification.karma.rank,description_motivational:gamification.rank_newbie
 msgid "Earn your first points and join the adventure !"
-msgstr ""
+msgstr "Guadagna i primi punti e prendi parte all'avventura !"
 
 #. module: gamification
 #: model:ir.model.fields,field_description:gamification.field_gamification_challenge__end_date
@@ -1152,7 +1152,7 @@ msgstr "Procedura per riconoscimento utente gamification"
 #. module: gamification
 #: model:ir.model,name:gamification.model_gamification_challenge_line
 msgid "Gamification generic goal for challenge"
-msgstr "Obiettivo generico di gamification per sfida"
+msgstr "Obiettivo generico di gamification per la sfida"
 
 #. module: gamification
 #: model:ir.actions.server,name:gamification.ir_cron_check_challenge_ir_actions_server
@@ -1916,12 +1916,12 @@ msgstr "Aggiorna sfida"
 #. module: gamification
 #: model:ir.actions.act_window,name:gamification.goals_from_challenge_act
 msgid "Related Goals"
-msgstr "Obiettivi collegati"
+msgstr "Obiettivi correlati"
 
 #. module: gamification
 #: model:ir.model.fields,help:gamification.field_gamification_badge_user_wizard__user_id
 msgid "Related user name for the resource to manage its access."
-msgstr "Nome utente collegato per gestire l'accesso alla risorsa."
+msgstr "Nome utente correlato per gestire l'accesso alla risorsa."
 
 #. module: gamification
 #: model:ir.model.fields,field_description:gamification.field_gamification_badge__remaining_sending
@@ -2007,7 +2007,7 @@ msgstr "Premi per sfide"
 #. module: gamification
 #: model_terms:ir.ui.view,arch_db:gamification.goal_search_view
 msgid "Running"
-msgstr "In esecuzione"
+msgstr "In corso"
 
 #. module: gamification
 #: model_terms:ir.ui.view,arch_db:gamification.challenge_search_view
@@ -2293,6 +2293,9 @@ msgid ""
 "\n"
 "%(error)s not found"
 msgstr ""
+"La configurazione del modello per la definizione %(name)s non sembra corretta, controllarla.\n"
+"\n"
+"%(error)s non trovata"
 
 #. module: gamification
 #: code:addons/gamification/models/goal.py:0
@@ -2302,6 +2305,9 @@ msgid ""
 "\n"
 "%(field_name)s not stored"
 msgstr ""
+"La configurazione del modello per la definizione %(name)s non sembra corretta, controllarla.\n"
+"\n"
+"%(field_name)s non memorizzato"
 
 #. module: gamification
 #: model:ir.model.fields,help:gamification.field_gamification_goal_definition__model_id
@@ -2320,35 +2326,38 @@ msgstr ""
 msgid ""
 "The number of time the current user has received this badge this month."
 msgstr ""
-"Numero di volte che l'utente ha ricevuto questo riconoscimento nel mese in "
-"corso."
+"Numero di volte in cui l'utente attuale ha ricevuto il riconoscimento nel "
+"mese in corso."
 
 #. module: gamification
 #: model:ir.model.fields,help:gamification.field_gamification_badge__stat_my
 msgid "The number of time the current user has received this badge."
-msgstr "Numero di volte che l'utente ha ricevuto questo riconoscimento."
+msgstr ""
+"Numero di volte in cui l'utente attuale ha ricevuto il riconoscimento."
 
 #. module: gamification
 #: model:ir.model.fields,help:gamification.field_gamification_badge__stat_my_monthly_sending
 msgid "The number of time the current user has sent this badge this month."
 msgstr ""
+"Numero di volte in cui l'utente attuale ha inviato il riconoscimento nel "
+"mese in corso."
 
 #. module: gamification
 #: model:ir.model.fields,help:gamification.field_gamification_badge__granted_users_count
 msgid "The number of time this badge has been received by unique users."
 msgstr ""
+"Numero di volte in cui il riconoscimento è stato ricevuto da utenti univoci."
 
 #. module: gamification
 #: model:ir.model.fields,help:gamification.field_gamification_badge__stat_this_month
 msgid "The number of time this badge has been received this month."
 msgstr ""
-"Numero di volte in cui è stato assegnato questo riconoscimento nel mese in "
-"corso."
+"Numero di volte in cui è stato ricevuto il riconoscimento nel mese in corso."
 
 #. module: gamification
 #: model:ir.model.fields,help:gamification.field_gamification_badge__granted_count
 msgid "The number of time this badge has been received."
-msgstr "Numero di volte in cui è stato assegnato questo riconoscimento."
+msgstr "Numero di volte in cui il riconoscimento è stato ricevuto."
 
 #. module: gamification
 #: model:ir.model.constraint,message:gamification.constraint_gamification_karma_rank_karma_min_check
@@ -2402,7 +2411,7 @@ msgid ""
 "            Make sure that your challenge is active and assigned to at least one user."
 msgstr ""
 "Nessun obiettivo associato alla sfida corrisponde alla ricerca.\n"
-"            Verificare che la sfida sia attiva e assegnata ad almeno un utente."
+"            Controllare che la sfida sia attiva e assegnata ad almeno un utente."
 
 #. module: gamification
 #: model:ir.model.fields,help:gamification.field_gamification_goal__closed
@@ -2438,7 +2447,7 @@ msgstr "Totale"
 #. module: gamification
 #: model:ir.model,name:gamification.model_gamification_karma_tracking
 msgid "Track Karma Changes"
-msgstr ""
+msgstr "Monitoraggio modifiche karma"
 
 #. module: gamification
 #: model_terms:ir.ui.view,arch_db:gamification.gamification_karma_tracking_view_form
@@ -2615,7 +2624,7 @@ msgstr ""
 #. module: gamification
 #: model_terms:gamification.karma.rank,description:gamification.rank_bachelor
 msgid "You love learning things. Curiosity is a good way to progress."
-msgstr ""
+msgstr "Tu ami imparare cose. La curiosità è un bel modo per migliorare."
 
 #. module: gamification
 #: model_terms:gamification.karma.rank,description:gamification.rank_student

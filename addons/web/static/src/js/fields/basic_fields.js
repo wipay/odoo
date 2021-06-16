@@ -274,7 +274,7 @@ var InputField = DebouncedField.extend({
             inputAttrs = _.extend(inputAttrs, { type: 'password', autocomplete: this.attrs.autocomplete || 'new-password' });
             inputVal = this.value || '';
         } else {
-            inputAttrs = _.extend(inputAttrs, { type: 'text', autocomplete: this.attrs.autocomplete || 'none'});
+            inputAttrs = _.extend(inputAttrs, { type: 'text', autocomplete: this.attrs.autocomplete || 'off'});
             inputVal = this._formatValue(this.value);
         }
 
@@ -1718,7 +1718,7 @@ var AbstractFieldBinary = AbstractField.extend({
         this._super.apply(this, arguments);
         this.fields = record.fields;
         this.useFileAPI = !!window.FileReader;
-        this.max_upload_size = 64 * 1024 * 1024; // 64Mo
+        this.max_upload_size = session.max_file_upload_size || 128 * 1024 * 1024;
         this.accepted_file_extensions = (this.nodeOptions && this.nodeOptions.accepted_file_extensions) || this.accepted_file_extensions || '*';
         if (!this.useFileAPI) {
             var self = this;
@@ -3666,6 +3666,9 @@ var FieldColorPicker = FieldInteger.extend({
 
         }
     },
+    _onNavigationMove() {
+        // disable navigation from FieldInput, to prevent a crash
+    }
 });
 
 return {

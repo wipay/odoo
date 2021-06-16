@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import timedelta
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tools import float_is_zero, float_compare
 
 
@@ -259,6 +259,8 @@ class PosSession(models.Model):
     def action_pos_session_closing_control(self):
         self._check_pos_session_balance()
         for session in self:
+            if any(order.state == 'draft' for order in session.order_ids):
+                raise UserError(_("You cannot close the POS when orders are still in draft"))
             if session.state == 'closed':
                 raise UserError(_('This session is already closed.'))
             session.write({'state': 'closing_control', 'stop_at': fields.Datetime.now()})
@@ -296,7 +298,7 @@ class PosSession(models.Model):
 
     def _validate_session(self):
         self.ensure_one()
-        if self.order_ids:
+        if self.order_ids or self.statement_ids.line_ids:
             self.cash_real_transaction = self.cash_register_total_entry_encoding
             self.cash_real_expected = self.cash_register_balance_end
             self.cash_real_difference = self.cash_register_difference
@@ -307,20 +309,22 @@ class PosSession(models.Model):
                 self._create_picking_at_end_of_session()
             # Users without any accounting rights won't be able to create the journal entry. If this
             # case, switch to sudo for creation and posting.
-            sudo = False
-            if (
-                not self.env['account.move'].check_access_rights('create', raise_exception=False)
-                and self.user_has_groups('point_of_sale.group_pos_user')
-            ):
-                sudo = True
-                self.sudo().with_company(self.company_id)._create_account_move()
-            else:
+            try:
                 self.with_company(self.company_id)._create_account_move()
+            except AccessError as e:
+                if self.user_has_groups('point_of_sale.group_pos_user'):
+                    self.sudo().with_company(self.company_id)._create_account_move()
+                else:
+                    raise e
             if self.move_id.line_ids:
                 # Set the uninvoiced orders' state to 'done'
                 self.env['pos.order'].search([('session_id', '=', self.id), ('state', '=', 'paid')]).write({'state': 'done'})
             else:
                 self.move_id.unlink()
+        elif not self.cash_register_id.difference:
+            cash_register = self.cash_register_id
+            cash_register.pos_session_id = False
+            cash_register.unlink()
         self.write({'state': 'closed'})
         return {
             'type': 'ir.actions.client',
@@ -340,7 +344,7 @@ class PosSession(models.Model):
             session_destination_id = picking_type.default_location_dest_id.id
 
         for order in self.order_ids:
-            if order.company_id.anglo_saxon_accounting and order.to_invoice:
+            if order.company_id.anglo_saxon_accounting and order.is_invoiced:
                 continue
             destination_id = order.partner_id.property_stock_customer.id or session_destination_id
             if destination_id in lines_grouped_by_dest_location:
@@ -459,7 +463,7 @@ class PosSession(models.Model):
 
             if order.is_invoiced:
                 # Combine invoice receivable lines
-                key = order.partner_id.property_account_receivable_id.id
+                key = order.partner_id
                 if self.config_id.cash_rounding:
                     invoice_receivables[key] = self._update_amounts(invoice_receivables[key], {'amount': order.amount_paid}, order.date_order)
                 else:
@@ -614,7 +618,7 @@ class PosSession(models.Model):
         split_cash_receivable_vals = defaultdict(list)
         for payment, amounts in split_receivables_cash.items():
             statement = statements_by_journal_id[payment.payment_method_id.cash_journal_id.id]
-            split_cash_statement_line_vals[statement].append(self._get_statement_line_vals(statement, payment.payment_method_id.receivable_account_id, amounts['amount'], payment.payment_date))
+            split_cash_statement_line_vals[statement].append(self._get_statement_line_vals(statement, payment.payment_method_id.receivable_account_id, amounts['amount'], date=payment.payment_date, partner=payment.pos_order_id.partner_id))
             split_cash_receivable_vals[statement].append(self._get_split_receivable_vals(payment, amounts['amount'], amounts['amount_converted']))
         # handle combine cash payments
         combine_cash_statement_line_vals = defaultdict(list)
@@ -653,12 +657,19 @@ class PosSession(models.Model):
 
         invoice_receivable_vals = defaultdict(list)
         invoice_receivable_lines = {}
-        for receivable_account_id, amounts in invoice_receivables.items():
-            invoice_receivable_vals[receivable_account_id].append(self._get_invoice_receivable_vals(receivable_account_id, amounts['amount'], amounts['amount_converted']))
-        for receivable_account_id, vals in invoice_receivable_vals.items():
-            receivable_line = MoveLine.create(vals)
-            if (not receivable_line.reconciled):
-                invoice_receivable_lines[receivable_account_id] = receivable_line
+        for partner, amounts in invoice_receivables.items():
+            commercial_partner = partner.commercial_partner_id
+            account_id = commercial_partner.property_account_receivable_id.id
+            invoice_receivable_vals[commercial_partner].append(self._get_invoice_receivable_vals(account_id, amounts['amount'], amounts['amount_converted'], partner=commercial_partner))
+        for commercial_partner, vals in invoice_receivable_vals.items():
+            account_id = commercial_partner.property_account_receivable_id.id
+            receivable_lines = MoveLine.create(vals)
+            for receivable_line in receivable_lines:
+                if (not receivable_line.reconciled):
+                    if account_id not in invoice_receivable_lines:
+                        invoice_receivable_lines[account_id] = receivable_line
+                    else:
+                        invoice_receivable_lines[account_id] |= receivable_line
 
         data.update({'invoice_receivable_lines': invoice_receivable_lines})
         return data
@@ -807,11 +818,13 @@ class PosSession(models.Model):
         }
         return self._debit_amounts(partial_vals, amount, amount_converted)
 
-    def _get_invoice_receivable_vals(self, account_id, amount, amount_converted):
+    def _get_invoice_receivable_vals(self, account_id, amount, amount_converted, **kwargs):
+        partner = kwargs.get('partner', False)
         partial_vals = {
             'account_id': account_id,
             'move_id': self.move_id.id,
-            'name': 'From invoiced orders'
+            'name': 'From invoiced orders',
+            'partner_id': partner and partner.id or False,
         }
         return self._credit_amounts(partial_vals, amount, amount_converted)
 
@@ -853,7 +866,7 @@ class PosSession(models.Model):
         partial_args = {'account_id': out_account.id, 'move_id': self.move_id.id}
         return self._credit_amounts(partial_args, amount, amount_converted, force_company_currency=True)
 
-    def _get_statement_line_vals(self, statement, receivable_account, amount, date=False):
+    def _get_statement_line_vals(self, statement, receivable_account, amount, date=False, partner=False):
         return {
             'date': fields.Date.context_today(self, timestamp=date),
             'amount': amount,
@@ -861,6 +874,7 @@ class PosSession(models.Model):
             'statement_id': statement.id,
             'journal_id': statement.journal_id.id,
             'counterpart_account_id': receivable_account.id,
+            'partner_id': partner and self.env["res.partner"]._find_accounting_partner(partner).id
         }
 
     def _update_amounts(self, old_amounts, amounts_to_add, date, round=True, force_company_currency=False):

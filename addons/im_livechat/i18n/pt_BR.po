@@ -383,7 +383,7 @@ msgstr "Contato"
 #: model:ir.model.fields,field_description:im_livechat.field_im_livechat_report_channel__channel_id
 #: model:ir.model.fields,field_description:im_livechat.field_im_livechat_report_operator__channel_id
 msgid "Conversation"
-msgstr "Conversação"
+msgstr "Conversas"
 
 #. module: im_livechat
 #. openerp-web
@@ -1880,7 +1880,7 @@ msgstr "segundos"
 #: code:addons/im_livechat/static/src/legacy/public_livechat.js:0
 #, python-format
 msgid "unnamed"
-msgstr "unnamed"
+msgstr "sem nome"
 
 #. module: im_livechat
 #: model_terms:ir.ui.view,arch_db:im_livechat.livechat_email_template
