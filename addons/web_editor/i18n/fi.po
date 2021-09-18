@@ -1001,7 +1001,7 @@ msgstr "Kuva"
 #. module: web_editor
 #: model:ir.model.fields,field_description:web_editor.field_ir_attachment__image_height
 msgid "Image Height"
-msgstr ""
+msgstr "Kuvan lorkeus"
 
 #. module: web_editor
 #. openerp-web
@@ -1025,7 +1025,7 @@ msgstr "Kuvan URL"
 #. module: web_editor
 #: model:ir.model.fields,field_description:web_editor.field_ir_attachment__image_width
 msgid "Image Width"
-msgstr ""
+msgstr "Kuvan leveys"
 
 #. module: web_editor
 #. openerp-web
@@ -2192,7 +2192,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Upload a document"
-msgstr ""
+msgstr "Lataa asiakirja"
 
 #. module: web_editor
 #. openerp-web

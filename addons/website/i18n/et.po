@@ -10,12 +10,12 @@
 # Martin Trigaux, 2020
 # Maidu Targama <m.targama@gmail.com>, 2020
 # Andre Roomet <andreroomet@gmail.com>, 2021
-# Eneli Õigus <enelioigus@gmail.com>, 2021
 # Arma Gedonsky <armagedonsky@hot.ee>, 2021
 # Piia Paurson <piia@avalah.ee>, 2021
 # Algo Kärp <algokarp@gmail.com>, 2021
 # Martin Talts <martin.t@avalah.ee>, 2021
 # Triine Aavik <triine@avalah.ee>, 2021
+# Eneli Õigus <enelioigus@gmail.com>, 2021
 # 
 msgid ""
 msgstr ""
@@ -23,7 +23,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-12-04 15:13+0000\n"
 "PO-Revision-Date: 2020-09-07 08:20+0000\n"
-"Last-Translator: Triine Aavik <triine@avalah.ee>, 2021\n"
+"Last-Translator: Eneli Õigus <enelioigus@gmail.com>, 2021\n"
 "Language-Team: Estonian (https://www.transifex.com/odoo/teams/41243/et/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1204,7 +1204,7 @@ msgstr "Tegevus"
 #: code:addons/website/static/src/js/backend/res_config_settings.js:0
 #, python-format
 msgid "Activate anyway"
-msgstr ""
+msgstr "Aktiveeri sellegipoolest"
 
 #. module: website
 #: model:ir.model.fields,field_description:website.field_theme_ir_ui_view__active
@@ -1594,6 +1594,7 @@ msgid ""
 "Automatically opens the pop-up if the user stays on a page longer than the "
 "specified time."
 msgstr ""
+"Avab automaatselt pop-upi, kui kasutaja jääb lehele määratud ajast kauemaks."
 
 #. module: website
 #: model:ir.model.fields,field_description:website.field_website__auto_redirect_lang
@@ -2012,6 +2013,13 @@ msgstr "Lõpetage ost nüüd ja teenige esimese tellimuse pealt 20$."
 #, python-format
 msgid "Check your configuration."
 msgstr "Kontrollige oma seadistust."
+
+#. module: website
+#. openerp-web
+#: code:addons/website/static/src/js/editor/snippets.editor.js:0
+#, python-format
+msgid "Check your connexion and try again"
+msgstr "Kontrollige oma ühendust ja proovige uuesti"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_product_catalog
@@ -3016,7 +3024,7 @@ msgstr "Kuva see veebileht, kui kasutajad külastavad seda domeeni"
 #: code:addons/website/static/src/js/backend/res_config_settings.js:0
 #, python-format
 msgid "Do not activate"
-msgstr ""
+msgstr "Ärge aktiveerige"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_banner
@@ -3303,6 +3311,13 @@ msgstr "Tühi välja nimi %r"
 #, python-format
 msgid "Enable billing on your Google Project"
 msgstr "Võimalda oma Google projektis arveldamist"
+
+#. module: website
+#. openerp-web
+#: code:addons/website/static/src/js/editor/snippets.editor.js:0
+#, python-format
+msgid "Enter an API Key"
+msgstr "Sisestage API võti"
 
 #. module: website
 #. openerp-web
@@ -4558,6 +4573,13 @@ msgstr "Suhtluse ajalugu"
 #: model_terms:ir.ui.view,arch_db:website.s_table_of_content
 msgid "Intuitive system"
 msgstr "Intuitiivne süsteem"
+
+#. module: website
+#. openerp-web
+#: code:addons/website/static/src/js/editor/snippets.editor.js:0
+#, python-format
+msgid "Invalid API Key. The following error was returned by Google:"
+msgstr "Kehtetu API võti. Järgmine error saabus Google'i poolt tagasi:"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_company_team
@@ -8676,7 +8698,7 @@ msgstr "Tõlkimist vajavad veebilehed"
 #: code:addons/website/static/src/xml/website.editor.xml:0
 #, python-format
 msgid "Welcome to your"
-msgstr "Teretulemast teie"
+msgstr "Tere tulemast! See on teie "
 
 #. module: website
 #. openerp-web
