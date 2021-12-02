@@ -176,18 +176,17 @@ class AccountAssetAsset(models.Model):
                             days = (self.company_id.compute_fiscalyear_dates(depreciation_date)['date_to'] - depreciation_date).days + 1
                             amount = (amount_to_depr / self.method_number) / total_days * days
                     #TRESCLOUD correcion
-                    else: #desde la segunda depreciacion
-                        #para mantener los valores calculados el recalculo debe hacerse
-                        #reversando la primera depreciacion
-                        if posted_depreciation_line_ids and amount_to_depr:
-                            amount_to_depr += posted_depreciation_line_ids[0].amount
+                    else:
                         #Caso de borde cuando la fecha de inicio de depreciaciones es el primer dia del mes
                         #no se le incrementa 1 depreciacion, es tratado como si no hubiese seleccionado la
                         #opcion de prorrateo, pues si no se hace esto se genera una ultima depreciacion con
                         #valores negativos
-                        amount = amount_to_depr / (undone_dotation_number - max(len(posted_depreciation_line_ids), 1))
+                        value_min = 1
                         if int(self.date.split('-')[2]) == 1:
-                            amount = amount_to_depr / (undone_dotation_number - max(len(posted_depreciation_line_ids), 0))
+                            value_min = 0
+                        amount = amount_to_depr / (
+                                    undone_dotation_number - max(len(posted_depreciation_line_ids), value_min))
+
             elif self.method == 'degressive':
                 amount = residual_amount * self.method_progress_factor
                 if self.prorata:
