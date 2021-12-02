@@ -24,10 +24,18 @@ class AccountPaymentRegister(models.TransientModel):
     journal_id = fields.Many2one('account.journal', store=True, readonly=False,
         compute='_compute_journal_id',
         domain="[('company_id', '=', company_id), ('type', 'in', ('bank', 'cash'))]")
-    partner_bank_id = fields.Many2one('res.partner.bank', string="Recipient Bank Account",
-        readonly=False, store=True,
+    available_partner_bank_ids = fields.Many2many(
+        comodel_name='res.partner.bank',
+        compute='_compute_available_partner_bank_ids',
+    )
+    partner_bank_id = fields.Many2one(
+        comodel_name='res.partner.bank',
+        string="Recipient Bank Account",
+        readonly=False,
+        store=True,
         compute='_compute_partner_bank_id',
-        domain="['|', ('company_id', '=', False), ('company_id', '=', company_id), ('partner_id', '=', partner_id)]")
+        domain="[('id', 'in', available_partner_bank_ids)]",
+    )
     company_currency_id = fields.Many2one('res.currency', string="Company Currency",
         related='company_id.currency_id')
 
@@ -124,11 +132,17 @@ class AccountPaymentRegister(models.TransientModel):
         will be grouped together.
         :return: A python dictionary.
         '''
+        move = line.move_id
+        partner_bank_account = self.env['res.partner.bank']
+
+        if move.is_invoice(include_receipts=True):
+            partner_bank_account = move.partner_bank_id._origin
+
         return {
             'partner_id': line.partner_id.id,
             'account_id': line.account_id.id,
             'currency_id': (line.currency_id or line.company_currency_id).id,
-            'partner_bank_id': (line.move_id.partner_bank_id or line.partner_id.commercial_partner_id.bank_ids[:1]).id,
+            'partner_bank_id': partner_bank_account.id,
             'partner_type': 'customer' if line.account_internal_type == 'receivable' else 'supplier',
             'payment_type': 'inbound' if line.balance > 0.0 else 'outbound',
         }
@@ -212,6 +226,7 @@ class AccountPaymentRegister(models.TransientModel):
                     'partner_id': False,
                     'partner_type': False,
                     'payment_type': wizard_values_from_batch['payment_type'],
+                    'partner_bank_id': False,
                     'source_currency_id': False,
                     'source_amount': False,
                     'source_amount_currency': False,
@@ -226,7 +241,7 @@ class AccountPaymentRegister(models.TransientModel):
         # it's a compute editable field and then, should be computed in a separated method.
         for wizard in self:
             if wizard.can_edit_wizard:
-                batches = self._get_batches()
+                batches = wizard._get_batches()
                 wizard.communication = wizard._get_batch_communication(batches[0])
             else:
                 wizard.communication = False
@@ -254,20 +269,30 @@ class AccountPaymentRegister(models.TransientModel):
                 journal = self.env['account.journal'].search(domain, limit=1)
             wizard.journal_id = journal
 
+    @api.depends('company_id', 'can_edit_wizard')
+    def _compute_available_partner_bank_ids(self):
+        for wizard in self:
+            if wizard.can_edit_wizard:
+                batches = wizard._get_batches()
+                bank_partners = batches[0]['lines'].move_id.bank_partner_id
+                wizard.available_partner_bank_ids = bank_partners.bank_ids\
+                    .filtered(lambda x: x.company_id in (False, wizard.company_id))._origin
+            else:
+                wizard.available_partner_bank_ids = False
+
+    @api.depends('available_partner_bank_ids')
+    def _compute_partner_bank_id(self):
+        for wizard in self:
+            if wizard.can_edit_wizard:
+                batches = wizard._get_batches()
+                wizard.partner_bank_id = self.env['res.partner.bank'].browse(batches[0]['key_values']['partner_bank_id'])
+            else:
+                wizard.partner_bank_id = False
+
     @api.depends('journal_id')
     def _compute_currency_id(self):
         for wizard in self:
             wizard.currency_id = wizard.journal_id.currency_id or wizard.source_currency_id or wizard.company_id.currency_id
-
-    @api.depends('partner_id')
-    def _compute_partner_bank_id(self):
-        ''' The default partner_bank_id will be the first available on the partner. '''
-        for wizard in self:
-            available_partner_bank_accounts = wizard.partner_id.bank_ids.filtered(lambda x: x.company_id in (False, wizard.company_id))
-            if available_partner_bank_accounts:
-                wizard.partner_bank_id = available_partner_bank_accounts[0]._origin
-            else:
-                wizard.partner_bank_id = False
 
     @api.depends('payment_type',
                  'journal_id.inbound_payment_method_ids',
@@ -341,7 +366,7 @@ class AccountPaymentRegister(models.TransientModel):
     def default_get(self, fields_list):
         # OVERRIDE
         res = super().default_get(fields_list)
-        
+
         if 'line_ids' in fields_list and 'line_ids' not in res:
 
             # Retrieve moves to pay from the context.
@@ -426,29 +451,41 @@ class AccountPaymentRegister(models.TransientModel):
             'destination_account_id': batch_result['lines'][0].account_id.id
         }
 
-    def _init_payments(self, to_process, edit_mode=False):
-        """ Create the payments.
+    def _create_payments(self):
+        self.ensure_one()
+        batches = self._get_batches()
+        edit_mode = self.can_edit_wizard and (len(batches[0]['lines']) == 1 or self.group_payment)
 
-        :param to_process:  A list of python dictionary, one for each payment to create, containing:
-                            * create_vals:  The values used for the 'create' method.
-                            * to_reconcile: The journal items to perform the reconciliation.
-                            * batch:        A python dict containing everything you want about the source journal items
-                                            to which a payment will be created (see '_get_batches').
-        :param edit_mode:   Is the wizard in edition mode.
-        """
+        to_reconcile = []
+        if edit_mode:
+            payment_vals = self._create_payment_vals_from_wizard()
+            payment_vals_list = [payment_vals]
+            to_reconcile.append(batches[0]['lines'])
+        else:
+            # Don't group payments: Create one batch per move.
+            if not self.group_payment:
+                new_batches = []
+                for batch_result in batches:
+                    for line in batch_result['lines']:
+                        new_batches.append({
+                            **batch_result,
+                            'lines': line,
+                        })
+                batches = new_batches
 
-        payments = self.env['account.payment'].create([x['create_vals'] for x in to_process])
+            payment_vals_list = []
+            for batch_result in batches:
+                payment_vals_list.append(self._create_payment_vals_from_batch(batch_result))
+                to_reconcile.append(batch_result['lines'])
 
-        for payment, vals in zip(payments, to_process):
-            vals['payment'] = payment
+        payments = self.env['account.payment'].create(payment_vals_list)
 
-            # If payments are made using a currency different than the source one, ensure the balance match exactly in
-            # order to fully paid the source journal items.
-            # For example, suppose a new currency B having a rate 100:1 regarding the company currency A.
-            # If you try to pay 12.15A using 0.12B, the computed balance will be 12.00A for the payment instead of 12.15A.
-            if edit_mode:
-                lines = vals['to_reconcile']
-
+        # If payments are made using a currency different than the source one, ensure the balance match exactly in
+        # order to fully paid the source journal items.
+        # For example, suppose a new currency B having a rate 100:1 regarding the company currency A.
+        # If you try to pay 12.15A using 0.12B, the computed balance will be 12.00A for the payment instead of 12.15A.
+        if edit_mode:
+            for payment, lines in zip(payments, to_reconcile):
                 # Batches are made using the same currency so making 'lines.currency_id' is ok.
                 if payment.currency_id != lines.currency_id:
                     liquidity_lines, counterpart_lines, writeoff_lines = payment._seek_for_lines()
@@ -479,78 +516,23 @@ class AccountPaymentRegister(models.TransientModel):
                         (1, debit_lines[0].id, {'debit': debit_lines[0].debit + delta_balance}),
                         (1, credit_lines[0].id, {'credit': credit_lines[0].credit + delta_balance}),
                     ]})
-        return payments
 
-    def _post_payments(self, to_process, edit_mode=False):
-        """ Post the newly created payments.
-
-        :param to_process:  A list of python dictionary, one for each payment to create, containing:
-                            * create_vals:  The values used for the 'create' method.
-                            * to_reconcile: The journal items to perform the reconciliation.
-                            * batch:        A python dict containing everything you want about the source journal items
-                                            to which a payment will be created (see '_get_batches').
-        :param edit_mode:   Is the wizard in edition mode.
-        """
-        payments = self.env['account.payment']
-        for vals in to_process:
-            payments |= vals['payment']
         payments.action_post()
 
-    def _reconcile_payments(self, to_process, edit_mode=False):
-        """ Reconcile the payments.
-
-        :param to_process:  A list of python dictionary, one for each payment to create, containing:
-                            * create_vals:  The values used for the 'create' method.
-                            * to_reconcile: The journal items to perform the reconciliation.
-                            * batch:        A python dict containing everything you want about the source journal items
-                                            to which a payment will be created (see '_get_batches').
-        :param edit_mode:   Is the wizard in edition mode.
-        """
         domain = [('account_internal_type', 'in', ('receivable', 'payable')), ('reconciled', '=', False)]
-        for vals in to_process:
-            payment_lines = vals['payment'].line_ids.filtered_domain(domain)
-            lines = vals['to_reconcile']
+        for payment, lines in zip(payments, to_reconcile):
 
+            # When using the payment tokens, the payment could not be posted at this point (e.g. the transaction failed)
+            # and then, we can't perform the reconciliation.
+            if payment.state != 'posted':
+                continue
+
+            payment_lines = payment.line_ids.filtered_domain(domain)
             for account in payment_lines.account_id:
                 (payment_lines + lines)\
                     .filtered_domain([('account_id', '=', account.id), ('reconciled', '=', False)])\
                     .reconcile()
 
-    def _create_payments(self):
-        self.ensure_one()
-        batches = self._get_batches()
-        edit_mode = self.can_edit_wizard and (len(batches[0]['lines']) == 1 or self.group_payment)
-        to_process = []
-
-        if edit_mode:
-            payment_vals = self._create_payment_vals_from_wizard()
-            to_process.append({
-                'create_vals': payment_vals,
-                'to_reconcile': batches[0]['lines'],
-                'batch': batches[0],
-            })
-        else:
-            # Don't group payments: Create one batch per move.
-            if not self.group_payment:
-                new_batches = []
-                for batch_result in batches:
-                    for line in batch_result['lines']:
-                        new_batches.append({
-                            **batch_result,
-                            'lines': line,
-                        })
-                batches = new_batches
-
-            for batch_result in batches:
-                to_process.append({
-                    'create_vals': self._create_payment_vals_from_batch(batch_result),
-                    'to_reconcile': batch_result['lines'],
-                    'batch': batch_result,
-                })
-
-        payments = self._init_payments(to_process, edit_mode=edit_mode)
-        self._post_payments(to_process, edit_mode=edit_mode)
-        self._reconcile_payments(to_process, edit_mode=edit_mode)
         return payments
 
     def action_create_payments(self):

@@ -51,7 +51,6 @@
 # Fabien FML, 2020
 # Julien Goergen <jgo@odoo.com>, 2020
 # Eloïse Stilmant <est@odoo.com>, 2020
-# Rémi CAZENAVE, 2020
 # Alain van de Werve <avw@openerp.com>, 2020
 # Olivier ANDRE <frsw194@gmail.com>, 2020
 # omaodoo <oma@odoo.com>, 2020
@@ -67,20 +66,22 @@
 # Alice Van Goethem <vga@odoo.com>, 2021
 # qdelcourte <delcourte.quentin@hotmail.com>, 2021
 # Jérôme JEK <jek@odoo.com>, 2021
-# Yann Papouin <y.papouin@dec-industrie.com>, 2021
+# Yann Papouin <ypa@decgroupe.com>, 2021
 # Anthony Chaussin <chaussin.anthony@gmail.com>, 2021
 # Christophe Ricevuto <cri@nalios.be>, 2021
 # Martin Trigaux, 2021
 # Pierre Delacroix <pde@odoo.com>, 2021
 # Benjamin Stienon <tsb@odoo.com>, 2021
-# Didier Luberriaga, 2021
+# c6006fcfb8a88157145e24bd47011b95_e8661c8, 2021
 # Jonathan Castillo <jcs@odoo.com>, 2021
 # Fabien Pinckaers <fp@openerp.com>, 2021
 # Alexandra Jubert <aju@odoo.com>, 2021
 # Saad Thaifa <saad.thaifa@gmail.com>, 2021
 # Amaury oci <asalmon@oci.fr>, 2021
-# Cécile Collart <cco@odoo.com>, 2021
 # sbr <sbr@odoo.com>, 2021
+# Rémi CAZENAVE, 2021
+# Thomas Deleval <thd@odoo.com>, 2021
+# Cécile Collart <cco@odoo.com>, 2021
 # Camille Dantinne <cmd@odoo.com>, 2021
 # 
 msgid ""
@@ -229,7 +230,7 @@ msgstr "Vous pourriez souhaiter saisir un nombre plus élevé."
 #: code:addons/account/wizard/account_resequence.py:0
 #, python-format
 msgid "... (%s other)"
-msgstr ""
+msgstr "... (%s autre(s))"
 
 #. module: account
 #: model:account.payment.term,name:account.account_payment_term_15days
@@ -1855,6 +1856,8 @@ msgid ""
 "Adjusting Entry for {link}: {percent:f}% of {amount} recognized on "
 "{new_date}"
 msgstr ""
+"Ecriture d'Ajustement pour {link}: {percent:f}% de {amount} reconnue le "
+"{new_date}"
 
 #. module: account
 #: code:addons/account/wizard/account_automatic_entry_wizard.py:0
@@ -1868,6 +1871,8 @@ msgstr "Ecriture d'ajustement de {date} ({percent:f}% reconnue le {new_date})"
 msgid ""
 "Adjusting Entry {link}: {percent:f}% of {amount} recognized from {date}"
 msgstr ""
+"Ecriture d'Ajustement {link}: {percent:f}% de {amount} reconnue depuis le "
+"{date}"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_tax_adjustments_wizard__adjustment_type
@@ -1973,6 +1978,7 @@ msgid ""
 "All the account entries lines must be processed in order to validate the "
 "statement."
 msgstr ""
+"Toutes les lignes comptables doivent être traitées pour valider ce relevé."
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_account_template__reconcile
@@ -2199,7 +2205,7 @@ msgid ""
 "                to disclose a certain amount of information."
 msgstr ""
 "Un compte fait partie d'un livre permettant à votre société d'enregistrer toute sorte de transaction au débit ou au crédit. \n"
-"Les sociétés présentent leurs comptes annuels en 2 parties principales : le bilan et le compte de résultats (compte de perte et \n"
+"Les sociétés présentent leurs comptes annuels en 2 parties principales : le bilan et le compte de résultat (compte de perte et \n"
 "profit). Les comptes annuels d'une société sont requis par la loi \n"
 "afin de publier un certain nombre d'information."
 
@@ -2215,7 +2221,7 @@ msgstr ""
 "Un type de compte est utilisé pour déterminer comment un compte est utilisé dans\n"
 " chaque journal. La méthode de report d'un type de compte détermine\n"
 " le processus à la clôture de l'exercice. Les rapports tels que le bilan \n"
-"ou le compte de résultats utilise la catégorie\n"
+"ou le compte de résultat utilise la catégorie\n"
 " (résultat ou bilan)"
 
 #. module: account
@@ -3084,6 +3090,8 @@ msgid ""
 "Cannot create an invoice of type %(move_type)s with a journal having "
 "%(journal_type)s as type."
 msgstr ""
+"Impossible de créer une facture de type %(move_type)s avec un journal ayant "
+"%(journal_type)s comme type."
 
 #. module: account
 #: code:addons/account/models/account_move.py:0
@@ -5468,7 +5476,7 @@ msgstr "États fédéraux"
 #: code:addons/account/static/src/js/tours/account.js:0
 #, python-format
 msgid "Fill in the details of the line."
-msgstr ""
+msgstr "Remplissez les détails de la ligne."
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_analytic_line__general_account_id
@@ -10974,7 +10982,7 @@ msgstr ""
 #. module: account
 #: model:res.groups,name:account.group_account_readonly
 msgid "Show Accounting Features - Readonly"
-msgstr ""
+msgstr "Afficher les fonctionnalités de comptabilité - Lecture seule"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_reconcile_model__show_decimal_separator
@@ -11088,6 +11096,8 @@ msgid ""
 "Some journal items already exist in this journal but with other accounts "
 "than the allowed ones."
 msgstr ""
+"Certaines écritures comptables existent déjà dans ce journal mais avec "
+"d'autres comptes que ceux autorisés."
 
 #. module: account
 #: code:addons/account/models/account_account.py:0
@@ -11096,6 +11106,8 @@ msgid ""
 "Some journal items already exist with this account but in other journals "
 "than the allowed ones."
 msgstr ""
+"Certaines écritures comptables existent déjà avec ce compte mais dans "
+"d'autres journaux que ceux autorisés."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_setup_bank_manual_config__bank_bic
@@ -12169,6 +12181,7 @@ msgstr ""
 #, python-format
 msgid "The Bill/Refund date is required to validate this document."
 msgstr ""
+"La date de facturation/remboursement est requise pour valider ce document."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_bank_statement__country_code
@@ -12349,7 +12362,7 @@ msgstr "Le modèle de tableau pour la société (le cas échéant)"
 #: code:addons/account/models/account_move.py:0
 #, python-format
 msgid "The chosen QR-code type is not eligible for this invoice."
-msgstr ""
+msgstr "Le type de code QR choisi n'est pas éligible pour cette facture."
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_bnk_stmt_check
@@ -12385,7 +12398,7 @@ msgstr ""
 #: model:ir.model.fields,help:account.field_account_move_line__tax_fiscal_country_id
 #: model:ir.model.fields,help:account.field_res_company__account_tax_fiscal_country_id
 msgid "The country to use the tax reports from for this company"
-msgstr ""
+msgstr "Le pays à utiliser pour les rapports de taxes de cette société"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_move_reversal

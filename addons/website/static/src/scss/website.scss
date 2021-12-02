@@ -1004,7 +1004,7 @@ header {
                 }
             }
 
-            .o_connected_user:not(.editor_has_snippets) header & {
+            .o_connected_user:not(.editor_has_snippets):not(.o_fullscreen) header & {
                 top: -$o-navbar-height;
                 padding-top: $o-navbar-height;
             }
@@ -1098,7 +1098,7 @@ header {
                 }
             }
         }
-        body.o_connected_user {
+        body.o_connected_user:not(.o_fullscreen) {
             &:not(.editor_has_snippets) #wrapwrap > header {
                 top: $o-navbar-height;
             }
@@ -1258,7 +1258,12 @@ header {
     @include media-breakpoint-up(lg) {
         #wrapwrap.o_footer_effect_enable {
             > main {
-                background-color: $body-bg;
+                @if o-website-value('layout') == 'full' {
+                    // Ensure a transparent snippet at the end of the content
+                    // still appears with the same background when hovering the
+                    // footer during the scroll effect.
+                    background-color: $body-bg;
+                }
                 @if o-website-value('footer-effect') == 'slideout_shadow' {
                     box-shadow: $box-shadow;
                 }

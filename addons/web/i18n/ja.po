@@ -18,6 +18,7 @@
 # Noma Yuki, 2020
 # Martin Trigaux, 2021
 # Abe Tomohiro <tomohiro@quartile.co>, 2021
+# Ryoko Tsuda <ryoko@quartile.co>, 2021
 # Yoshi Tashiro (Quartile) <tashiro@roomsfor.hk>, 2021
 # 
 msgid ""
@@ -590,7 +591,7 @@ msgstr ""
 #: code:addons/web/static/src/js/views/signature_dialog.js:0
 #, python-format
 msgid "Adopt and Sign"
-msgstr ""
+msgstr "承認及び署名"
 
 #. module: web
 #. openerp-web
@@ -695,6 +696,7 @@ msgstr "印刷された文書(レポートヘッダ)の右上隅にデフォル�
 
 #. module: web
 #. openerp-web
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #: code:addons/web/static/src/xml/base.xml:0
 #: code:addons/web/static/src/xml/base.xml:0
 #, python-format
@@ -952,6 +954,7 @@ msgstr "カレンダービューで 'date_start'属性が定義されていま�
 #. openerp-web
 #: code:addons/web/static/src/js/core/dialog.js:0
 #: code:addons/web/static/src/js/core/dialog.js:0
+#: code:addons/web/static/src/js/fields/basic_fields.js:0
 #: code:addons/web/static/src/js/fields/relational_fields.js:0
 #: code:addons/web/static/src/js/fields/upgrade_fields.js:0
 #: code:addons/web/static/src/js/services/crash_manager.js:0
@@ -1655,7 +1658,7 @@ msgstr ""
 #: code:addons/web/static/src/xml/name_and_signature.xml:0
 #, python-format
 msgid "Draw"
-msgstr ""
+msgstr "手書き"
 
 #. module: web
 #. openerp-web
@@ -5052,7 +5055,7 @@ msgstr ""
 #: code:addons/web/static/src/xml/base.xml:0
 #, python-format
 msgid "selected"
-msgstr ""
+msgstr "選択済"
 
 #. module: web
 #. openerp-web

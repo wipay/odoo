@@ -9,7 +9,7 @@
 # Minj P <pminj322@gmail.com>, 2020
 # Batmunkh Ganbat <batmunkh.g@bumanit.mn>, 2020
 # Батболд <batbold.ts@gmail.com>, 2020
-# Munkhbaatar Gombosuren <muuguu17@gmail.com>, 2020
+# Munkhbaatar g <muuguu17@gmail.com>, 2021
 # Baskhuu Lodoikhuu <baskhuujacara@gmail.com>, 2021
 # 
 msgid ""
@@ -69,7 +69,7 @@ msgstr "Ажилбарын төлөв"
 #. module: stock_picking_batch
 #: model:ir.model.fields,field_description:stock_picking_batch.field_stock_picking_batch__activity_type_icon
 msgid "Activity Type Icon"
-msgstr ""
+msgstr "Ажилбарын төрөлийн Icon"
 
 #. module: stock_picking_batch
 #: model_terms:ir.ui.view,arch_db:stock_picking_batch.stock_picking_to_batch_form
@@ -221,7 +221,7 @@ msgstr "Дагагчид (Харилцагчид)"
 #. module: stock_picking_batch
 #: model:ir.model.fields,help:stock_picking_batch.field_stock_picking_batch__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
-msgstr ""
+msgstr "Font awesome icon e.g. fa-tasks"
 
 #. module: stock_picking_batch
 #: model_terms:ir.ui.view,arch_db:stock_picking_batch.stock_picking_batch_filter
