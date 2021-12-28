@@ -143,7 +143,7 @@ class db(netsvc.ExportService):
         db = sql_db.db_connect('postgres')
         cr = db.cursor()
         chosen_template = tools.config['db_template']
-        cr.execute("""SELECT datname 
+        cr.execute("""SELECT datname
                               FROM pg_database
                               WHERE datname = %s """,
                            (name,))
@@ -249,7 +249,7 @@ class db(netsvc.ExportService):
         set, and removing it afterwards.
 
         See also http://www.postgresql.org/docs/8.4/static/libpq-envars.html
-        
+
         .. note:: This is not thread-safe, and should never be enabled for
              SaaS (giving SaaS users the super-admin password is not a good idea
              anyway)
@@ -275,12 +275,12 @@ class db(netsvc.ExportService):
             if tools.config['db_port']:
                 cmd.append('--port=' + str(tools.config['db_port']))
             cmd.append(db_name)
-    
+
             stdin, stdout = tools.exec_pg_command_pipe(*tuple(cmd))
             stdin.close()
             data = stdout.read()
             res = stdout.close()
-    
+
             if not data or res:
                 logger.error(
                         'DUMP DB: %s failed! Please verify the configuration of the database password on the server. '
@@ -288,7 +288,7 @@ class db(netsvc.ExportService):
                         'server configuration file.\n %s', db_name, data)
                 raise Exception, "Couldn't dump database"
             logger.info('DUMP DB successful: %s', db_name)
-    
+
             return base64.encodestring(data)
 
     def exp_restore(self, db_name, data):
@@ -699,6 +699,7 @@ class report_spool(netsvc.ExportService):
         return self._check_report(id)
 
     def exp_report(self, db, uid, object, ids, datas=None, context=None):
+        _logger.info('ENTRO A REPORT: Report name: %s ids: %s datas: %s', object, ids, datas)
         if not datas:
             datas={}
         if not context:
@@ -735,6 +736,7 @@ class report_spool(netsvc.ExportService):
             return True
 
         thread.start_new_thread(go, (id, uid, ids, datas, context))
+        _logger.info('SALIO DE REPORT: Report id: %s', id)
         return id
 
     def _check_report(self, report_id):
@@ -761,6 +763,7 @@ class report_spool(netsvc.ExportService):
         return res
 
     def exp_report_get(self, db, uid, report_id):
+        _logger.info('ENTRO A REPORT GET: Report id: %s', report_id)
         if report_id in self._reports:
             if self._reports[report_id]['uid'] == uid:
                 return self._check_report(report_id)
