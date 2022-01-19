@@ -294,7 +294,10 @@ class MailComposer(models.TransientModel):
                 'no_auto_thread': self.no_auto_thread,
                 'mail_server_id': self.mail_server_id.id,
             }
-
+            #Las siguientes 2 lineas fueron agregadas por trescloud, para forzar que cuando la plantilla de correo
+            #tenga seteado el campo "Responder a" se vaya esta direccion en el correo.
+            if self.reply_to:
+                mail_values.update({'reply_to': self.reply_to})
             # mass mailing: rendering override wizard static values
             if mass_mail_mode and self.model:
                 if self.model in self.env and hasattr(self.env[self.model], 'message_get_email_values'):
