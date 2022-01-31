@@ -201,54 +201,6 @@ export function createDOMPathGenerator(
     };
 }
 
-export function createDOMPathGeneratorBak(direction, deepOnly, inline, inScope = false) {
-    const nextDeepest =
-        direction === DIRECTIONS.LEFT
-            ? node => lastLeaf(node.previousSibling, inline ? isBlock : undefined)
-            : node => firstLeaf(node.nextSibling, inline ? isBlock : undefined);
-
-    const firstNode =
-        direction === DIRECTIONS.LEFT
-            ? (node, offset) => lastLeaf(node.childNodes[offset - 1], inline ? isBlock : undefined)
-            : (node, offset) => firstLeaf(node.childNodes[offset], inline ? isBlock : undefined);
-
-    // Note "reasons" is a way for the caller to be able to know why the
-    // generator ended yielding values.
-    return function* (node, offset, reasons = []) {
-        let movedUp = false;
-
-        let currentNode = firstNode(node, offset);
-        if (!currentNode) {
-            movedUp = true;
-            currentNode = node;
-        }
-
-        while (currentNode) {
-            if (inline && isBlock(currentNode)) {
-                reasons.push(movedUp ? PATH_END_REASONS.BLOCK_OUT : PATH_END_REASONS.BLOCK_HIT);
-                break;
-            }
-            if (inScope && currentNode === node) {
-                reasons.push(PATH_END_REASONS.OUT_OF_SCOPE);
-                break;
-            }
-            if (!deepOnly || !movedUp) {
-                yield currentNode;
-            }
-
-            movedUp = false;
-            let nextNode = nextDeepest(currentNode);
-            if (!nextNode) {
-                movedUp = true;
-                nextNode = currentNode.parentNode;
-            }
-            currentNode = nextNode;
-        }
-
-        reasons.push(PATH_END_REASONS.NO_NODE);
-    };
-}
-
 /**
  * Find a node.
  * @param {findCallback} findCallback - This callback check if this function
@@ -307,6 +259,20 @@ export function closestElement(node, selector, restrictToEditable=false) {
 export function ancestors(node, editable) {
     if (!node || !node.parentElement || node === editable) return [];
     return [node.parentElement, ...ancestors(node.parentElement, editable)];
+}
+
+/**
+ * Take a node, return all of its descendants, in depth-first order.
+ *
+ * @param {Node} node
+ * @returns {Node[]}
+ */
+export function descendants(node) {
+    const posterity = [];
+    for (const child of (node.childNodes || [])) {
+        posterity.push(child, ...descendants(child));
+    }
+    return posterity;
 }
 
 export function closestBlock(node) {
@@ -1366,6 +1332,44 @@ export function splitElement(element, offset) {
     element.after(after);
     element.remove();
     return [before, after];
+}
+
+/**
+ * Split around the given elements, until a given ancestor (included). Elements
+ * will be removed in the process so caution is advised in dealing with their
+ * references. Returns a tuple containing the new elements on both sides of the
+ * split.
+ *
+ * @see splitElement
+ * @param {Node[] | Node} elements
+ * @param {Node} limitAncestor
+ * @returns {[Node, Node]}
+ */
+export function splitAroundUntil(elements, limitAncestor) {
+    elements = Array.isArray(elements) ? elements : [elements];
+    let after = elements[elements.length - 1].nextSibling;
+    let newUntil = limitAncestor;
+    let beforeSplit, afterSplit;
+    // Split up ancestors up to font
+    while (after && after.parentElement !== limitAncestor) {
+        afterSplit = splitElement(after.parentElement, childNodeIndex(after))[0];
+        newUntil = afterSplit;
+        after = newUntil.nextSibling;
+    }
+    if (after) {
+        afterSplit = splitElement(limitAncestor, childNodeIndex(after))[0];
+        limitAncestor = afterSplit;
+    }
+    let before = elements[0].previousSibling;
+    while (before && before.parentElement !== limitAncestor) {
+        beforeSplit = splitElement(before.parentElement, childNodeIndex(before) + 1)[1];
+        newUntil = beforeSplit;
+        before = newUntil.previousSibling;
+    }
+    if (before) {
+        beforeSplit = splitElement(limitAncestor, childNodeIndex(before) + 1)[1];
+    }
+    return [beforeSplit, afterSplit];
 }
 
 export function insertText(sel, content) {

@@ -347,6 +347,7 @@ function factory(dependencies) {
             this._disconnectAudioMonitor && this._disconnectAudioMonitor();
             if (this.messaging.userSetting.usePushToTalk || !this.channel || !this.audioTrack) {
                 this.currentRtcSession.update({ isTalking: false });
+                await this._updateLocalAudioTrackEnabledState();
                 return;
             }
             try {
@@ -368,6 +369,7 @@ function factory(dependencies) {
                 });
                 this.currentRtcSession.update({ isTalking: true });
             }
+            await this._updateLocalAudioTrackEnabledState();
         }
 
         //----------------------------------------------------------------------
@@ -384,7 +386,7 @@ function factory(dependencies) {
          * @param {String} [param2.state] current state of the connection
          */
         _addLogEntry(token, entry, { error, step, state } = {}) {
-            if (!this.env.isDebug()) {
+            if (!this.modelManager.isDebug) {
                 return;
             }
             if (!(token in this.logs)) {

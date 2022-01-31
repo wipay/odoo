@@ -129,12 +129,10 @@ class HolidaysType(models.Model):
         FROM
             hr_leave_allocation alloc
         WHERE
-            alloc.id is not null or (
             alloc.employee_id = %s AND
             alloc.active = True AND alloc.state = 'validate' AND
-            alloc.date_to >= %s OR alloc.date_to IS NULL AND
+            (alloc.date_to >= %s OR alloc.date_to IS NULL) AND
             alloc.date_from <= %s 
-            )
         '''
 
         self._cr.execute(query, (employee_id or None, date_to, date_from))
@@ -234,7 +232,7 @@ class HolidaysType(models.Model):
         ])
 
         if not date:
-            date = fields.Date.context_today(self)
+            date = self.env.context.get('default_date_from', fields.Date.context_today(self))
         allocations = self.env['hr.leave.allocation'].search([
             ('employee_id', 'in', employee_ids),
             ('state', 'in', ['confirm', 'validate1', 'validate']),
@@ -329,15 +327,8 @@ class HolidaysType(models.Model):
             holiday_status.virtual_leaves_taken = result.get('virtual_leaves_taken', 0)
 
     def _compute_group_days_allocation(self):
-        date_from = fields.Datetime.to_string(datetime.datetime.now().replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0))
-        domain = [
-            ('holiday_status_id', 'in', self.ids),
-            '|',
-            ('date_from', '>=', date_from),
-            ('date_from', '=', False),
-        ]
         grouped_res = self.env['hr.leave.allocation'].read_group(
-            domain,
+            [('holiday_status_id', 'in', self.ids), ],
             ['holiday_status_id'],
             ['holiday_status_id'],
         )
@@ -369,7 +360,7 @@ class HolidaysType(models.Model):
         res = []
         for record in self:
             name = record.name
-            if record.requires_allocation == "yes":
+            if record.requires_allocation == "yes" and not self._context.get('from_manager_leave_form'):
                 name = "%(name)s (%(count)s)" % {
                     'name': name,
                     'count': _('%g remaining out of %g') % (
@@ -404,13 +395,8 @@ class HolidaysType(models.Model):
     def action_see_days_allocated(self):
         self.ensure_one()
         action = self.env["ir.actions.actions"]._for_xml_id("hr_holidays.hr_leave_allocation_action_all")
-        date_from = fields.Datetime.to_string(
-                datetime.datetime.now().replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0))
         action['domain'] = [
             ('holiday_status_id', 'in', self.ids),
-            '|',
-            ('date_from', '>=', date_from),
-            ('date_from', '=', False),
         ]
         action['context'] = {
             'default_holiday_type': 'department',

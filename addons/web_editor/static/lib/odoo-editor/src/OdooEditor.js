@@ -46,6 +46,7 @@ import {
     YOUTUBE_URL_GET_VIDEO_ID,
     unwrapContents,
     peek,
+    rightPos,
 } from './utils/utils.js';
 import { editorCommands } from './commands/commands.js';
 import { Powerbox } from './powerbox/Powerbox.js';
@@ -1386,7 +1387,7 @@ export class OdooEditor extends EventTarget {
                 if (hasGradient && hasTextGradientClass) {
                     foreColor = backgroundImage;
                 } else {
-                    foreColor = document.queryCommandValue('foreColor');
+                    foreColor = this.document.queryCommandValue('foreColor');
                 }
             }
             if (!hiliteColor) {
@@ -1623,7 +1624,6 @@ export class OdooEditor extends EventTarget {
     // ===========
 
     _createCommandBar() {
-        this.options.noScrollSelector = this.options.noScrollSelector || 'body';
         this.commandbarTablePicker = new TablePicker({
             document: this.document,
             floating: true,
@@ -1732,16 +1732,6 @@ export class OdooEditor extends EventTarget {
             shouldActivate: () => !!this.options.getPowerboxElement(),
             onActivate: () => {
                 this._beforeCommandbarStepIndex = this._historySteps.length - 1;
-                this.observerUnactive();
-                for (const element of document.querySelectorAll(this.options.noScrollSelector)) {
-                    element.classList.add('oe-noscroll');
-                }
-                for (const element of this.document.querySelectorAll(
-                    this.options.noScrollSelector,
-                )) {
-                    element.classList.add('oe-noscroll');
-                }
-                this.observerActive();
             },
             preValidate: () => {
                 this._historyRevertUntil(this._beforeCommandbarStepIndex);
@@ -1753,16 +1743,6 @@ export class OdooEditor extends EventTarget {
             },
             postValidate: () => {
                 this.historyStep(true);
-            },
-            onStop: () => {
-                this.observerUnactive();
-                for (const element of document.querySelectorAll('.oe-noscroll')) {
-                    element.classList.remove('oe-noscroll');
-                }
-                for (const element of this.document.querySelectorAll('.oe-noscroll')) {
-                    element.classList.remove('oe-noscroll');
-                }
-                this.observerActive();
             },
             commands: [...mainCommands, ...(this.options.commands || [])],
         });
@@ -1786,6 +1766,12 @@ export class OdooEditor extends EventTarget {
     // TOOLBAR
     // =======
 
+    toolbarHide() {
+        this._updateToolbar(false);
+    }
+    toolbarShow() {
+        this._updateToolbar(true);
+    }
     /**
      * @private
      * @param {boolean} [show]
@@ -1938,7 +1924,14 @@ export class OdooEditor extends EventTarget {
         const range = sel.getRangeAt(0);
         const isSelForward =
             sel.anchorNode === range.startContainer && sel.anchorOffset === range.startOffset;
+        const startRect = range.startContainer.getBoundingClientRect && range.startContainer.getBoundingClientRect();
         const selRect = range.getBoundingClientRect();
+        // In some undetermined circumstance in chrome, the selection rect is
+        // wrongly defined and result with all the values for x, y, width, and
+        // height to be 0. In that case, use the rect of the startContainer if
+        // possible.
+        const isSelectionPotentiallyBugged = [selRect.x, selRect.y, selRect.width, selRect.height].every( x => x === 0 );
+        const correctedSelectionRect = isSelectionPotentiallyBugged && startRect ? startRect : selRect;
         const toolbarWidth = this.toolbar.offsetWidth;
         const toolbarHeight = this.toolbar.offsetHeight;
         const editorRect = this.editable.getBoundingClientRect();
@@ -1948,7 +1941,7 @@ export class OdooEditor extends EventTarget {
         const scrollY = this.document.defaultView.scrollY;
 
         // Get left position.
-        let left = selRect.left + OFFSET;
+        let left = correctedSelectionRect.left + OFFSET;
         // Ensure the toolbar doesn't overflow the editor on the left.
         left = Math.max(OFFSET, left);
         // Ensure the toolbar doesn't overflow the editor on the right.
@@ -1958,11 +1951,11 @@ export class OdooEditor extends EventTarget {
         this.toolbar.style.left = scrollX + left + 'px';
 
         // Get top position.
-        let top = selRect.top - toolbarHeight - OFFSET;
+        let top = correctedSelectionRect.top - toolbarHeight - OFFSET;
         // Ensure the toolbar doesn't overflow the editor on the top.
         if (top < editorTopPos) {
             // Position the toolbar below the selection.
-            top = selRect.bottom + OFFSET;
+            top = correctedSelectionRect.bottom + OFFSET;
             isBottom = true;
         }
         // Ensure the toolbar doesn't overflow the editor on the bottom.
@@ -1972,7 +1965,7 @@ export class OdooEditor extends EventTarget {
         this.toolbar.style.top = scrollY + top + 'px';
 
         // Position the arrow.
-        let arrowLeftPos = (isSelForward ? selRect.right : selRect.left) - left - OFFSET;
+        let arrowLeftPos = (isSelForward && !isSelectionPotentiallyBugged ? correctedSelectionRect.right : correctedSelectionRect.left) - left - OFFSET;
         // Ensure the arrow doesn't overflow the toolbar on the left.
         arrowLeftPos = Math.max(OFFSET, arrowLeftPos);
         // Ensure the arrow doesn't overflow the toolbar on the right.
@@ -2138,7 +2131,21 @@ export class OdooEditor extends EventTarget {
                 this.historyRollback();
                 ev.preventDefault();
                 if (this._applyCommand('oEnter') === UNBREAKABLE_ROLLBACK_CODE) {
-                    this._applyCommand('oShiftEnter');
+                    const brs = this._applyCommand('oShiftEnter');
+                    const anchor = brs[0].parentElement;
+                    if (anchor.nodeName === 'A') {
+                        if (brs.includes(anchor.firstChild)) {
+                            brs.forEach(br => anchor.before(br));
+                            setSelection(...rightPos(brs[brs.length - 1]));
+                            this.sanitize();
+                            this.historyStep();
+                        } else if (brs.includes(anchor.lastChild)) {
+                            brs.forEach(br => anchor.after(br));
+                            setSelection(...rightPos(brs[0]));
+                            this.sanitize();
+                            this.historyStep();
+                        }
+                    }
                 }
             } else if (['insertText', 'insertCompositionText'].includes(ev.inputType)) {
                 // insertCompositionText, courtesy of Samsung keyboard.
@@ -2308,7 +2315,7 @@ export class OdooEditor extends EventTarget {
             'CL LI': 'To-do',
         };
 
-        for (const hint of this.document.querySelectorAll('.oe-hint')) {
+        for (const hint of this.editable.querySelectorAll('.oe-hint')) {
             if (hint.classList.contains('oe-command-temporary-hint') || !isEmptyBlock(hint)) {
                 this.observerUnactive();
                 hint.classList.remove('oe-hint', 'oe-command-temporary-hint');
@@ -2766,6 +2773,7 @@ export class OdooEditor extends EventTarget {
                     }
                 }
             }
+            this.historyStep();
         }
     }
     /**
@@ -2817,7 +2825,7 @@ export class OdooEditor extends EventTarget {
         if (cursorDestination) {
             setSelection(...startPos(cursorDestination), ...endPos(cursorDestination), true);
         } else if (direction === DIRECTIONS.RIGHT) {
-            this._addRowBelow();
+            this.execCommand('addRowBelow');
             this._onTabulationInTable(ev);
         }
     }

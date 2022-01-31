@@ -574,20 +574,8 @@ class QWeb(object):
         return ''.join(code)
 
     def _compile_expr(self, expr, raise_on_missing=False):
-        """Transform string coming into a python instruction in textual form by
-        adding the namepaces for the dynamic values.
-        This method tokenize the string and call ``_compile_expr_tokens``
-        method.
-        """
-        readable = io.BytesIO(expr.strip().encode('utf-8'))
-        try:
-            tokens = list(tokenize.tokenize(readable.readline))
-        except tokenize.TokenError:
-            raise ValueError(f"Can not compile expression: {expr}")
-
-        expression = self._compile_expr_tokens(tokens, self._allowed_keyword + list(self._available_objects.keys()), raise_on_missing=raise_on_missing)
-
-        return f"({expression})"
+        """This method must be overridden by <ir.qweb> in order to compile the template."""
+        raise NotImplementedError("Templates should use the ir.qweb compile method")
 
     def _compile_bool(self, attr, default=False):
         """Convert the statements as a boolean."""
@@ -1223,6 +1211,7 @@ class QWeb(object):
             options['_text_concat'].clear()
             code.append(self._indent("else:", indent))
             code.extend(self._compile_tag_open(el, options, indent + 1, not without_attributes))
+            code.extend(self._flushText(options, indent + 1))
             code.extend(default_body)
             options['_text_concat'].extend(_text_concat)
             code.extend(self._compile_tag_close(el, options))

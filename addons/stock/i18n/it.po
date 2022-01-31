@@ -6,10 +6,11 @@
 # Sergio Zanchetta <primes2h@gmail.com>, 2021
 # Martin Trigaux, 2021
 # Niccolò Lubello <nlubello@gmail.com>, 2021
-# Stefano Consolaro <stefano.consolaro@mymage.it>, 2021
 # Vortex Storm <vortexstorm@protonmail.com>, 2021
 # Léonie Bouchat <lbo@odoo.com>, 2021
 # Friederike Fasterling-Nesselbosch, 2021
+# sakodoo <sak@odoo.com>, 2022
+# Stefano Consolaro <stefano.consolaro@mymage.it>, 2022
 # 
 msgid ""
 msgstr ""
@@ -17,7 +18,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-16 13:18+0000\n"
 "PO-Revision-Date: 2021-09-14 12:26+0000\n"
-"Last-Translator: Friederike Fasterling-Nesselbosch, 2021\n"
+"Last-Translator: Stefano Consolaro <stefano.consolaro@mymage.it>, 2022\n"
 "Language-Team: Italian (https://www.transifex.com/odoo/teams/41243/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -125,7 +126,7 @@ msgstr ""
 #: code:addons/stock/models/stock_warehouse.py:0
 #, python-format
 msgid "%(warehouse)s: Supply Product from %(supplier)s"
-msgstr ""
+msgstr "%(warehouse)s: rifornisci prodotto da %(supplier)s"
 
 #. module: stock
 #: code:addons/stock/models/stock_package_type.py:0
@@ -231,7 +232,7 @@ msgstr ""
 #: code:addons/stock/models/stock_rule.py:0
 #, python-format
 msgid "+ %d day(s)"
-msgstr ""
+msgstr "+ %d giorno/i"
 
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.report_stock_rule
@@ -481,7 +482,7 @@ msgstr "<span>Assegna numeri di serie</span>"
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.view_stock_move_operations
 msgid "<span>Clear All</span>"
-msgstr ""
+msgstr "<span>Cancella tutto</span>"
 
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.report_lot_label
@@ -869,6 +870,8 @@ msgid ""
 "All our contractual relations will be governed exclusively by United States "
 "law."
 msgstr ""
+"Tutti i nostri rapporti contrattuali saranno regolati esclusivamente dalla "
+"legge degli Stati Uniti."
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_move__returned_move_ids
@@ -1099,7 +1102,7 @@ msgstr "Quantità disponibile"
 #: code:addons/stock/models/product.py:0
 #, python-format
 msgid "Available quantity should be set to zero before changing type"
-msgstr ""
+msgstr "La quantità disponibile deve essere zero prima di modificare il tipo"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking__backorder_id
@@ -1177,6 +1180,8 @@ msgid ""
 "Below text serves as a suggestion and doesn’t engage Odoo S.A. "
 "responsibility."
 msgstr ""
+"Il testo qui sotto serve come suggerimento e non impegna la responsabilità "
+"di Odoo S.A."
 
 #. module: stock
 #: model:ir.model.fields.selection,name:stock.selection__res_partner__picking_warn__block
@@ -1370,6 +1375,8 @@ msgstr ""
 #, python-format
 msgid "Changing the operation type of this record is forbidden at this point."
 msgstr ""
+"La modifica del tipo di operazione di questo record è vietata a questo "
+"punto."
 
 #. module: stock
 #: code:addons/stock/models/stock_move_line.py:0
@@ -1444,7 +1451,7 @@ msgstr "Rimuovi"
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.view_stock_move_operations
 msgid "Clear Lines"
-msgstr ""
+msgstr "Cancella righe"
 
 #. module: stock
 #. openerp-web
@@ -1924,8 +1931,8 @@ msgstr ""
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_res_config_settings__module_delivery_dhl
-msgid "DHL USA Connector"
-msgstr "Connettore DHL USA"
+msgid "DHL Express Connector"
+msgstr "Connettore DHL Express"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_report_stock_quantity__date
@@ -2083,6 +2090,9 @@ msgid ""
 "Define a minimum stock rule so that Odoo creates automatically requests for "
 "quotations or confirmed manufacturing orders to resupply your stock."
 msgstr ""
+"Definire una regola di giacenza minima in modo che Odoo crei automaticamente"
+" richieste di preventivi od ordini di produzione confermati per rifornire la"
+" tua giacenza."
 
 #. module: stock
 #: model_terms:ir.actions.act_window,help:stock.action_warehouse_form
@@ -2991,7 +3001,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:stock.field_stock_production_lot__has_message
 #: model:ir.model.fields,field_description:stock.field_stock_scrap__has_message
 msgid "Has Message"
-msgstr ""
+msgstr "Contiene messaggio"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking__move_line_exist
@@ -3132,6 +3142,10 @@ msgid ""
 "services of a debt recovery company. All legal expenses will be payable by "
 "the client."
 msgstr ""
+"Se un pagamento è ancora in sospeso più di sessanta (60) giorni dopo la data"
+" di pagamento dovuta, My Company (Chicago) si riserva il diritto di chiamare"
+" i servizi di una società di recupero crediti. Tutte le spese legali saranno"
+" a carico del cliente."
 
 #. module: stock
 #: model:ir.model.fields.selection,name:stock.selection__stock_storage_category__allow_new_product__same
@@ -3323,6 +3337,10 @@ msgid ""
 "office within 8 days of the delivery of the goods or the provision of the "
 "services."
 msgstr ""
+"Affinché sia ammissibile, My Company (San Francisco) deve essere notificata "
+"di qualsiasi reclamo per mezzo di una lettera raccomandata alla sua sede "
+"legale entro 8 giorni dalla consegna della merce o dalla prestazione dei "
+"servizi."
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_product_product__incoming_qty
@@ -4434,6 +4452,12 @@ msgid ""
 "to appear as a third party in the context of any claim for damages filed "
 "against the client by an end consumer."
 msgstr ""
+"My Company (Chicago) si impegna a fare del suo meglio per fornire servizi "
+"performanti a tempo debito in conformità con i tempi concordati. Tuttavia, "
+"nessuno dei suoi obblighi può essere considerato come un obbligo di "
+"risultato. My Company (Chicago) non può in nessun caso, essere richiesto dal"
+" cliente di apparire come terza parte nel contesto di qualsiasi richiesta di"
+" risarcimento danni presentata al cliente da un consumatore finale."
 
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.quant_search_view
@@ -4960,6 +4984,13 @@ msgid ""
 "My Company (Chicago) will be authorized to suspend any provision of services"
 " without prior warning in the event of late payment."
 msgstr ""
+"Le nostre fatture sono pagabili entro 21 giorni lavorativi, a meno che non "
+"sia indicato un altro termine di pagamento sulla fattura o sull'ordine. In "
+"caso di mancato pagamento entro la data di scadenza, My Company (San "
+"Francisco) si riserva il diritto di richiedere il pagamento di un interesse "
+"fisso pari al 10% della somma restante dovuta. My Company (San Francisco) "
+"sarà autorizzato a sospendere qualsiasi fornitura di servizi senza preavviso"
+" in caso di ritardo nel pagamento."
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_warehouse__out_type_id
@@ -5612,6 +5643,7 @@ msgstr "Varianti prodotto"
 #, python-format
 msgid "Product model not defined, Please contact your administrator."
 msgstr ""
+"Modello di prodotto non definito, si prega di contattare l'amministratore."
 
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.view_production_lot_form
@@ -6531,7 +6563,7 @@ msgstr "Errore di consegna SMS"
 #. module: stock
 #: model_terms:res.company,invoice_terms_html:stock.res_company_1
 msgid "STANDARD TERMS AND CONDITIONS OF SALE"
-msgstr ""
+msgstr "TERMINI E CONDIZIONI STANDARD DI VENDITA"
 
 #. module: stock
 #. openerp-web
@@ -7552,6 +7584,10 @@ msgid ""
 "order to be valid, any derogation must be expressly agreed to in advance in "
 "writing."
 msgstr ""
+"Il cliente rinuncia esplicitamente alle proprie condizioni standard, anche "
+"se queste sono state stabilite dopo le presenti condizioni standard di "
+"vendita. Per essere valida, qualsiasi deroga deve essere espressamente "
+"concordata in anticipo per iscritto."
 
 #. module: stock
 #: model:ir.model.constraint,message:stock.constraint_stock_warehouse_orderpoint_product_location_check
@@ -8011,7 +8047,7 @@ msgstr "Da applicare"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_backorder_confirmation_line__to_backorder
 msgid "To Backorder"
-msgstr ""
+msgstr "A ordine residuo"
 
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.quant_search_view
@@ -8166,7 +8202,7 @@ msgstr "Trasferimenti"
 #: code:addons/stock/models/stock_picking.py:0
 #, python-format
 msgid "Transfers %s: Please add some items to move."
-msgstr ""
+msgstr "Trasferimento %s: aggiungere alcuni articoli da movimentare."
 
 #. module: stock
 #: model_terms:ir.actions.act_window,help:stock.action_get_picking_type_operations
@@ -8433,6 +8469,9 @@ msgid ""
 "                Depending on your product configuration, launching a replenishment may trigger a request for quotation,\n"
 "                a manufacturing order or a transfer."
 msgstr ""
+"Utilizzare questo assistente per rifornire le giacenze.\n"
+"                In funzione della configurazione del prodotto, richiedere un rifornimento può attivare la richiesta di preventivo,\n"
+"                un ordine di produzione o un trasferimento."
 
 #. module: stock
 #: model:res.groups,name:stock.group_stock_picking_wave
@@ -8511,7 +8550,7 @@ msgstr "Vista"
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.view_template_property_form
 msgid "View Diagram"
-msgstr ""
+msgstr "Visualizza schema"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_warehouse__view_location_id
@@ -8853,7 +8892,7 @@ msgstr "Procedura guidata"
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.view_stock_move_line_operation_tree
 msgid "Write your SN/LN one by one or copy paste a list."
-msgstr ""
+msgstr "Scrivere ogni seriale/lotto o incollare un elenco."
 
 #. module: stock
 #: model_terms:ir.actions.act_window,help:stock.action_orderpoint_replenish
@@ -9168,6 +9207,8 @@ msgstr ""
 msgid ""
 "You have to define a groupby and sorted method and pass them as arguments."
 msgstr ""
+"È necessario definire un raggruppamento e un metodo di ordinamento e "
+"passarli come argomenti."
 
 #. module: stock
 #: code:addons/stock/models/stock_orderpoint.py:0
@@ -9176,6 +9217,8 @@ msgid ""
 "You have to select a product unit of measure that is in the same category as"
 " the default unit of measure of the product"
 msgstr ""
+"È necessario selezionare una unità di misura del prodotto della stessa "
+"categoria dell'unità di misura predefinita del prodotto"
 
 #. module: stock
 #. openerp-web
@@ -9222,23 +9265,27 @@ msgid ""
 "You need to supply a Lot/Serial Number for product: \n"
 " - "
 msgstr ""
+"È necessario fornire un numero di lotto/serie per il prodotto: \n"
+" - "
 
 #. module: stock
 #: code:addons/stock/models/stock_picking.py:0
 #, python-format
 msgid "You need to supply a Lot/Serial number for products %s."
-msgstr ""
+msgstr "È necessario fornire un numero di lotto/serie per i prodotti %s."
 
 #. module: stock
 #: model_terms:res.company,invoice_terms_html:stock.res_company_1
 msgid "You should update this document to reflect your T&amp;C."
 msgstr ""
+"Aggiorni questo documento per riflettere le vostre Condizioni Generali."
 
 #. module: stock
 #: code:addons/stock/models/stock_warehouse.py:0
 #, python-format
 msgid "You still have ongoing operations for picking types %s in warehouse %s"
 msgstr ""
+"Ci sono altre operazioni in corso per movimenti di tipo %s nel magazzino %s"
 
 #. module: stock
 #: code:addons/stock/models/product.py:0
@@ -9423,7 +9470,7 @@ msgstr ""
 #. module: stock
 #: model:mail.template,report_name:stock.mail_template_data_delivery_confirmation
 msgid "{{ (object.name or '').replace('/','_') }}"
-msgstr ""
+msgstr "{{ (object.name or '').replace('/','_') }}"
 
 #. module: stock
 #: model:mail.template,subject:stock.mail_template_data_delivery_confirmation
