@@ -6,6 +6,7 @@
 # Tivisse <yti@odoo.com>, 2021
 # Eloïse Stilmant <est@odoo.com>, 2021
 # Aurélien Pillevesse <aurelienpillevesse@hotmail.fr>, 2021
+# Martin Trigaux, 2021
 # Olivier Lenoir <olivier.lenoir@free.fr>, 2021
 # Alexandra Jubert <aju@odoo.com>, 2021
 # RHTodoo, 2021
@@ -14,7 +15,6 @@
 # ButterflyOfFire, 2021
 # Grégory Schreiner <gregory@mokatourisme.fr>, 2021
 # Geoffrey_GMF <gmf@odoo.com>, 2022
-# Martin Trigaux, 2022
 # Cécile Collart <cco@odoo.com>, 2022
 # 
 msgid ""
@@ -4724,7 +4724,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Gérez la triple concordance de vos factures fournisseurs\n"
+"Gérez le triple rapprochement des factures de fournisseurs\n"
 "=====================================\n"
 "\n"
 "Dans le secteur de la fabrication, les personnes reçoivent souvent les factures des fournisseurs avant de\n"
@@ -5244,7 +5244,7 @@ msgid ""
 "If required, you can manually adjust the descriptions via the CODA configuration menu.\n"
 msgstr ""
 "\n"
-"Module d'importation des relevés bancaires CODA.\n"
+"Module d'importation des relevés de banque CODA.\n"
 "=========================================\n"
 "\n"
 "Prise en compte des fichiers plats CODA V2 des comptes bancaires belges.\n"
@@ -9802,7 +9802,7 @@ msgstr "Données de Démonstration pour les Transferts Automatiques de Compte"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_bank_statement_import
 msgid "Account Bank Statement Import"
-msgstr "Import de Relevés Bancaires"
+msgstr "Import de Relevé de Compte Bancaire"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_accountant_batch_payment
@@ -11165,7 +11165,7 @@ msgstr "Actifs"
 #: model_terms:ir.ui.view,arch_db:base.asset_view_search
 #: model_terms:ir.ui.view,arch_db:base.asset_view_tree
 msgid "Assets"
-msgstr "Assets"
+msgstr "Immobilisations"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_asset
@@ -18894,7 +18894,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_six
 msgid "Integrate your POS with a Six payment terminal"
-msgstr "Intégrez votre PdV avec un terminal de paiement Six"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_adyen
@@ -23308,7 +23308,7 @@ msgstr "Rendez-vous en ligne"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_online_synchronization
 msgid "Online Bank Statement Synchronization"
-msgstr "Synchronisation des relevés bancaires en ligne"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_website_event_booth_sale
@@ -27106,7 +27106,7 @@ msgstr ""
 #: model:res.groups,name:base.group_system
 #: model_terms:ir.ui.view,arch_db:base.res_config_settings_view_form
 msgid "Settings"
-msgstr "Paramètres"
+msgstr "Configuration"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_settle_due

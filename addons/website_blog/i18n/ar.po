@@ -39,7 +39,7 @@ msgstr "&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_post_short
 msgid "' page header."
-msgstr "' ترويسة الصفحة."
+msgstr ""
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_post_short
@@ -49,7 +49,7 @@ msgstr "'. يتم عرض النتائج لـ '"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.date_selector
 msgid "-- All dates"
-msgstr "-- كافة التواريخ "
+msgstr ""
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_6
@@ -60,10 +60,6 @@ msgid ""
 "they are more lightweight to carry to the country and use while you are "
 "there than a cumbersome telescope set up kit."
 msgstr ""
-"<b>تتسم المناظير بخفة الوزن وسهولة النقل.</b> إذا لم يكن باستطاعتك تركيب "
-"معدّات فاخرة وتجهيز مرصد على السطح، فسوف تضطر غالباً إلى السفر لأماكن مختلفة"
-" حتى تتمكن من المراقبة. المناظير أكثر سهولة في النقل ويمكنك جلبها معك عندما "
-"تسافر، على عكس مجموعة أجهزة التيليسكوب. "
 
 #. module: website_blog
 #. openerp-web
@@ -82,19 +78,13 @@ msgid ""
 " what works and what to avoid that is more valid than anything you will get "
 "from a web article or a salesperson at Wal-Mart."
 msgstr ""
-"<b>اختر عقول الخبراء</b>. إذا لم تكن عضواً فعالاً بالفعل في نادي أو مجتمع "
-"لعلوم الفلك، سوف يكون بوسع مندوبي المبيعات في محلات بيع التليسكوبات مساعدتك "
-"للوصول إلى المجتمعات النشطة في منطقتك. بمجرد تواصلك مع أفراد قاموا بشراء "
-"تيليسكوبات، سوف تكتسب الكثير من المعلومات والنصائح عن الأجهزة التي يُنصح "
-"بشرائها والتي يُفضّل الابتعاد عنها، أكثر من أي مقال قد تجده على الإنترنت أو "
-"مندوب مبيعات في Wal-Mart. "
 
 #. module: website_blog
 #. openerp-web
 #: code:addons/website_blog/static/src/js/tours/website_blog.js:0
 #, python-format
 msgid "<b>Publish your blog post</b> to make it visible to your visitors."
-msgstr "<b>انشر مقال مدونتك</b> حتى يتمكن زوارك من مشاهدته. "
+msgstr "<b>انشر مقال مدونتك</b> ليظهر لزوارك."
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_comment
@@ -109,8 +99,8 @@ msgid ""
 "<b>That's it, your blog post is published!</b> Discover more features "
 "through the <i>Customize</i> menu."
 msgstr ""
-"<b>هذا كل شيء، لقد تم نشر مقال مدونتك!</b> اكتشف المزيد من الخصائص عن طريق "
-"قائمة <i>التخصيص</i>. "
+"<b>هذا كل شيء، تم نشر مقال مدونتك!</b> اكتشف خصائص أخرى من قائمة "
+"<i>تخصيص</i>."
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_6
@@ -121,10 +111,6 @@ msgid ""
 "equipment, learn the key technical aspects, and try them out before you sink"
 " money in your own set up."
 msgstr ""
-"<b>جربه قبل أن تقوم بشرائه.</b> هذه ميزة أخرى من مميزات الذهاب إلى رحلات "
-"ميدانية مع نادي علوم الفلك. يمكنك قضاء بعض الوقت القيّم مع أفراد يجيدون "
-"استخدام التيليسكوب ولديهم أدوات مجهزة لتفحصها عن كثب وتعلم الجوانب التقنية "
-"المتعلقة بها وتجربتها قبل أن تنفق نقودك في المعدّات الخاصة بك. "
 
 #. module: website_blog
 #. openerp-web
@@ -135,9 +121,9 @@ msgid ""
 " image or table, set bold or italic, etc. Drag and drop building blocks for "
 "more graphical blogs."
 msgstr ""
-"<b>اكتب قصتك هنا.</b> استخدم شريط الأدوات العلوي لتنسيق نصك: كإضافة صورة أو "
-"جدول، أو جعل النص سميكًا أو مائلًا، إلخ. قم بسحب وإفلات الكتل البرمجية "
-"الإنشائية لجعل مدوناتك أكثر رسومية."
+"<b>اكتب قصتك هنا.</b> استخدم شريط الأدوات العلوي لتنسيق نصك: أضف صورة أو "
+"جدول، واجعل النص سميكًا أو مائلًا، إلخ. قم بسحب وإسقاط عناصر البناء لإضافة "
+"مدونات رسومية أكثر."
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_1
@@ -145,8 +131,6 @@ msgid ""
 "<em class=\"h4 my-0\">Apart from the native population, the local wildlife "
 "is also a major crowd puller.</em>"
 msgstr ""
-"<em class=\"h4 my-0\">بعيداً عن السكان الأصليين، فإن الحياة البريّة المحلية "
-"تُعَد معلماً جذاباً أيضاً.</em>"
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_6
@@ -154,16 +138,12 @@ msgid ""
 "<em class=\"h4 my-0\">It is critically important that you get just the right"
 " telescope.</em>"
 msgstr ""
-"<em class=\"h4 my-0\">من المهم جداً الحصول على التيليسكوب المناسب "
-"تماماً.</em>"
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_4
 msgid ""
 "<em class=\"h4 my-0\">That “Wow” moment is what astrology is all about.</em>"
 msgstr ""
-"<em class=\"h4 my-0\">تلك اللحظة الخاطفة للأنفاس هي ما يجعل من علوم الفلك "
-"أمراً مميزاً جداً.</em>"
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_3
@@ -171,8 +151,6 @@ msgid ""
 "<em class=\"h4 my-0\">The more reviews you read, the more you notice how "
 "they tend to cluster at the extremes of opinion.</em>"
 msgstr ""
-"<em class=\"h4 my-0\">كلما قرأت تقييمات أكثر، كلما لاحظت تضاربات الآراء "
-"المتطرفة.</em>"
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_5
@@ -185,13 +163,11 @@ msgid ""
 "<em class=\"h4 my-0\">Your study of the moon, like anything else, can go "
 "from the simple to the very complex.</em>"
 msgstr ""
-"<em class=\"h4 my-0\">دراستك للقمر، كأي شيء آخر، يمكن أن تتدرج من كونها "
-"بسيطة إلى شديدة التعقيد.</em>"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_tags_display
 msgid "<em>No tags defined</em>"
-msgstr "<em>لم يتم تحديد أي علامات تصنيف</em>"
+msgstr ""
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_post_complete
@@ -199,20 +175,18 @@ msgid ""
 "<i class=\"fa fa-angle-down fa-3x text-white\" aria-label=\"To blog "
 "content\" title=\"To blog content\"/>"
 msgstr ""
-"<i class=\"fa fa-angle-down fa-3x text-white\" aria-label=\"To blog "
-"content\" title=\"إلى محتوى المدونة \"/>"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_post_view_kanban
 msgid "<i class=\"fa fa-clock-o\" role=\"img\" aria-label=\"Post date\" title=\"Post date\"/>"
 msgstr ""
-"<i class=\"fa fa-clock-o\" role=\"img\" aria-label=\"Post date\" "
-"title=\"تاريخ النشر \"/>"
+"<i class=\"fa fa-clock-o\" role=\"img\" aria-label=\"تاريخ النشر\" "
+"title=\"تاريخ النشر\"/>"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_sidebar_blog_index_follow_us
 msgid "<i class=\"fa fa-github text-github\" aria-label=\"Github\" title=\"Github\"/>"
-msgstr "<i class=\"fa fa-github text-github\" aria-label=\"Github\" title=\"Github \"/>"
+msgstr ""
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_sidebar_blog_index_follow_us
@@ -220,8 +194,6 @@ msgid ""
 "<i class=\"fa fa-instagram text-instagram\" aria-label=\"Instagram\" "
 "title=\"Instagram\"/>"
 msgstr ""
-"<i class=\"fa fa-instagram text-instagram\" aria-label=\"Instagram\" "
-"title=\"إنستغرام \"/>"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_share_links_display
@@ -230,19 +202,17 @@ msgid ""
 "<i class=\"fa fa-linkedin text-linkedin\" aria-label=\"LinkedIn\" "
 "title=\"LinkedIn\"/>"
 msgstr ""
-"<i class=\"fa fa-linkedin text-linkedin\" aria-label=\"LinkedIn\" "
-"title=\"LinkedIn \"/>"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_sidebar_blog_index_follow_us
 msgid "<i class=\"fa fa-rss-square\" aria-label=\"RSS\" title=\"RSS\"/>"
-msgstr "<i class=\"fa fa-rss-square\" aria-label=\"RSS\" title=\"RSS \"/>"
+msgstr ""
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_share_links_display
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_sidebar_blog_index_follow_us
 msgid "<i class=\"fa fa-twitter text-twitter\" aria-label=\"Twitter\" title=\"Twitter\"/>"
-msgstr "<i class=\"fa fa-twitter text-twitter\" aria-label=\"Twitter\" title=\"تويتر \"/>"
+msgstr ""
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_sidebar_blog_index_follow_us
@@ -250,8 +220,6 @@ msgid ""
 "<i class=\"fa fa-youtube-play text-youtube\" aria-label=\"Youtube\" "
 "title=\"Youtube\"/>"
 msgstr ""
-"<i class=\"fa fa-youtube-play text-youtube\" aria-label=\"Youtube\" "
-"title=\"يوتيوب \"/>"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_read_next
@@ -259,8 +227,6 @@ msgid ""
 "<span class=\"bg-o-color-3 h6 d-inline-block py-1 px-2 rounded-sm\">Read "
 "Next</span>"
 msgstr ""
-"<span class=\"bg-o-color-3 h6 d-inline-block py-1 px-2 rounded-sm\">قراءة "
-"التالي</span>"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_read_next
@@ -269,24 +235,21 @@ msgid ""
 "                                    <i class=\"fa fa-angle-right fa-3x text-white\" aria-label=\"Read next\" title=\"Read Next\"/>\n"
 "                                </span>"
 msgstr ""
-"<span class=\"h4 d-inline-block py-1 px-2 rounded-sm text-white\">\n"
-"                                    <i class=\"fa fa-angle-right fa-3x text-white\" aria-label=\"Read next\" title=\"قراءة التالي \"/>\n"
-"                                </span>"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.posts_loop
 msgid "<span class=\"mr-1\">Show:</span>"
-msgstr "<span class=\"mr-1\">إظهار:</span>"
+msgstr ""
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blogs_nav
 msgid "<span class=\"nav-link disabled pl-0\">Blogs:</span>"
-msgstr "<span class=\"nav-link disabled pl-0\">المدونات:</span>"
+msgstr ""
 
 #. module: website_blog
 #: model:blog.post,subtitle:website_blog.blog_post_2
 msgid "A great way to discover hidden places"
-msgstr "طريقة رائعة لاستكشاف الأماكن الخفية "
+msgstr ""
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_1
@@ -294,13 +257,11 @@ msgid ""
 "A holiday to the Copper Canyon promises to be an exciting mix of relaxation,"
 " culture, history, wildlife and hiking."
 msgstr ""
-"من المؤكد أن رحلة إلى كوبر كانيون ستحمل الكثير من المتعة والحماس والاسترخاء،"
-" بالإضافة إلى التعرف على الثقافة والتاريخ والاستكشاف مشياً على الأقدام. "
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_post_template_new_post
 msgid "A new post"
-msgstr "منشور جديد "
+msgstr "مشاركة جديدة"
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_1
@@ -313,12 +274,6 @@ msgid ""
 "Travelers can also drive from anywhere in the United States and acquire a "
 "visa at the Mexican customs station at the border."
 msgstr ""
-"قد يرغب المسافر في استكشاف المنطقة مشياً على الأقدام حول الوادي أو عبره. سوف"
-" يحتاج هؤلاء الذين يرغبون في التوغّل في الوادي تخطيطاً محكماً ومفصّلاً. توجد"
-" العديد من وكالات السفر التي تتخصص في تنظيم جولات سياحية لتلك المنطقة، وبوسع"
-" المسافرين السفر إلى كوبر كانيون عن طريق تأشيرة سياح والتي تكون صالحة لمدة "
-"180 يوماً. بمقدور المسافرين أيضاً السفر براً من أي مكان في الولايات المتحدة "
-"الأمريكية والحصول على تأشيرة في مركز الجمارك المكسيكي على الحدود. "
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.sidebar_blog_index
@@ -333,21 +288,17 @@ msgid ""
 "Wal-Mart or department store, the odds you will get the right thing are "
 "remote."
 msgstr ""
-"والأهم من كل ذلك، <b>عليك أن تبني علاقة جيدة مع محل لبيع التيليسكوبات ذي "
-"سمعة جيدة والذي موظفوه على دراية كاملة بكل ما تحتاج لمعرفته عن الأمر.</b> "
-"إذا قمت بشراء التيليسكوب الخاص بك من متجر Wal-Mart، قد لا تحصل دائماً على "
-"الشيء الصحيح. "
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_post_template_new_post
 msgid "Access post"
-msgstr "الوصول للمنشور "
+msgstr "الوصول للمشاركة"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__message_needaction
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__message_needaction
 msgid "Action Needed"
-msgstr "يتطلب إجراء "
+msgstr "إجراء مطلوب"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__active
@@ -379,7 +330,7 @@ msgstr "كافة المدونات"
 #: code:addons/website_blog/models/website_snippet_filter.py:0
 #, python-format
 msgid "Alone in the ocean"
-msgstr "وحدك في المحيط "
+msgstr ""
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_6
@@ -465,7 +416,7 @@ msgstr ""
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_post_short
 msgid "Atom Feed"
-msgstr "موجز Atom "
+msgstr "Atom Feed"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__message_attachment_count
@@ -477,7 +428,7 @@ msgstr "عدد المرفقات"
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__author_id
 #: model_terms:ir.ui.view,arch_db:website_blog.view_blog_post_search
 msgid "Author"
-msgstr "الكاتب "
+msgstr "الناشر"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__author_name
@@ -570,19 +521,19 @@ msgstr "اسم المدونة"
 #: model_terms:ir.ui.view,arch_db:website_blog.view_blog_post_search
 #, python-format
 msgid "Blog Post"
-msgstr "منشور المدونة "
+msgstr "مقال المدونة"
 
 #. module: website_blog
 #: code:addons/website_blog/models/website.py:0
 #, python-format
 msgid "Blog Post <b>%s</b> seems to be calling this file !"
-msgstr "يبدو أن منشور المدونة <b>%s</b> يتطلب استخدام هذا الملف! "
+msgstr "يبدو أن مقال المدونة <b>%s</b> يطلب استخدام هذا الملف!"
 
 #. module: website_blog
 #: code:addons/website_blog/models/website.py:0
 #, python-format
 msgid "Blog Post <b>%s</b> seems to have a link to this page !"
-msgstr "يبدو أن منشور المدونة <b>%s</b> يحتوي على رابط لهذه الصفحة! "
+msgstr "يبدو أن مقال المدونة <b>%s</b> يحتوي على رابط لهذه الصفحة!"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_post_complete
@@ -596,7 +547,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_read_next
 #: model_terms:ir.ui.view,arch_db:website_blog.view_blog_post_form
 msgid "Blog Post Title"
-msgstr "عنوان منشور المدونة "
+msgstr "عنوان مقال المدونة"
 
 #. module: website_blog
 #: code:addons/website_blog/models/website.py:0
@@ -606,7 +557,7 @@ msgstr "عنوان منشور المدونة "
 #: model_terms:ir.ui.view,arch_db:website_blog.view_blog_post_list
 #, python-format
 msgid "Blog Posts"
-msgstr "منشورات المدونة "
+msgstr "مقالات المدونة"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__subtitle
@@ -618,17 +569,17 @@ msgstr "العنوان الفرعي للمدونة"
 #. module: website_blog
 #: model:ir.model,name:website_blog.model_blog_tag
 msgid "Blog Tag"
-msgstr "علامة تصنيف المدونة "
+msgstr "وسم المدونة"
 
 #. module: website_blog
 #: model:ir.model,name:website_blog.model_blog_tag_category
 msgid "Blog Tag Category"
-msgstr "فئة علامة تصنيف المدونة "
+msgstr "فئة وسم المدونة"
 
 #. module: website_blog
 #: model:ir.actions.act_window,name:website_blog.action_tags
 msgid "Blog Tags"
-msgstr "علامات تصنيف المدونة "
+msgstr "وسوم المدونة"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_cover_post_fullwidth_design
@@ -682,7 +633,7 @@ msgstr "بإمكانه النشر "
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_tag__category_id
 msgid "Category"
-msgstr "الفئة "
+msgstr "فئة"
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_3
@@ -713,7 +664,7 @@ msgstr ""
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.posts_loop
 msgid "Close"
-msgstr "إغلاق "
+msgstr "اغلاق"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_regular_cover
@@ -756,7 +707,7 @@ msgstr "خصائص الغلاف"
 #. module: website_blog
 #: model_terms:ir.actions.act_window,help:website_blog.action_blog_post
 msgid "Create a new blog post"
-msgstr "إنشاء منشور مدونة جديد"
+msgstr "إنشاء مقال مدونة جديد"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__create_uid
@@ -777,12 +728,12 @@ msgstr "أنشئ في"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_searchbar_input_snippet_options
 msgid "Date (new to old)"
-msgstr "التاريخ (من الأحدث إلى الأقدم) "
+msgstr ""
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_searchbar_input_snippet_options
 msgid "Date (old to new)"
-msgstr "التاريخ (من الأقدم إلى الأحدث) "
+msgstr ""
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_searchbar_input_snippet_options
@@ -800,12 +751,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_blog.field_blog_tag__display_name
 #: model:ir.model.fields,field_description:website_blog.field_blog_tag_category__display_name
 msgid "Display Name"
-msgstr "اسم العرض "
+msgstr "الاسم المعروض"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_edit_options
 msgid "Duplicate"
-msgstr "استنساخ "
+msgstr "استنساخ"
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_2
@@ -825,7 +776,7 @@ msgstr ""
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_tags_display
 msgid "Edit in backend"
-msgstr "التحرير في الواجهة الخلفية "
+msgstr "تحرير في الجهة الخلفية"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_post_short
@@ -872,13 +823,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__message_follower_ids
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__message_follower_ids
 msgid "Followers"
-msgstr "المتابعين"
+msgstr "المتابعون"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__message_partner_ids
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__message_partner_ids
 msgid "Followers (Partners)"
-msgstr "المتابعين (الشركاء) "
+msgstr "المتابعون (الشركاء)"
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_4
@@ -928,7 +879,7 @@ msgstr "ابدأ"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.view_blog_post_search
 msgid "Group By"
-msgstr "التجميع حسب "
+msgstr "تجميع حسب"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__has_message
@@ -984,7 +935,7 @@ msgstr "المُعرف"
 #: model:ir.model.fields,help:website_blog.field_blog_post__message_needaction
 #: model:ir.model.fields,help:website_blog.field_blog_post__message_unread
 msgid "If checked, new messages require your attention."
-msgstr "إذا كان محددًا، فهناك رسائل جديدة عليك رؤيتها. "
+msgstr "إذا كان محددًا، فهناك رسائل جديدة تحتاج لرؤيتها."
 
 #. module: website_blog
 #: model:ir.model.fields,help:website_blog.field_blog_blog__message_has_error
@@ -1174,7 +1125,7 @@ msgstr ""
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_3
 msgid "Location"
-msgstr "الموقع "
+msgstr "المكان"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__message_main_attachment_id
@@ -1294,12 +1245,12 @@ msgstr "الاسم"
 #: code:addons/website_blog/static/src/js/website_blog.editor.js:0
 #, python-format
 msgid "New Blog Post"
-msgstr "منشور مدونة جديد "
+msgstr "مقال مدونة جديد"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.posts_loop
 msgid "No blog post yet."
-msgstr "لا توجد منشورات في المدونة بعد. "
+msgstr "لا توجد مقالات على المدونة حتى الآن."
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__visits
@@ -1354,7 +1305,7 @@ msgstr "عدد الإجراءات"
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__message_has_error_counter
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__message_has_error_counter
 msgid "Number of errors"
-msgstr "عدد الأخطاء "
+msgstr "عدد الاخطاء"
 
 #. module: website_blog
 #: model:ir.model.fields,help:website_blog.field_blog_blog__message_needaction_counter
@@ -1372,7 +1323,7 @@ msgstr "عدد الرسائل الحادث بها خطأ في التسليم"
 #: model:ir.model.fields,help:website_blog.field_blog_blog__message_unread_counter
 #: model:ir.model.fields,help:website_blog.field_blog_post__message_unread_counter
 msgid "Number of unread messages"
-msgstr "عدد الرسائل غير المقروءة "
+msgstr "عدد الرسائل الجديدة"
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_7
@@ -1461,17 +1412,17 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__blog_post_count
 #: model:ir.model.fields,field_description:website_blog.field_blog_tag__post_ids
 msgid "Posts"
-msgstr "المنشورات "
+msgstr "مشاركات"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_searchbar_input_snippet_options
 msgid "Publication Date"
-msgstr "تاريخ النشر "
+msgstr ""
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.posts_loop
 msgid "Published ("
-msgstr "تم النشر ("
+msgstr "منشور ("
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__published_date
@@ -1482,7 +1433,7 @@ msgstr "تاريخ النشر"
 #: model:mail.message.subtype,description:website_blog.mt_blog_blog_published
 #: model:mail.message.subtype,name:website_blog.mt_blog_blog_published
 msgid "Published Post"
-msgstr "المنشور الذي تمت مشاركته "
+msgstr "مشاركة منشورة"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.view_blog_post_form
@@ -1585,7 +1536,7 @@ msgstr ""
 #: code:addons/website_blog/static/src/js/tours/website_blog.js:0
 #, python-format
 msgid "Select this menu item to create a new blog post."
-msgstr "اختر هذا العنصر من القائمة لإنشاء منشور مدونة جديد. "
+msgstr "اختر هذا العنصر من القائمة لإنشاء مقال مدونة جديد."
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__seo_name
@@ -1604,7 +1555,7 @@ msgstr ""
 #: code:addons/website_blog/static/src/js/tours/website_blog.js:0
 #, python-format
 msgid "Set a blog post <b>cover</b>."
-msgstr "تعيين <b>غلاف</b> لمنشور المدونة. "
+msgstr "تعيين <b>غلاف</b> لمقال المدونة."
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_1
@@ -1745,37 +1696,37 @@ msgstr "العنوان الفرعي"
 #: model:ir.ui.menu,name:website_blog.menu_website_blog_tag_category_global
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_tag_category_tree
 msgid "Tag Categories"
-msgstr "فئات علامات التصنيف "
+msgstr "فئات الوسم"
 
 #. module: website_blog
 #: model:ir.actions.act_window,name:website_blog.action_tag_category
 msgid "Tag Category"
-msgstr "فئة علامة التصنيف "
+msgstr "فئة الوسم"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_tag_category_form
 msgid "Tag Category Form"
-msgstr "استمارة فئة علامة التصنيف "
+msgstr "نموذج فئة الوسم"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_tag_form
 msgid "Tag Form"
-msgstr "استمارة علامة التصنيف "
+msgstr "نموذج الوسم"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_tag_tree
 msgid "Tag List"
-msgstr "قائمة علامات التصنيف "
+msgstr "قائمة الوسم"
 
 #. module: website_blog
 #: model:ir.model.constraint,message:website_blog.constraint_blog_tag_category_name_uniq
 msgid "Tag category already exists !"
-msgstr "فئة علامة التصنيف موجودة بالفعل! "
+msgstr "فئة الوسم موجودة بالفعل!"
 
 #. module: website_blog
 #: model:ir.model.constraint,message:website_blog.constraint_blog_tag_name_uniq
 msgid "Tag name already exists !"
-msgstr "اسم علامة التصنيف موجود بالفعل! "
+msgstr "اسم الوسم موجود بالفعل!"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__tag_ids
@@ -1785,7 +1736,7 @@ msgstr "اسم علامة التصنيف موجود بالفعل! "
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_sidebar_blog_index_tags
 #: model_terms:ir.ui.view,arch_db:website_blog.snippet_options
 msgid "Tags"
-msgstr "علامات التصنيف "
+msgstr "الوسوم"
 
 #. module: website_blog
 #: code:addons/website_blog/models/website_snippet_filter.py:0
@@ -1853,8 +1804,8 @@ msgid ""
 "The blog post will be visible for your visitors as of this date on the "
 "website if it is set as published."
 msgstr ""
-"سوف يكون منشور المدونة ظاهرًا لزوارك على الموقع الإلكتروني ابتداءً من هذا "
-"التاريخ إذا تم تعيينه كمنشور تم نشره. "
+"سيكون مقال المدونة ظاهرًا لزوارك على الموقع ابتداءً من هذا التاريخ إذا تم "
+"تعيينه كمنشور."
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_2
@@ -2047,18 +1998,18 @@ msgstr "غير منشور ("
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__message_unread
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__message_unread
 msgid "Unread Messages"
-msgstr "الرسائل غير المقروءة "
+msgstr "الرسائل الجديدة"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__message_unread_counter
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__message_unread_counter
 msgid "Unread Messages Counter"
-msgstr "عدد الرسائل غير المقروءة "
+msgstr "عدد الرسائل الجديدة"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.post_heading
 msgid "Untitled Post"
-msgstr "منشور بلا عنوان "
+msgstr "مشاركة غير مسماة"
 
 #. module: website_blog
 #. openerp-web
@@ -2066,7 +2017,7 @@ msgstr "منشور بلا عنوان "
 #, python-format
 msgid "Use this icon to preview your blog post on <b>mobile devices</b>."
 msgstr ""
-"استخدم هذه الأيقونة لمعاينة كيف يبدو منشور مدونتك على <b>أجهزة الهاتف "
+"استخدم هذه الأيقونة لمعاينة كيف يبدو مقال مدونتك على <b>أجهزة الهاتف "
 "المحمول</b>."
 
 #. module: website_blog
@@ -2088,12 +2039,12 @@ msgstr "أدوات العرض"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.index
 msgid "Visible in all blogs' pages"
-msgstr "مرئي في كافة صفحات المدونات "
+msgstr "ظاهرة في جميع صفحات المدونات"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__website_published
 msgid "Visible on current website"
-msgstr "مرئي في الموقع الإلكتروني الحالي "
+msgstr "ظاهرة في الموقع الحالي"
 
 #. module: website_blog
 #: model:ir.model,name:website_blog.model_website
@@ -2105,13 +2056,13 @@ msgstr "الموقع الإلكتروني"
 #. module: website_blog
 #: model:ir.actions.act_url,name:website_blog.action_open_website
 msgid "Website Blogs"
-msgstr "مدونات الموقع الإلكتروني "
+msgstr "مدونات الموقع"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__website_message_ids
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__website_message_ids
 msgid "Website Messages"
-msgstr "رسائل الموقع الإلكتروني "
+msgstr "رسائل الموقع"
 
 #. module: website_blog
 #: model:ir.model,name:website_blog.model_website_snippet_filter
@@ -2121,41 +2072,41 @@ msgstr "عامل تصفية قصاصات الموقع الإلكتروني "
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__website_url
 msgid "Website URL"
-msgstr "رابط الموقع الإلكتروني "
+msgstr "رابط الموقع"
 
 #. module: website_blog
 #: model:ir.model.fields,help:website_blog.field_blog_blog__website_message_ids
 #: model:ir.model.fields,help:website_blog.field_blog_post__website_message_ids
 msgid "Website communication history"
-msgstr "سجل تواصل الموقع الإلكتروني "
+msgstr "سجل تواصل الموقع"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__website_meta_description
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__website_meta_description
 #: model:ir.model.fields,field_description:website_blog.field_blog_tag__website_meta_description
 msgid "Website meta description"
-msgstr "الوصف الدلالي في الموقع الإلكتروني "
+msgstr "الوصف الدلالي في الموقع"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__website_meta_keywords
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__website_meta_keywords
 #: model:ir.model.fields,field_description:website_blog.field_blog_tag__website_meta_keywords
 msgid "Website meta keywords"
-msgstr "الكلمات الدلالية في الموقع الإلكتروني "
+msgstr "الكلمات الدلالية بالموقع"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__website_meta_title
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__website_meta_title
 #: model:ir.model.fields,field_description:website_blog.field_blog_tag__website_meta_title
 msgid "Website meta title"
-msgstr "العنوان الدلالي في الموقع الإلكتروني "
+msgstr "العنوان الدلالي بالموقع"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__website_meta_og_img
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__website_meta_og_img
 #: model:ir.model.fields,field_description:website_blog.field_blog_tag__website_meta_og_img
 msgid "Website opengraph image"
-msgstr "صورة الرسم البياني المفتوح للموقع الإلكتروني "
+msgstr "صورة الرسم البياني المفتوح للموقع"
 
 #. module: website_blog
 #: model:blog.post,name:website_blog.blog_post_5
@@ -2228,7 +2179,7 @@ msgstr "مدونة. اضغط هنا للوصول للمدونة:"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.post_breadcrumbs
 msgid "breadcrumb"
-msgstr "التتبع "
+msgstr "فتات الخبز"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_regular_cover
@@ -2279,7 +2230,7 @@ msgstr ""
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_comment
 msgid "to leave a comment"
-msgstr "حتى تترك تعليقاً "
+msgstr "اترك تعليقًا"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.posts_loop
@@ -2296,7 +2247,7 @@ msgstr ""
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_regular_cover
 msgid "| No comments yet"
-msgstr "لا توجد تعليقات بعد "
+msgstr "لا توجد تعليقات"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.s_dynamic_snippet_options_template

@@ -4,25 +4,17 @@
 # 
 # Translators:
 # Muftiara Syuhada <muftiara.syuhada@gmail.com>, 2021
-# Abdul Munif Hanafi <amunifhanafi@gmail.com>, 2022
-# Abdi Pratama <abdipro@gmail.com>, 2022
-# Edy Kend <edy@azmall.co.id>, 2022
-# Ikhsanul Wirsa <iwirsa02@outlook.co.id>, 2022
-# William Surya Permana <zarambie_game@yahoo.com>, 2022
-# Altela Eleviansyah Pramardhika <altela_pramardhika@yahoo.com>, 2022
-# oon arfiandwi <oon.arfiandwi@gmail.com>, 2022
-# Bonny Useful <bonny.useful@gmail.com>, 2022
-# Ryanto The <ry.the77@gmail.com>, 2022
-# Martin Trigaux, 2022
-# Wahyu Setiawan <wahyusetiaaa@gmail.com>, 2022
+# Abdul Munif Hanafi <amunifhanafi@gmail.com>, 2021
+# Wahyu Setiawan <wahyusetiaaa@gmail.com>, 2021
+# Ryanto The <ry.the77@gmail.com>, 2021
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-24 08:20+0000\n"
+"POT-Creation-Date: 2021-11-08 07:16+0000\n"
 "PO-Revision-Date: 2021-09-14 12:27+0000\n"
-"Last-Translator: Wahyu Setiawan <wahyusetiaaa@gmail.com>, 2022\n"
+"Last-Translator: Ryanto The <ry.the77@gmail.com>, 2021\n"
 "Language-Team: Indonesian (https://www.transifex.com/odoo/teams/41243/id/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -93,7 +85,7 @@ msgstr ""
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 msgid "100%"
-msgstr "100%"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
@@ -116,7 +108,7 @@ msgstr ""
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 msgid "25%"
-msgstr "25%"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -145,7 +137,7 @@ msgstr ""
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 msgid "50%"
-msgstr "50%"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -312,7 +304,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "All"
-msgstr "Semua"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -352,7 +344,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Apply"
-msgstr "Terapkan"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -383,12 +375,12 @@ msgstr ""
 #. module: web_editor
 #: model:ir.model,name:web_editor.model_ir_attachment
 msgid "Attachment"
-msgstr "Lampiran"
+msgstr ""
 
 #. module: web_editor
 #: model:ir.model.fields,field_description:web_editor.field_ir_attachment__local_url
 msgid "Attachment URL"
-msgstr "URL Lampiran"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -396,7 +388,7 @@ msgstr "URL Lampiran"
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 #, python-format
 msgid "Auto"
-msgstr "Otomatis"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -410,12 +402,12 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Autoplay"
-msgstr "Autoplay"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_background_options
 msgid "Background"
-msgstr "Latar Belakang"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -423,7 +415,7 @@ msgstr "Latar Belakang"
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 #, python-format
 msgid "Background Color"
-msgstr "Warna Latar"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_background_options
@@ -452,7 +444,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/js/editor/snippets.editor.js:0
 #, python-format
 msgid "Block"
-msgstr "Blokir"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_background_options
@@ -506,7 +498,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/snippets.xml:0
 #, python-format
 msgid "Button"
-msgstr "Tombol"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -551,14 +543,14 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Close"
-msgstr "Tutup"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
 #: code:addons/web_editor/static/src/xml/editor.xml:0
 #, python-format
 msgid "Code"
-msgstr "Kode"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -569,7 +561,7 @@ msgstr "Kode"
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 #, python-format
 msgid "Color"
-msgstr "Warna"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -598,7 +590,7 @@ msgstr "Konfirmasi"
 #: code:addons/web_editor/static/src/js/editor/snippets.editor.js:0
 #, python-format
 msgid "Confirmation"
-msgstr "Konfirmasi"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
@@ -636,17 +628,17 @@ msgstr ""
 #: code:addons/web_editor/static/src/js/editor/snippets.options.js:0
 #, python-format
 msgid "Create"
-msgstr "Buat"
+msgstr ""
 
 #. module: web_editor
 #: model:ir.model.fields,field_description:web_editor.field_web_editor_converter_test_sub__create_uid
 msgid "Created by"
-msgstr "Dibuat oleh"
+msgstr ""
 
 #. module: web_editor
 #: model:ir.model.fields,field_description:web_editor.field_web_editor_converter_test_sub__create_date
 msgid "Created on"
-msgstr "Dibuat pada"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -664,7 +656,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:web_editor.snippets
 #, python-format
 msgid "Custom"
-msgstr "Khusus"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -694,7 +686,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Default"
-msgstr "Baku"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -730,7 +722,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 #, python-format
 msgid "Description"
-msgstr "Deskripsi"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -741,7 +733,7 @@ msgstr "Deskripsi"
 #: model_terms:ir.ui.view,arch_db:web_editor.snippets
 #, python-format
 msgid "Discard"
-msgstr "Abaikan"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippets
@@ -751,7 +743,7 @@ msgstr ""
 #. module: web_editor
 #: model:ir.model.fields,field_description:web_editor.field_web_editor_converter_test_sub__display_name
 msgid "Display Name"
-msgstr "Nama Tampilan"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -794,7 +786,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/snippets.xml:0
 #, python-format
 msgid "Duplicate Container"
-msgstr "Duplikat Kontainer"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
@@ -904,7 +896,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 #, python-format
 msgid "Filter"
-msgstr "Saring"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippets
@@ -969,14 +961,14 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/ace.xml:0
 #, python-format
 msgid "Format"
-msgstr "Format"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
 #: code:addons/web_editor/static/src/xml/backend.xml:0
 #, python-format
 msgid "Fullscreen"
-msgstr "Layar penuh"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -997,7 +989,7 @@ msgstr ""
 #. module: web_editor
 #: model:ir.model,name:web_editor.model_ir_http
 msgid "HTTP Routing"
-msgstr "HTTP routing"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1086,14 +1078,14 @@ msgstr ""
 #. module: web_editor
 #: model:ir.model.fields,field_description:web_editor.field_web_editor_converter_test_sub__id
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
 #: code:addons/web_editor/static/src/js/editor/snippets.editor.js:0
 #, python-format
 msgid "Icon"
-msgstr "Ikon"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1169,7 +1161,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_background_options
 #, python-format
 msgid "Image"
-msgstr "Gambar"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1238,7 +1230,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/js/editor/snippets.editor.js:0
 #, python-format
 msgid "Install"
-msgstr "Pasang"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1289,22 +1281,22 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Large"
-msgstr "Besar"
+msgstr ""
 
 #. module: web_editor
 #: model:ir.model.fields,field_description:web_editor.field_web_editor_converter_test_sub____last_update
 msgid "Last Modified on"
-msgstr "Terakhir diubah pada"
+msgstr ""
 
 #. module: web_editor
 #: model:ir.model.fields,field_description:web_editor.field_web_editor_converter_test_sub__write_uid
 msgid "Last Updated by"
-msgstr "Terakhir diperbarui oleh"
+msgstr ""
 
 #. module: web_editor
 #: model:ir.model.fields,field_description:web_editor.field_web_editor_converter_test_sub__write_date
 msgid "Last Updated on"
-msgstr "Terakhir diperbarui pada"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1312,24 +1304,24 @@ msgstr "Terakhir diperbarui pada"
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 #, python-format
 msgid "Left"
-msgstr "Kiri"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.colorpicker
 msgid "Linear"
-msgstr "Linier"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 msgid "Lines"
-msgstr "Baris"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
 #: code:addons/web_editor/static/src/js/wysiwyg/widgets/link.js:0
 #, python-format
 msgid "Link"
-msgstr "Tautan..."
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1350,7 +1342,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/js/wysiwyg/widgets/link.js:0
 #, python-format
 msgid "Link to"
-msgstr "Tautan ke:"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1389,7 +1381,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Medium"
-msgstr "Media"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1408,14 +1400,14 @@ msgstr ""
 #. module: web_editor
 #: model:ir.model.fields,field_description:web_editor.field_web_editor_converter_test_sub__name
 msgid "Name"
-msgstr "Nama"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
 #: code:addons/web_editor/static/src/js/editor/snippets.editor.js:0
 #, python-format
 msgid "No"
-msgstr "Tidak"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1447,13 +1439,20 @@ msgstr ""
 
 #. module: web_editor
 #. openerp-web
+#: code:addons/web_editor/static/lib/odoo-editor/src/powerbox/Powerbox.js:0
+#, python-format
+msgid "No results"
+msgstr ""
+
+#. module: web_editor
+#. openerp-web
 #: code:addons/web_editor/static/src/xml/editor.xml:0
 #: code:addons/web_editor/static/src/xml/snippets.xml:0
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 #, python-format
 msgid "None"
-msgstr "Tidak Ada"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1462,7 +1461,7 @@ msgstr "Tidak Ada"
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 #, python-format
 msgid "Normal"
-msgstr "Biasa"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1498,7 +1497,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Open in new window"
-msgstr "Buka di jendela baru"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1548,12 +1547,12 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Pictogram"
-msgstr "Piktogram"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.colorpicker
 msgid "Position"
-msgstr "Posisi"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1563,14 +1562,14 @@ msgstr "Posisi"
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Preview"
-msgstr "Pratinjau"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
 #: code:addons/web_editor/static/src/js/wysiwyg/widgets/link.js:0
 #, python-format
 msgid "Primary"
-msgstr "Primer"
+msgstr ""
 
 #. module: web_editor
 #: model:ir.model.fields.selection,name:web_editor.selection__web_editor_converter_test__selection_str__c
@@ -1590,14 +1589,14 @@ msgstr ""
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 msgid "Quality"
-msgstr "Kualitas"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
 #: code:addons/web_editor/static/src/xml/editor.xml:0
 #, python-format
 msgid "Quote"
-msgstr "Kutipan"
+msgstr ""
 
 #. module: web_editor
 #: model:ir.model,name:web_editor.model_ir_qweb
@@ -1642,7 +1641,7 @@ msgstr ""
 #. module: web_editor
 #: model:ir.model,name:web_editor.model_ir_qweb_field_image
 msgid "Qweb Field Image"
-msgstr "Kolom Gambar Qweb"
+msgstr ""
 
 #. module: web_editor
 #: model:ir.model,name:web_editor.model_ir_qweb_field_integer
@@ -1693,13 +1692,6 @@ msgstr ""
 
 #. module: web_editor
 #. openerp-web
-#: code:addons/web_editor/static/src/xml/image_link_tools.xml:0
-#, python-format
-msgid "Redirect the user elsewhere when he clicks on the media."
-msgstr ""
-
-#. module: web_editor
-#. openerp-web
 #: code:addons/web_editor/static/src/xml/editor.xml:0
 #, python-format
 msgid "Remove (DELETE)"
@@ -1711,7 +1703,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/snippets.xml:0
 #, python-format
 msgid "Remove Block"
-msgstr "Hapus Blok"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1795,7 +1787,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 #, python-format
 msgid "Reset"
-msgstr "Reset"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1860,7 +1852,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 #, python-format
 msgid "Right"
-msgstr "Kanan"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1909,7 +1901,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:web_editor.snippets
 #, python-format
 msgid "Save"
-msgstr "Simpan"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1937,7 +1929,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Search"
-msgstr "Pencarian"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1984,7 +1976,7 @@ msgstr ""
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippets
 msgid "Search..."
-msgstr "Cari ..."
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -1998,7 +1990,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/js/wysiwyg/widgets/media_dialog.js:0
 #, python-format
 msgid "Select a Media"
-msgstr "Pilih Media sebuah"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -2025,13 +2017,13 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 #, python-format
 msgid "Shadow"
-msgstr "Bayangan"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_background_options
 msgid "Shape"
-msgstr "Bentuk"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -2072,7 +2064,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 #, python-format
 msgid "Size"
-msgstr "Ukuran"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
@@ -2106,7 +2098,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Small"
-msgstr "Kecil"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -2132,7 +2124,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 #, python-format
 msgid "Style"
-msgstr "Gaya"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -2160,14 +2152,14 @@ msgstr ""
 #: code:addons/web_editor/static/src/js/common/ace.js:0
 #, python-format
 msgid "Template ID: %s"
-msgstr "ID Template:%s"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
 #: code:addons/web_editor/static/src/xml/snippets.xml:0
 #, python-format
 msgid "Text"
-msgstr "Teks"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -2205,8 +2197,6 @@ msgid ""
 "The image could not be deleted because it is used in the\n"
 "               following pages or views:"
 msgstr ""
-"Gambar tidak bisa dihapus karena digunakan di halaman berikut atau "
-"pandangan:"
 
 #. module: web_editor
 #. openerp-web
@@ -2227,7 +2217,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/snippets.xml:0
 #, python-format
 msgid "Theme"
-msgstr "Tema"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -2292,7 +2282,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/snippets.xml:0
 #, python-format
 msgid "Title"
-msgstr "Judul"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
@@ -2411,12 +2401,12 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/backend.xml:0
 #, python-format
 msgid "Translate"
-msgstr "Terjemahkan"
+msgstr ""
 
 #. module: web_editor
 #: model:ir.model,name:web_editor.model_ir_translation
 msgid "Translation"
-msgstr "Terjemahan"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -2431,7 +2421,14 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:web_editor.colorpicker
 #, python-format
 msgid "Type"
-msgstr "Jenis"
+msgstr ""
+
+#. module: web_editor
+#. openerp-web
+#: code:addons/web_editor/static/lib/odoo-editor/src/OdooEditor.js:0
+#, python-format
+msgid "Type \"/\" for commands"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -2490,7 +2487,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "Video"
-msgstr "Video"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -2556,7 +2553,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 msgid "Width"
-msgstr "Lebar"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -2583,7 +2580,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/js/editor/snippets.editor.js:0
 #, python-format
 msgid "Yes"
-msgstr "Ya"
+msgstr ""
 
 #. module: web_editor
 #. openerp-web
@@ -2653,7 +2650,7 @@ msgstr ""
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "and"
-msgstr "dan"
+msgstr ""
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_background_options
@@ -2727,13 +2724,6 @@ msgstr ""
 
 #. module: web_editor
 #. openerp-web
-#: code:addons/web_editor/static/src/xml/image_link_tools.xml:0
-#, python-format
-msgid "www.example.com"
-msgstr ""
-
-#. module: web_editor
-#. openerp-web
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "⌙ Autoconvert to relative link"
@@ -2793,7 +2783,6 @@ msgstr ""
 
 #. module: web_editor
 #. openerp-web
-#: code:addons/web_editor/static/src/xml/image_link_tools.xml:0
 #: code:addons/web_editor/static/src/xml/wysiwyg.xml:0
 #, python-format
 msgid "⌙ Open in new window"
@@ -2836,11 +2825,4 @@ msgstr ""
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_background_options
 msgid "⌙ Width"
-msgstr ""
-
-#. module: web_editor
-#. openerp-web
-#: code:addons/web_editor/static/src/xml/image_link_tools.xml:0
-#, python-format
-msgid "⌙ Your URL"
 msgstr ""

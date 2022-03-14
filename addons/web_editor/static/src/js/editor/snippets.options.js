@@ -3587,7 +3587,6 @@ const SnippetOptionWidget = Widget.extend({
                     // if editing the other).
                     const parts = backgroundImageCssToParts(styles['background-image']);
                     if (parts.gradient) {
-                        _restoreTransitions();
                         return parts.gradient;
                     }
                 }

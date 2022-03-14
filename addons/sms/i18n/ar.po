@@ -148,12 +148,12 @@ msgstr ""
 #. module: sms
 #: model:ir.model.fields,field_description:sms.field_res_partner__mobile_blacklisted
 msgid "Blacklisted Phone Is Mobile"
-msgstr "الهاتف الذي تم إدراجه في القائمة السوداء هو هاتف محمول "
+msgstr ""
 
 #. module: sms
 #: model:ir.model.fields,field_description:sms.field_res_partner__phone_blacklisted
 msgid "Blacklisted Phone is Phone"
-msgstr "الهاتف الذي تم إدراجه في القائمة السوداء هو هاتف "
+msgstr ""
 
 #. module: sms
 #: model:ir.model.fields,field_description:sms.field_sms_sms__body
@@ -171,7 +171,7 @@ msgstr "شراء رصيد"
 #: code:addons/sms/models/sms_api.py:0
 #, python-format
 msgid "Buy credits."
-msgstr "شراء رصيد. "
+msgstr ""
 
 #. module: sms
 #: model_terms:ir.ui.view,arch_db:sms.sms_cancel
@@ -366,8 +366,6 @@ msgid ""
 "Field used to store sanitized phone number. Helps speeding up searches and "
 "comparisons."
 msgstr ""
-"حقل مُستخدَم لتخزين أرقام الهواتف السليمة، مما يساعد على تسريع عمليات البحث "
-"والمقارنات. "
 
 #. module: sms
 #: model:ir.model.fields,help:sms.field_sms_template__copyvalue
@@ -488,8 +486,6 @@ msgid ""
 "If the sanitized phone number is on the blacklist, the contact won't receive"
 " mass mailing sms anymore, from any list"
 msgstr ""
-"إذا كان رقم الهاتف السليم في القائمة السوداء، لن تستلم جهة الاتصال الرسائل "
-"النصية القصيرة الجماعية من أي قائمة بعد الآن "
 
 #. module: sms
 #: model_terms:ir.ui.view,arch_db:sms.sms_cancel
@@ -516,9 +512,6 @@ msgid ""
 "distinguish which number is blacklisted             when there is both a "
 "mobile and phone field in a model."
 msgstr ""
-"يشير إلى إذا ما كان رقم الهاتف السليم المدرج في القائمة السوداء أم لا.  "
-"يساعد في تمييز أي الأرقام تم إدراجها في القائمة السوداء عندما يمون هناك "
-"حقلان لرقم الهاتف والهاتف المحمول في إحدى النماذج. "
 
 #. module: sms
 #: model:ir.model.fields,help:sms.field_res_partner__phone_blacklisted
@@ -527,9 +520,6 @@ msgid ""
 "distinguish which number is blacklisted             when there is both a "
 "mobile and phone field in a model."
 msgstr ""
-"يشير إلى إذا ما كان رقم الهاتف السليم رقم هاتف أم لا. يساعد في تمييز أي "
-"الأرقام تم إدراجها في القائمة السوداء عندما يكون هناك حقلان لرقم الهاتف "
-"والهاتف المحمول في أحد النماذج. "
 
 #. module: sms
 #: model:ir.model.fields,help:sms.field_sms_composer__comment_single_recipient
@@ -786,12 +776,12 @@ msgstr ""
 #. module: sms
 #: model:ir.model.fields,field_description:sms.field_res_partner__phone_sanitized_blacklisted
 msgid "Phone Blacklisted"
-msgstr "تمت إضافة رقم الهاتف إلى القائمة السوداء "
+msgstr ""
 
 #. module: sms
 #: model:ir.model.fields,field_description:sms.field_res_partner__phone_mobile_search
 msgid "Phone/Mobile"
-msgstr "الهاتف/الهاتف المتحرك "
+msgstr ""
 
 #. module: sms
 #: model:ir.model.fields,field_description:sms.field_sms_template__copyvalue
@@ -899,7 +889,7 @@ msgstr "إعادة المحاولة"
 #: model_terms:ir.ui.view,arch_db:sms.sms_tsms_view_form
 #, python-format
 msgid "SMS"
-msgstr "الرسائل النصية القصيرة "
+msgstr ""
 
 #. module: sms
 #: model:ir.model,name:sms.model_sms_api
@@ -982,7 +972,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:sms.field_ir_cron__sms_template_id
 #: model_terms:ir.ui.view,arch_db:sms.sms_template_view_form
 msgid "SMS Template"
-msgstr "قالب الرسائل النصية القصيرة "
+msgstr ""
 
 #. module: sms
 #: model:ir.model,name:sms.model_sms_template_preview
@@ -996,7 +986,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sms.sms_template_view_form
 #: model_terms:ir.ui.view,arch_db:sms.sms_template_view_tree
 msgid "SMS Templates"
-msgstr "قوالب الرسائل النصية القصيرة "
+msgstr ""
 
 #. module: sms
 #: model_terms:ir.ui.view,arch_db:sms.sms_template_preview_form
@@ -1014,7 +1004,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:sms.field_res_partner__phone_sanitized
 #: model:ir.model.fields,field_description:sms.field_sms_composer__sanitized_numbers
 msgid "Sanitized Number"
-msgstr "رقم هاتف سليم "
+msgstr ""
 
 #. module: sms
 #: model_terms:ir.ui.view,arch_db:sms.sms_sms_view_search
@@ -1058,7 +1048,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:sms.selection__ir_actions_server__state__sms
 #, python-format
 msgid "Send SMS Text Message"
-msgstr "إرسال رسالة نصية قصيرة "
+msgstr ""
 
 #. module: sms
 #: model:ir.model,name:sms.model_sms_composer
@@ -1211,8 +1201,6 @@ msgstr ""
 msgid ""
 "This phone number is blacklisted for SMS Marketing. Click to unblacklist."
 msgstr ""
-"لقد تم وضع هذا الرقم في القائمة السوداء للتسويق عبر الرسائل النصية القصيرة. "
-"انقر لإزالته من القائمة السوداء. "
 
 #. module: sms
 #: model:ir.model.fields,field_description:sms.field_mail_mail__message_type
@@ -1234,14 +1222,6 @@ msgid ""
 "- 'Add Followers': add followers to a record (Discuss)\n"
 "- 'Create Next Activity': create an activity (Discuss)"
 msgstr ""
-"القيم التالية متاحة لنوع إجراء الخادم:\n"
-"- 'تنفيذ كود بايثون': سوف يتم تنفيذ كتلة كود بايثون\n"
-"- 'إنشاء': إنشاء سجل جديد بقيم جديدة\n"
-"- 'تحديث سجل': تحديث قيم سجل\n"
-"- 'تنفيذ عدة إجراءات': قم بتحديد إجراء سوف يقوم بتشغيل إجراءات خادم متعددة أخرى\n"
-"- 'إرسال بريد إلكتروني': إرسال بريد إلكتروني تلقائياً (المناقشة)\n"
-"- 'إضافة متابعين': إضافة متابعين إلى سجل (المناقشة)\n"
-"- 'إنشاء النشاط التالي': إنشاء نشاط (المناقشة) "
 
 #. module: sms
 #: model:ir.model.fields,help:sms.field_sms_composer__recipient_single_number_itf

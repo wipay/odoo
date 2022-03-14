@@ -16,7 +16,6 @@ ATTENDEE_CONVERTER_O2M = {
     'accepted': 'accepted'
 }
 ATTENDEE_CONVERTER_M2O = {
-    'none': 'needsAction',
     'notResponded': 'needsAction',
     'tentativelyAccepted': 'tentative',
     'declined': 'declined',

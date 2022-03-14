@@ -183,11 +183,9 @@ class AssetsBundle(object):
     @func.lazy_property
     def last_modified(self):
         """Returns last modified date of linked files"""
-        assets = [WebAsset(self, url=f['url'], filename=f['filename'], inline=f['content'])
-            for f in self.files
-            if f['atype'] in ['text/sass', "text/scss", "text/less", "text/css", "text/javascript"]]
         return max(itertools.chain(
-            (asset.last_modified for asset in assets),
+            (asset.last_modified for asset in self.javascripts),
+            (asset.last_modified for asset in self.stylesheets),
         ))
 
     @func.lazy_property

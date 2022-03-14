@@ -64,7 +64,6 @@ var MediaWidget = Widget.extend({
 
 var SearchableMediaWidget = MediaWidget.extend({
     events: _.extend({}, MediaWidget.prototype.events || {}, {
-        'keydown .o_we_search': '_onSearchKeydown',
         'input .o_we_search': '_onSearchInput',
     }),
 
@@ -105,16 +104,6 @@ var SearchableMediaWidget = MediaWidget.extend({
     // Handlers
     //--------------------------------------------------------------------------
 
-    /**
-     * @private
-     */
-    _onSearchKeydown: function (ev) {
-        // If the template contains a form that has only one input, the enter
-        // will reload the page as the html 2.0 specify this behavior.
-        if (ev.originalEvent && (ev.originalEvent.code === "Enter" || ev.originalEvent.key === "Enter")) {
-            ev.preventDefault();
-        }
-    },
     /**
      * @private
      */

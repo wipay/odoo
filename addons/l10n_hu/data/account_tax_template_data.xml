@@ -204,22 +204,14 @@
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'plus_report_line_ids': [ref('tax_report_alap_fiz_koron_kivuli')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
+                })
             ]"/>
             <field name="refund_repartition_line_ids" eval="[(5,0,0),
                 (0,0, {
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'minus_report_line_ids': [ref('tax_report_alap_fiz_koron_kivuli')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
+                })
             ]"/>
         </record>
 
@@ -239,22 +231,14 @@
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'plus_report_line_ids': [ref('tax_report_alap_fiz_koron_kivuli')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
+                })
             ]"/>
             <field name="refund_repartition_line_ids" eval="[(5,0,0),
                 (0,0, {
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'minus_report_line_ids': [ref('tax_report_alap_fiz_koron_kivuli')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
+                })
             ]"/>
         </record>
 
@@ -310,20 +294,12 @@
                     'repartition_type': 'base',
                     'plus_report_line_ids': [ref('tax_report_alap_fiz_eu')],
                 }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
             ]"/>
             <field name="refund_repartition_line_ids" eval="[(5,0,0),
                 (0,0, {
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'minus_report_line_ids': [ref('tax_report_alap_fiz_eu')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
                 }),
             ]"/>
         </record>
@@ -345,20 +321,12 @@
                     'repartition_type': 'base',
                     'plus_report_line_ids': [ref('tax_report_alap_fiz_eu')],
                 }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
             ]"/>
             <field name="refund_repartition_line_ids" eval="[(5,0,0),
                 (0,0, {
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'minus_report_line_ids': [ref('tax_report_alap_fiz_eu')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
                 }),
             ]"/>
         </record>
@@ -380,20 +348,12 @@
                     'repartition_type': 'base',
                     'plus_report_line_ids': [ref('tax_report_alap_fiz_export')],
                 }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
             ]"/>
             <field name="refund_repartition_line_ids" eval="[(5,0,0),
                 (0,0, {
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'minus_report_line_ids': [ref('tax_report_alap_fiz_export')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
                 }),
             ]"/>
         </record>
@@ -415,20 +375,12 @@
                     'repartition_type': 'base',
                     'plus_report_line_ids': [ref('tax_report_alap_fiz_export')],
                 }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
             ]"/>
             <field name="refund_repartition_line_ids" eval="[(5,0,0),
                 (0,0, {
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'minus_report_line_ids': [ref('tax_report_alap_fiz_export')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
                 }),
             ]"/>
         </record>
@@ -755,22 +707,14 @@
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'plus_report_line_ids': [ref('tax_report_alap_viss_koron_kivuli')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
+                })
             ]"/>
             <field name="refund_repartition_line_ids" eval="[(5,0,0),
                 (0,0, {
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'minus_report_line_ids': [ref('tax_report_alap_viss_koron_kivuli')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
+                })
             ]"/>
         </record>
 
@@ -790,22 +734,14 @@
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'plus_report_line_ids': [ref('tax_report_alap_viss_koron_kivuli')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
+                })
             ]"/>
             <field name="refund_repartition_line_ids" eval="[(5,0,0),
                 (0,0, {
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'minus_report_line_ids': [ref('tax_report_alap_viss_koron_kivuli')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
+                })
             ]"/>
         </record>
 
@@ -826,20 +762,12 @@
                     'repartition_type': 'base',
                     'plus_report_line_ids': [ref('tax_report_alap_forditott')],
                 }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
             ]"/>
             <field name="refund_repartition_line_ids" eval="[(5,0,0),
                 (0,0, {
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'minus_report_line_ids': [ref('tax_report_alap_forditott')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
                 }),
             ]"/>
         </record>
@@ -1013,22 +941,14 @@
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'plus_report_line_ids': [ref('tax_report_alap_viss')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
+                })
             ]"/>
             <field name="refund_repartition_line_ids" eval="[(5,0,0),
                 (0,0, {
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'minus_report_line_ids': [ref('tax_report_alap_viss')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
+                })
             ]"/>
         </record>
 
@@ -1139,20 +1059,12 @@
                     'repartition_type': 'base',
                     'plus_report_line_ids': [ref('tax_report_alap_import')],
                 }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
-                }),
             ]"/>
             <field name="refund_repartition_line_ids" eval="[(5,0,0),
                 (0,0, {
                     'factor_percent': 100,
                     'repartition_type': 'base',
                     'minus_report_line_ids': [ref('tax_report_alap_import')],
-                }),
-                (0,0, {
-                    'factor_percent': 100,
-                    'repartition_type': 'tax',
                 }),
             ]"/>
         </record>

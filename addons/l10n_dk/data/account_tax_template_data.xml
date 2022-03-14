@@ -83,20 +83,12 @@
                 'repartition_type': 'base',
                 'plus_report_line_ids': [ref('l10n_dk.account_tax_report_line_section_b_product_eu')],
             }),
-            (0,0, {
-                'factor_percent': 100,
-                'repartition_type': 'tax',
-            }),
         ]"/>
         <field name="refund_repartition_line_ids" eval="[(5, 0, 0),
             (0,0, {
                 'factor_percent': 100,
                 'repartition_type': 'base',
                 'minus_report_line_ids': [ref('l10n_dk.account_tax_report_line_section_b_product_eu')],
-            }),
-            (0,0, {
-                'factor_percent': 100,
-                'repartition_type': 'tax',
             }),
         ]"/>
     </record>
@@ -113,20 +105,12 @@
                 'repartition_type': 'base',
                 'plus_report_line_ids': [ref('l10n_dk.account_tax_report_line_section_b_services')],
             }),
-            (0,0, {
-                'factor_percent': 100,
-                'repartition_type': 'tax',
-            }),
         ]"/>
         <field name="refund_repartition_line_ids" eval="[(5, 0, 0),
             (0,0, {
                 'factor_percent': 100,
                 'repartition_type': 'base',
                 'minus_report_line_ids': [ref('l10n_dk.account_tax_report_line_section_b_services')],
-            }),
-            (0,0, {
-                'factor_percent': 100,
-                'repartition_type': 'tax',
             }),
         ]"/>
     </record>
@@ -145,20 +129,12 @@
                 'repartition_type': 'base',
                 'plus_report_line_ids': [ref('l10n_dk.account_tax_report_line_section_c')],
             }),
-            (0,0, {
-                'factor_percent': 100,
-                'repartition_type': 'tax',
-            }),
         ]"/>
         <field name="refund_repartition_line_ids" eval="[(5, 0, 0),
             (0,0, {
                 'factor_percent': 100,
                 'repartition_type': 'base',
                 'minus_report_line_ids': [ref('l10n_dk.account_tax_report_line_section_c')],
-            }),
-            (0,0, {
-                'factor_percent': 100,
-                'repartition_type': 'tax',
             }),
         ]"/>
     </record>

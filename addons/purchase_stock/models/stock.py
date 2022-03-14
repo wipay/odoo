@@ -300,8 +300,7 @@ class Orderpoint(models.Model):
 
     def _get_orderpoint_procurement_date(self):
         date = super()._get_orderpoint_procurement_date()
-        if any(rule.action == 'buy' for rule in self.rule_ids):
-            date -= relativedelta(days=self.company_id.po_lead)
+        date -= relativedelta(days=self.company_id.po_lead)
         return date
 
 

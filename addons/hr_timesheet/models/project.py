@@ -3,7 +3,7 @@
 
 from collections import defaultdict
 
-from odoo import models, fields, api, _, _lt
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError, RedirectWarning
 
 
@@ -219,7 +219,7 @@ class Project(models.Model):
         if self.user_has_groups('hr_timesheet.group_hr_timesheet_user'):
             buttons.append({
                 'icon': 'clock-o',
-                'text': _lt('Recorded'),
+                'text': _('Recorded'),
                 'number': '%s %s' % (self.total_timesheet_time, self.env.company.timesheet_encode_uom_id.name),
                 'action_type': 'object',
                 'action': 'action_show_timesheets_by_employee_invoice_type',

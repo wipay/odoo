@@ -184,15 +184,13 @@ function factory(dependencies) {
             if (!this.messaging) {
                 return;
             }
-
-            if (this.messages.length && this.originThread && this.originThread.model === 'mail.channel') {
-                return this.messages.some(message => (
+            return this.messages.length
+                ? this.messages.some(message => (
                     message.canBeDeleted ||
                     (message.author && message.author === this.messaging.currentPartner) ||
                     (message.guestAuthor && message.guestAuthor === this.messaging.currentGuest)
-                ));
-            }
-            return true;
+                ))
+                : true;
         }
 
         /**

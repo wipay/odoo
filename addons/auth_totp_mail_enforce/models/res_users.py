@@ -89,12 +89,10 @@ class Users(models.Model):
         context = {}
         if request:
             geoip = request.session.geoip
-            device = request.httprequest.user_agent.platform
-            browser = request.httprequest.user_agent.browser
             context.update({
                 'location': f"{geoip['city']}, {geoip['country_name']}" if geoip else None,
-                'device': device and device.capitalize() or None,
-                'browser': browser and browser.capitalize() or None,
+                'device': request.httprequest.user_agent.platform.capitalize(),
+                'browser': request.httprequest.user_agent.browser.capitalize(),
                 'ip': request.httprequest.environ['REMOTE_ADDR'],
             })
         email_values = {

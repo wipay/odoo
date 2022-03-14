@@ -262,9 +262,7 @@ class DiscussController(http.Controller):
     def mail_attachment_delete(self, attachment_id, access_token=None, **kwargs):
         attachment_sudo = request.env['ir.attachment'].browse(int(attachment_id)).sudo().exists()
         if not attachment_sudo:
-            target = request.env.user.partner_id
-            request.env['bus.bus']._sendone(target, 'ir.attachment/delete', {'id': attachment_id})
-            return
+            raise NotFound()
         if not request.env.user.share:
             # Check through standard access rights/rules for internal users.
             attachment_sudo.sudo(False)._delete_and_notify()

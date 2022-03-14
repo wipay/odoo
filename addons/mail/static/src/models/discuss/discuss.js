@@ -55,7 +55,7 @@ function factory(dependencies) {
                 const channel = await this.async(() =>
                     this.messaging.models['mail.thread'].performRpcCreateChannel({
                         name,
-                        privacy: ui.item.special === 'private' ? 'private' : 'groups',
+                        privacy: ui.item.special,
                     })
                 );
                 channel.open();

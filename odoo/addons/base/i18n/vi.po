@@ -6,10 +6,11 @@
 # Thang Duong Bao <nothingctrl@gmail.com>, 2021
 # Dao Nguyen <trucdao.uel@gmail.com>, 2021
 # Martin Trigaux, 2021
+# thanhnguyen.icsc <thanhnguyen.icsc@gmail.com>, 2021
 # Duy BQ <duybq86@gmail.com>, 2021
 # Trinh Tran Thi Phuong <trinhttp@trobz.com>, 2021
+# Thin Tran <trvathin@gmail.com>, 2022
 # Vo Thanh Thuy, 2022
-# Nancy Momoland <thanhnguyen.icsc@gmail.com>, 2022
 # 
 msgid ""
 msgstr ""
@@ -17,7 +18,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-16 13:42+0000\n"
 "PO-Revision-Date: 2021-09-14 12:18+0000\n"
-"Last-Translator: Nancy Momoland <thanhnguyen.icsc@gmail.com>, 2022\n"
+"Last-Translator: Vo Thanh Thuy, 2022\n"
 "Language-Team: Vietnamese (https://www.transifex.com/odoo/teams/41243/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -718,9 +719,6 @@ msgid ""
 "        Allow clients to Schedule Appointments through the Portal\n"
 "    "
 msgstr ""
-"\n"
-"        Cho phép khách hàng lên lịch các cuộc hẹn thông qua trang web của bạn\n"
-"    "
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_mx_reports_closing
@@ -764,7 +762,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"        Xuất hoá đơn bảng chấm công ghi nhận từ vé hỗ trợ.\n"
+"        Tính phí thời gian biểu được ghi nhận cho phần hỗ trợ.\n"
 "    "
 
 #. module: base
@@ -908,7 +906,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"        Chuyển đổi vé hỗ trợ thành nhiệm vụ thực địa.\n"
+"        Chuyển đổi phiếu trợ giúp thành các công việc thuộc lĩnh vực dịch vụ.\n"
 "    "
 
 #. module: base
@@ -1166,9 +1164,9 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"        Đặc điểm dùng để quản lý công việc cho thuê sản phẩm (sản phẩm, báo giá, hóa đơn, ...)\n"
-"        Quản lý tình trạng của sản phẩm, cho thuê, sự chậm trễ\n"
-"        Quản lý thông báo của người dùng và người quản lý\n"
+"        Specify rentals of products (products, quotations, invoices, ...)\n"
+"        Manage status of products, rentals, delays\n"
+"        Manage user and manager notifications\n"
 "    "
 
 #. module: base
@@ -9522,7 +9520,7 @@ msgstr "1 Ngày"
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__base_enable_profiling_wizard__duration__hours_1
 msgid "1 Hour"
-msgstr "1 Giờ"
+msgstr ""
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__base_enable_profiling_wizard__duration__months_1
@@ -9567,7 +9565,7 @@ msgstr "4. %d, %m         ==&gt; 05, 12"
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__base_enable_profiling_wizard__duration__minutes_5
 msgid "5 Minutes"
-msgstr "5 Phút"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_lang_form
@@ -11427,7 +11425,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_helpdesk_fsm
 msgid "Allow generating fsm tasks from ticket"
-msgstr "Cho phép tạo nhiệm vụ thực địa từ vé"
+msgstr "Cho phép tạo nhiệm vụ fsm từ yêu cầu hỗ trợ"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_appointment
@@ -12654,8 +12652,6 @@ msgid ""
 "Below text serves as a suggestion and doesn’t engage Odoo S.A. "
 "responsibility."
 msgstr ""
-"Văn bản dưới đây đóng vai trò như một gợi ý và không liên quan đến trách "
-"nhiệm của Odoo S.A."
 
 #. module: base
 #: model:res.country,name:base.bj
@@ -12800,23 +12796,23 @@ msgstr "Brazilian - Kế toán"
 #: model:ir.module.module,description:base.module_iap_crm
 #: model:ir.module.module,summary:base.module_iap_crm
 msgid "Bridge between IAP and CRM"
-msgstr "Kết nối giữa IAP và CRM"
+msgstr "Bridge between IAP and CRM"
 
 #. module: base
 #: model:ir.module.module,description:base.module_iap_mail
 #: model:ir.module.module,summary:base.module_iap_mail
 msgid "Bridge between IAP and mail"
-msgstr "Kết nối giữa IAP và mail"
+msgstr "Bridge between IAP and mail"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_sale_account_accountant
 msgid "Bridge between Sale and Accounting"
-msgstr "Kết nối giữa Bán hàng và Kế toán"
+msgstr "Bridge between Sale and Accounting"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_stock_accountant
 msgid "Bridge between Stock and Accounting"
-msgstr "Kết nối giữa Kho và Kế toán"
+msgstr "Bridge between Stock and Accounting"
 
 #. module: base
 #: model:ir.module.module,description:base.module_project_account_asset
@@ -12980,7 +12976,7 @@ msgstr "Bulgaria"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_asset__bundle
 msgid "Bundle name"
-msgstr "Tên gói"
+msgstr ""
 
 #. module: base
 #: model:res.country,name:base.bf
@@ -13720,7 +13716,7 @@ msgstr "Đối tác thương mại"
 #. module: base
 #: model:ir.module.category,name:base.module_category_sales_commissions
 msgid "Commissions"
-msgstr "Hoa hồng"
+msgstr ""
 
 #. module: base
 #: model:res.country,name:base.km
@@ -13769,8 +13765,6 @@ msgid ""
 "Company %(company_name)s is not in the allowed companies for user "
 "%(user_name)s (%(company_allowed)s)."
 msgstr ""
-"Công ty %(company_name)s không nằm trong danh sách các công ty được cấp phép"
-" cho người dùng %(user_name)s (%(company_allowed)s)."
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.onboarding_company_step
@@ -13780,7 +13774,7 @@ msgstr "Dữ liệu công ty"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_company__company_details
 msgid "Company Details"
-msgstr "Chi tiết công ty"
+msgstr "Thông tin công ty"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_company__favicon
@@ -13809,7 +13803,7 @@ msgstr "Tên công ty"
 #: model_terms:ir.ui.view,arch_db:base.view_partner_form
 #: model_terms:ir.ui.view,arch_db:base.view_partner_simple_form
 msgid "Company Name..."
-msgstr "Tên công ty..."
+msgstr ""
 
 #. module: base
 #: model:ir.actions.act_window,name:base.ir_property_form
@@ -14041,7 +14035,7 @@ msgstr ""
 #: code:addons/base/models/ir_mail_server.py:0
 #, python-format
 msgid "Connection Test Successful!"
-msgstr "Kiểm tra kết nối thành công!"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_consolidation
@@ -14220,12 +14214,12 @@ msgstr "Kiểm tra chất lượng sản phẩm của bạn với thiết bị I
 #. module: base
 #: model:ir.module.module,summary:base.module_crm_helpdesk
 msgid "Convert Tickets from/to Leads"
-msgstr "Chuyển đổi phiếu từ / thành khách hàng tiềm năng"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,summary:base.module_helpdesk_mail_plugin
 msgid "Convert emails to Helpdesk Tickets."
-msgstr "Chuyển đổi email thành Phiếu hỗ trợ."
+msgstr ""
 
 #. module: base
 #: model:res.country,name:base.ck
@@ -14255,8 +14249,6 @@ msgid ""
 "Could not load your certificate / private key. \n"
 "%s"
 msgstr ""
-"Không thể tải chứng chỉ / khóa cá nhân của bạn. \n"
-"%s"
 
 #. module: base
 #: code:addons/base/models/res_partner.py:0
@@ -14396,7 +14388,7 @@ msgstr "Create _Menu"
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.action_res_bank_form
 msgid "Create a Bank"
-msgstr "Tạo một tài khoản ngân hàng"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.action_res_partner_bank_account_form
@@ -14406,7 +14398,7 @@ msgstr "Tạo một tài khoản ngân hàng"
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.action_partner_category_form
 msgid "Create a Contact Tag"
-msgstr "Từ khóa Liên hệ"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.action_partner_form
@@ -14416,7 +14408,7 @@ msgstr "Tạo một liên hệ trong sổ địa chỉ"
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.action_country_group
 msgid "Create a Country Group"
-msgstr "Tạo nhóm quốc gia"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_model_form
@@ -14426,12 +14418,12 @@ msgstr "Tạo một trình đơn"
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.action_country_state
 msgid "Create a State"
-msgstr "Tạo tỉnh/thành phố"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.action_partner_title_contact
 msgid "Create a Title"
-msgstr "Tạo một xưng hô"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.action_ui_view_custom
@@ -14461,7 +14453,7 @@ msgstr "Tạo một nhà cung cấp mới trong sổ địa chỉ của bạn"
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.res_partner_industry_action
 msgid "Create an Industry"
-msgstr "Tạo ngành nghề"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,summary:base.module_web_studio
@@ -15995,7 +15987,7 @@ msgstr "EDI for Mexico (Advanced Features)"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_pe_edi
 msgid "EDI for Peru"
-msgstr "EDI cho Peru"
+msgstr ""
 
 #. module: base
 #: model:res.country,vat_label:base.us
@@ -16026,12 +16018,12 @@ msgstr "Mỗi đối tượng đều có phải tên riêng không trùng."
 #: model:ir.module.module,description:base.module_sale_sms
 #: model:ir.module.module,summary:base.module_sale_sms
 msgid "Ease SMS integration with sales capabilities"
-msgstr "Dễ dàng tích hợp SMS với khả năng bán hàng"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_us_1099
 msgid "Easily export 1099 data for e-filing with a 3rd party."
-msgstr "Dễ dàng xuất dữ liệu 1099 để gửi hồ sơ điện tử với bên thứ ba."
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,description:base.module_data_cleaning
@@ -16056,7 +16048,7 @@ msgstr "Ecuador"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ec
 msgid "Ecuadorian Accounting"
-msgstr "Kế toán Ecuador"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_view_form
@@ -16290,22 +16282,22 @@ msgstr ""
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.enable_profiling_wizard
 msgid "Enable profiling"
-msgstr "Bật cấu hình"
+msgstr ""
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_base_enable_profiling_wizard__duration
 msgid "Enable profiling for"
-msgstr "Bật cấu hình cho"
+msgstr ""
 
 #. module: base
 #: model:ir.model,name:base.model_base_enable_profiling_wizard
 msgid "Enable profiling for some time"
-msgstr "Bật cấu hình trong một thời gian"
+msgstr ""
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_base_enable_profiling_wizard__expiration
 msgid "Enable profiling until"
-msgstr "Bật cấu hình cho đến khi"
+msgstr ""
 
 #. module: base
 #: model:res.partner.industry,name:base.res_partner_industry_D
@@ -16386,7 +16378,7 @@ msgstr "Giải trí"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_profile__entry_count
 msgid "Entry count"
-msgstr "Số lượt đăng ký"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_epson_printer_restaurant
@@ -16432,10 +16424,6 @@ msgid ""
 "%(fivelines)s\n"
 "%(error)s"
 msgstr ""
-"Lỗi khi xác thực chế độ xem gần:\n"
-"\n"
-"%(fivelines)s\n"
-"%(error)s"
 
 #. module: base
 #: code:addons/base/models/ir_ui_view.py:0
@@ -17653,15 +17641,13 @@ msgstr "Từ"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_mail_server__from_filter
 msgid "From Filter"
-msgstr "Từ bộ lọc"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.action_res_partner_bank_account_form
 msgid ""
 "From here you can manage all bank accounts linked to you and your contacts."
 msgstr ""
-"Từ đây, bạn có thể quản lý tất cả các tài khoản ngân hàng được liên kết với "
-"bạn và các địa chỉ liên hệ của bạn."
 
 #. module: base
 #: model:ir.module.module,summary:base.module_sale_management
@@ -18013,12 +17999,12 @@ msgstr "Thẻ quà tặng"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_pos_gift_card
 msgid "Gift Card for point of sales module"
-msgstr "Thẻ quà tặng cho mô-đun điểm bán hàng"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_sale_gift_card
 msgid "Gift Card for sales module"
-msgstr "Thẻ quà tặng cho mô-đun bán hàng"
+msgstr ""
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_rule__global
@@ -18058,7 +18044,7 @@ msgstr "Đi tới bảng cấu hình"
 #: code:addons/base/models/res_partner.py:0
 #, python-format
 msgid "Go to users"
-msgstr "Chuyển đến người dùng"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_google_calendar
@@ -18334,7 +18320,7 @@ msgstr "Khoảng cách tiêu đề"
 #. module: base
 #: model:ir.model.fields,help:base.field_res_company__company_details
 msgid "Header text displayed at the top of all reports."
-msgstr "Văn bản tiêu đề hiển thị ở đầu tất cả các báo cáo."
+msgstr ""
 
 #. module: base
 #: model:res.partner.industry,name:base.res_partner_industry_Q
@@ -18387,7 +18373,7 @@ msgstr "Helpdesk After Sales"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_helpdesk_fsm
 msgid "Helpdesk FSM"
-msgstr "Hỗ trợ thực địa"
+msgstr "Helpdesk FSM"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_helpdesk_fsm_sale
@@ -18448,7 +18434,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.category,description:base.module_category_sales_commissions
 msgid "Helps you handle commissions."
-msgstr "Giúp bạn xử lý tiền hoa hồng."
+msgstr ""
 
 #. module: base
 #: model:ir.module.category,description:base.module_category_accounting_accounting
@@ -19308,8 +19294,6 @@ msgid ""
 "Incorrect Password, try again or click on Forgot Password to reset your "
 "password."
 msgstr ""
-"Mật khẩu không chính xác, hãy thử lại hoặc nhấp vào Quên mật khẩu để cài lại"
-" mật khẩu của bạn."
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_model_fields__index
@@ -20562,7 +20546,7 @@ msgstr "Cập nhật lần cuối vào"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_currency_kanban
 msgid "Last update:"
-msgstr "Cập nhật lần cuối:"
+msgstr ""
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_module_module__installed_version
@@ -20782,7 +20766,7 @@ msgstr "Kiểm soát đường dẫn"
 #. module: base
 #: model:ir.module.module,summary:base.module_timesheet_grid_holidays
 msgid "Link between timesheet and time off"
-msgstr "Liên kết giữa bảng chấm công và thời gian nghỉ"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,summary:base.module_voip_crm
@@ -21033,7 +21017,7 @@ msgstr "Mail Mobile"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_mail_plugin
 msgid "Mail Plugin"
-msgstr "Plugin thư"
+msgstr ""
 
 #. module: base
 #: model:ir.model,name:base.model_ir_mail_server
@@ -21199,7 +21183,7 @@ msgstr "Quản lý thời gian nghỉ trong Phiếu lương"
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_work_entry_holidays_enterprise
 msgid "Manage Time Off in Payslips Enterprise"
-msgstr "Quản lý thời gian nghỉ trong bảng lương"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,summary:base.module_website_forum
@@ -23916,9 +23900,7 @@ msgstr "Hệ thống giúp bạn quản lý các hoạt động liên quan tới
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.action_partner_form
 msgid "Odoo helps you track all activities related to your contacts."
-msgstr ""
-"Hệ thống giúp bạn dễ dàng truy xuất và theo dõi tất cả các hoạt động liên "
-"quan đến các đối tác của bạn."
+msgstr "Odoo giúp bạn theo dõi tất cả hoạt động liên quan tới liên hệ. "
 
 #. module: base
 #: code:addons/base/models/ir_module.py:0
@@ -25236,12 +25218,12 @@ msgstr "Kế hoạch"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_planning_hr_skills
 msgid "Planning - Skills"
-msgstr "Kế hoạch - Kỹ năng"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_planning_contract
 msgid "Planning Contract"
-msgstr "Hợp đồng lập kế hoạch"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,summary:base.module_planning_hr_skills
@@ -25256,12 +25238,12 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_planning_contract
 msgid "Planning integration with contracts"
-msgstr "Kế hoạch tích hợp với các hợp đồng"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,summary:base.module_planning_holidays
 msgid "Planning integration with holidays"
-msgstr "Kế hoạch tích hợp với các ngày nghỉ"
+msgstr ""
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_pt
@@ -25603,7 +25585,7 @@ msgstr "Giáo sư"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.ir_profile_view_list
 msgid "Profile Session"
-msgstr "Hồ sơ"
+msgstr ""
 
 #. module: base
 #: model:ir.ui.menu,name:base.menu_ir_profile
@@ -25844,7 +25826,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_helpdesk_sale_timesheet
 msgid "Project, Helpdesk, Timesheet and Sale Orders"
-msgstr "Dự án, Hỗ trợ, Bảng chấm công và Đơn bán hàng"
+msgstr "Dự án, Trợ giúp, Chấm công và Đơn bán hàng"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_helpdesk_account
@@ -27026,7 +27008,7 @@ msgstr "SSL/TLS"
 #. module: base
 #: model_terms:res.company,invoice_terms_html:base.main_company
 msgid "STANDARD TERMS AND CONDITIONS OF SALE"
-msgstr "ĐIỀU KHOẢN VÀ ĐIỀU KIỆN CỦA BÁN HÀNG TIÊU CHUẨN"
+msgstr ""
 
 #. module: base
 #: model:res.country,name:base.bl
@@ -29129,10 +29111,6 @@ msgid ""
 "order to be valid, any derogation must be expressly agreed to in advance in "
 "writing."
 msgstr ""
-"Khách hàng từ bỏ các điều khoản và điều kiện tiêu chuẩn của riêng mình một "
-"cách rõ ràng, ngay cả khi chúng được soạn thảo sau các điều khoản và điều "
-"kiện bán hàng tiêu chuẩn này. Để có hiệu lực, bất kỳ sự phủ định nào phải "
-"được đồng ý trước bằng văn bản."
 
 #. module: base
 #: model:ir.model.constraint,message:base.constraint_res_country_code_uniq
@@ -30397,7 +30375,7 @@ msgstr "Trinidad và Tobago"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_config_settings_view_form
 msgid "Try searching for another keyword"
-msgstr "Thử tìm kiếm một từ khóa khác"
+msgstr ""
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__res_lang__week_start__2
@@ -32307,7 +32285,7 @@ msgstr "Bạn nên thử tiêu chí tìm kiếm khác."
 #. module: base
 #: model_terms:res.company,invoice_terms_html:base.main_company
 msgid "You should update this document to reflect your T&amp;C."
-msgstr "Bạn nên cập nhật tài liệu này để phản ánh T&amp;C."
+msgstr ""
 
 #. module: base
 #: code:addons/base/models/ir_module.py:0
@@ -32416,7 +32394,7 @@ msgstr "account_qr_code_sepa"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_asset__active
 msgid "active"
-msgstr "kích hoạt"
+msgstr ""
 
 #. module: base
 #: code:addons/models.py:0
@@ -32439,7 +32417,7 @@ msgstr "và"
 #. module: base
 #: model:ir.module.category,name:base.module_category_services_assets
 msgid "assets"
-msgstr "tài sản"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_partner_kanban_view
@@ -32464,7 +32442,7 @@ msgstr "bpost giao hàng"
 #. module: base
 #: model:ir.module.category,name:base.module_category_account_budget
 msgid "budget"
-msgstr "ngân sách"
+msgstr ""
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_model_fields__ttype__char
@@ -32517,7 +32495,7 @@ msgstr "hoàn thành"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_partner_category_form
 msgid "e.g. \"Consulting Services\""
-msgstr "ví dụ. \"Các dịch vụ tư vấn\""
+msgstr ""
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_partner_form
@@ -32528,7 +32506,7 @@ msgstr "ví dụ: BE0477472701"
 #: model_terms:ir.ui.view,arch_db:base.view_partner_form
 #: model_terms:ir.ui.view,arch_db:base.view_partner_simple_form
 msgid "e.g. Brandom Freeman"
-msgstr "ví dụ. Brandom Freeman"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_base_import_language
@@ -32538,12 +32516,12 @@ msgstr "ví dụ: tiếng Anh"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_country_group_form
 msgid "e.g. Europe"
-msgstr "ví dụ. Châu Âu"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_lang_form
 msgid "e.g. French"
-msgstr "ví dụ. người Pháp"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_users_form
@@ -32555,7 +32533,7 @@ msgstr "vd: John Doe"
 #: model_terms:ir.ui.view,arch_db:base.view_partner_form
 #: model_terms:ir.ui.view,arch_db:base.view_partner_simple_form
 msgid "e.g. Lumber Inc"
-msgstr "ví dụ. Lumber Inc"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_partner_form
@@ -32570,7 +32548,7 @@ msgstr "ví dụ: Ô."
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_company_form
 msgid "e.g. My Company"
-msgstr "ví dụ. Công ty của tôi"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_partner_form
@@ -32587,7 +32565,7 @@ msgstr "vd: Cập nhật số lượng đặt hàng"
 #: model_terms:ir.ui.view,arch_db:base.view_users_form
 #: model_terms:ir.ui.view,arch_db:base.view_users_simple_form
 msgid "e.g. email@yourcompany.com"
-msgstr "ví dụ. email@yourcompany.com"
+msgstr ""
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_base_import_language

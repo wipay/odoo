@@ -89,7 +89,7 @@ class AccountEdiFormat(models.Model):
 
             # Currency
             currency = self._retrieve_currency(_find_value('//cbc:DocumentCurrencyCode'))
-            if currency and currency.active:
+            if currency:
                 invoice_form.currency_id = currency
 
             # Incoterm
