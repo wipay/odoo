@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-16 13:18+0000\n"
+"POT-Creation-Date: 2022-01-24 08:19+0000\n"
 "PO-Revision-Date: 2021-09-14 12:23+0000\n"
 "Last-Translator: Erwin van der Ploeg <erwin@odooexperts.nl>, 2022\n"
 "Language-Team: Dutch (https://www.transifex.com/odoo/teams/41243/nl/)\n"
@@ -52,13 +52,14 @@ msgstr "%(activity_name)s: %(summary)s aan jou toegewezen"
 #: code:addons/mail/wizard/mail_wizard_invite.py:0
 #, python-format
 msgid "%(user_name)s invited you to follow %(document)s document: %(title)s"
-msgstr "%(user_name)s heb je uitgenodigd om %(document)s te volgen: %(title)s"
+msgstr ""
+"%(user_name)s heeft je uitgenodigd om %(document)s te volgen: %(title)s"
 
 #. module: mail
 #: code:addons/mail/wizard/mail_wizard_invite.py:0
 #, python-format
 msgid "%(user_name)s invited you to follow a new document."
-msgstr "%(user_name)s heb je uitgenodigd om een nieuwe document te volgen."
+msgstr "%(user_name)s heeft je uitgenodigd om een nieuwe document te volgen."
 
 #. module: mail
 #. openerp-web
@@ -202,10 +203,17 @@ msgstr "(origineel toegewezen aan"
 
 #. module: mail
 #. openerp-web
+#: code:addons/mail/static/src/models/thread/thread.js:0
+#, python-format
+msgid ", "
+msgstr ", "
+
+#. module: mail
+#. openerp-web
 #: code:addons/mail/static/src/components/composer/composer.xml:0
 #, python-format
 msgid ", enter to"
-msgstr ", stap binnen in"
+msgstr ", enter voor"
 
 #. module: mail
 #: model_terms:ir.ui.view,arch_db:mail.message_notification_email
@@ -508,12 +516,6 @@ msgid "<strong>Recommended Activities</strong>"
 msgstr "<strong>Aanbevolen activiteiten:</strong>"
 
 #. module: mail
-#: code:addons/mail/models/mail_channel.py:0
-msgid "A channel of type 'chat' cannot have more than two users."
-msgstr ""
-"Een kanaal van het type 'chat' mag niet meer dan twee gebruikers hebben."
-
-#. module: mail
 #: model:ir.model.fields,help:mail.field_mail_alias__alias_defaults
 #: model:ir.model.fields,help:mail.field_mail_channel__alias_defaults
 msgid ""
@@ -532,6 +534,13 @@ msgstr "Een busaanwezigheid moet een gebruiker of een gast hebben."
 #: model:ir.model.constraint,message:mail.constraint_mail_channel_partner_partner_or_guest_exists
 msgid "A channel member must be a partner or a guest."
 msgstr "Een kanaallid moet een partner of een gast zijn."
+
+#. module: mail
+#: code:addons/mail/models/mail_channel.py:0
+#, python-format
+msgid "A channel of type 'chat' cannot have more than two users."
+msgstr ""
+"Een kanaal van het type 'chat' mag niet meer dan twee gebruikers hebben."
 
 #. module: mail
 #: code:addons/mail/models/mail_channel.py:0
@@ -1422,7 +1431,14 @@ msgstr "CC"
 #: model:ir.model.fields,field_description:mail.field_mail_activity__chaining_type
 #: model:ir.model.fields,field_description:mail.field_mail_activity_type__chaining_type
 msgid "Chaining Type"
-msgstr "Type ketting"
+msgstr "Soort "
+
+#. module: mail
+#. openerp-web
+#: code:addons/mail/static/src/models/rtc_call_viewer/rtc_call_viewer.js:0
+#, python-format
+msgid "Change Layout"
+msgstr "Opmaak wijzigen"
 
 #. module: mail
 #. openerp-web
@@ -2557,9 +2573,9 @@ msgid ""
 "mass; only used when the reply is not logged in the original discussion "
 "thread."
 msgstr ""
-"E-mailadres waarnaar antwoorden worden doorgestuurd bij massale verzending "
-"van e-mails; alleen gebruikt als het antwoord niet is vastgelegd in de "
-"originele discussiethread."
+"E-mailadres waarnaar antwoorden worden doorgestuurd bij bulkverzending van "
+"e-mails; alleen gebruikt als het antwoord niet is vastgelegd in de originele"
+" discussiethread."
 
 #. module: mail
 #: model_terms:ir.actions.act_window,help:mail.mail_blacklist_action
@@ -3976,7 +3992,7 @@ msgstr "Log een interne notitie ..."
 #. module: mail
 #: model:ir.model.fields.selection,name:mail.selection__mail_compose_message__reply_to_mode__update
 msgid "Log in the original discussion thread"
-msgstr "Log in op de originele discussiethread"
+msgstr "Log in de originele discussiethread"
 
 #. module: mail
 #. openerp-web
@@ -5420,13 +5436,13 @@ msgstr ""
 #: code:addons/mail/models/res_users.py:0
 #, python-format
 msgid "Portal Access Granted"
-msgstr "Portaltoegang verleend"
+msgstr "Portaaltoegang verleend"
 
 #. module: mail
 #: code:addons/mail/models/res_users.py:0
 #, python-format
 msgid "Portal Access Revoked"
-msgstr "Portaltoegang ingetrokken"
+msgstr "Portaaltoegang ingetrokken"
 
 #. module: mail
 #: model:ir.model.fields.selection,name:mail.selection__mail_compose_message__composition_mode__mass_post
@@ -6191,7 +6207,10 @@ msgstr ""
 "overeenkomstige contactpersoon."
 
 #. module: mail
+#. openerp-web
+#: code:addons/mail/static/src/components/thread_icon/thread_icon.xml:0
 #: model:ir.model.fields.selection,name:mail.selection__mail_channel__public__groups
+#, python-format
 msgid "Selected group of users"
 msgstr "Geselecteerde groep van gebruikers"
 
@@ -6677,6 +6696,12 @@ msgid "Targeted model"
 msgstr "Doelmodel"
 
 #. module: mail
+#: model:ir.model.fields,field_description:mail.field_res_partner__vat
+#: model:ir.model.fields,field_description:mail.field_res_users__vat
+msgid "Tax ID"
+msgstr "BTW Nr"
+
+#. module: mail
 #: model:ir.model.fields,help:mail.field_mail_activity__has_recommended_activities
 msgid "Technical field for UX purpose"
 msgstr "Technisch veld voor UI doeleinden"
@@ -6766,7 +6791,7 @@ msgstr "Tekstbestand"
 #. module: mail
 #: model_terms:ir.ui.view,arch_db:mail.mail_bounce_catchall
 msgid "The"
-msgstr "De"
+msgstr "Het"
 
 #. module: mail
 #: code:addons/mail/models/ir_actions_server.py:0
@@ -6780,13 +6805,6 @@ msgstr "De waarde 'Vervaldatum in' kan niet negatief zijn."
 #, python-format
 msgid "The FullScreen mode was denied by the browser"
 msgstr "De modus Volledig scherm is geweigerd door de browser"
-
-#. module: mail
-#. openerp-web
-#: code:addons/mail/static/src/models/rtc_call_viewer/rtc_call_viewer.js:0
-#, python-format
-msgid "Change Layout"
-msgstr "Opmaak wijzigen"
 
 #. module: mail
 #: model:ir.model.fields,help:mail.field_res_partner__vat
@@ -7570,12 +7588,6 @@ msgstr ""
 " profiteren van een kant-en-klare e-mailserver (@ mijnbedrijf.odoo.com)."
 
 #. module: mail
-#: model:ir.model.fields,field_description:mail.field_res_partner__vat
-#: model:ir.model.fields,field_description:mail.field_res_users__vat
-msgid "VAT/Tax ID"
-msgstr "Btw-nummer"
-
-#. module: mail
 #. openerp-web
 #: code:addons/mail/static/src/components/attachment_viewer/attachment_viewer.xml:0
 #: code:addons/mail/static/src/xml/thread.xml:0
@@ -8141,7 +8153,7 @@ msgstr "bijv. waar.waar..f"
 #: code:addons/mail/static/src/components/composer/composer.xml:0
 #, python-format
 msgid "escape to"
-msgstr "ontsnap naar"
+msgstr "escape voor"
 
 #. module: mail
 #. openerp-web

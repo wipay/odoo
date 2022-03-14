@@ -1059,6 +1059,9 @@ export class OdooEditor extends EventTarget {
             this.historyApply(stepToApply.mutations);
         }
     }
+    collaborationSetClientId(id) {
+        this._collabClientId = id;
+    }
 
     onExternalHistorySteps(newSteps) {
         this.observerUnactive();
@@ -1496,6 +1499,7 @@ export class OdooEditor extends EventTarget {
         const result = this._protect(() => this._applyRawCommand(...args));
         this.sanitize();
         this.historyStep();
+        this._handleCommandHint();
         return result;
     }
     /**
@@ -2368,6 +2372,9 @@ export class OdooEditor extends EventTarget {
         this.observerUnactive();
         for (const hint of this.editable.querySelectorAll('.oe-hint')) {
             hint.classList.remove('oe-hint', 'oe-command-temporary-hint');
+            if (hint.classList.length === 0) {
+                hint.removeAttribute('class');
+            }
             hint.removeAttribute('placeholder');
         }
         this.cleanForSave();
@@ -2450,6 +2457,9 @@ export class OdooEditor extends EventTarget {
             if (hint.classList.contains('oe-command-temporary-hint') || !isEmptyBlock(hint)) {
                 this.observerUnactive();
                 hint.classList.remove('oe-hint', 'oe-command-temporary-hint');
+                if (hint.classList.length === 0) {
+                    hint.removeAttribute('class');
+                }
                 hint.removeAttribute('placeholder');
                 this.observerActive();
             }
@@ -2641,7 +2651,21 @@ export class OdooEditor extends EventTarget {
         const node = ev.target;
         // handle checkbox lists
         if (node.tagName == 'LI' && getListMode(node.parentElement) == 'CL') {
-            if (ev.offsetX < 0) {
+            const beforStyle = window.getComputedStyle(node, 'before');
+            const style1 = {
+                left: parseInt(beforStyle.getPropertyValue('left'), 10),
+                top: parseInt(beforStyle.getPropertyValue('top'), 10),
+            }
+            style1.right = style1.left + parseInt(beforStyle.getPropertyValue('width'), 10);
+            style1.bottom = style1.top + parseInt(beforStyle.getPropertyValue('height'), 10);
+
+            const isMouseInsideCheckboxBox =
+                ev.offsetX >= style1.left &&
+                ev.offsetX <= style1.right &&
+                ev.offsetY >= style1.top &&
+                ev.offsetY <= style1.bottom;
+
+            if (isMouseInsideCheckboxBox) {
                 toggleClass(node, 'o_checked');
                 ev.preventDefault();
                 this.historyStep();

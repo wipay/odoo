@@ -12,6 +12,9 @@
 # Arnau Ros, 2021
 # Susanna Pujol, 2021
 # jabelchi, 2021
+# Harcogourmet, 2022
+# ericrolo, 2022
+# Jonatan Gk, 2022
 # 
 msgid ""
 msgstr ""
@@ -19,7 +22,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 10:29+0000\n"
 "PO-Revision-Date: 2021-09-14 12:27+0000\n"
-"Last-Translator: jabelchi, 2021\n"
+"Last-Translator: Jonatan Gk, 2022\n"
 "Language-Team: Catalan (https://www.transifex.com/odoo/teams/41243/ca/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -230,7 +233,7 @@ msgstr ""
 #. module: website_event_exhibitor
 #: model_terms:ir.ui.view,arch_db:website_event_exhibitor.exhibitor_card
 msgid "Connect"
-msgstr ""
+msgstr "Connecta't"
 
 #. module: website_event_exhibitor
 #: model:ir.model.fields,field_description:website_event_exhibitor.field_event_sponsor__country_id
@@ -460,12 +463,12 @@ msgstr "Si està marcat, alguns missatges tenen un error d'entrega."
 #. module: website_event_exhibitor
 #: model:ir.model.fields,field_description:website_event_exhibitor.field_event_sponsor__image_128
 msgid "Image 128"
-msgstr ""
+msgstr "Imatge 128"
 
 #. module: website_event_exhibitor
 #: model:ir.model.fields,field_description:website_event_exhibitor.field_event_sponsor__image_256
 msgid "Image 256"
-msgstr ""
+msgstr "Image 256"
 
 #. module: website_event_exhibitor
 #: model:ir.model.fields,field_description:website_event_exhibitor.field_event_sponsor__website_image_url
@@ -602,7 +605,7 @@ msgstr "Nom"
 #. module: website_event_exhibitor
 #: model:ir.model.fields,field_description:website_event_exhibitor.field_event_sponsor__activity_calendar_event_id
 msgid "Next Activity Calendar Event"
-msgstr ""
+msgstr "Proper esdeveniment del calendari d'activitats"
 
 #. module: website_event_exhibitor
 #: model:ir.model.fields,field_description:website_event_exhibitor.field_event_sponsor__activity_date_deadline

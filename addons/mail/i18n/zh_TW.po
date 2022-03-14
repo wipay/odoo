@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-16 13:18+0000\n"
+"POT-Creation-Date: 2022-01-24 08:19+0000\n"
 "PO-Revision-Date: 2021-09-14 12:23+0000\n"
 "Last-Translator: 敬雲 林 <chingyun@yuanchih-consult.com>, 2022\n"
 "Language-Team: Chinese (Taiwan) (https://www.transifex.com/odoo/teams/41243/zh_TW/)\n"
@@ -200,6 +200,13 @@ msgstr "(從"
 #: model_terms:ir.ui.view,arch_db:mail.message_activity_done
 msgid "(originally assigned to"
 msgstr "(最初分配給"
+
+#. module: mail
+#. openerp-web
+#: code:addons/mail/static/src/models/thread/thread.js:0
+#, python-format
+msgid ", "
+msgstr ""
 
 #. module: mail
 #. openerp-web
@@ -495,11 +502,6 @@ msgid "<strong>Recommended Activities</strong>"
 msgstr "<strong>推薦的活動</strong>"
 
 #. module: mail
-#: code:addons/mail/models/mail_channel.py:0
-msgid "A channel of type 'chat' cannot have more than two users."
-msgstr ""
-
-#. module: mail
 #: model:ir.model.fields,help:mail.field_mail_alias__alias_defaults
 #: model:ir.model.fields,help:mail.field_mail_channel__alias_defaults
 msgid ""
@@ -516,6 +518,12 @@ msgstr "總線存在必須有用戶或訪客。"
 #: model:ir.model.constraint,message:mail.constraint_mail_channel_partner_partner_or_guest_exists
 msgid "A channel member must be a partner or a guest."
 msgstr "頻道成員必須是合作夥伴或訪客。"
+
+#. module: mail
+#: code:addons/mail/models/mail_channel.py:0
+#, python-format
+msgid "A channel of type 'chat' cannot have more than two users."
+msgstr ""
 
 #. module: mail
 #: code:addons/mail/models/mail_channel.py:0
@@ -1385,6 +1393,13 @@ msgstr "抄送"
 #: model:ir.model.fields,field_description:mail.field_mail_activity_type__chaining_type
 msgid "Chaining Type"
 msgstr "鍊式"
+
+#. module: mail
+#. openerp-web
+#: code:addons/mail/static/src/models/rtc_call_viewer/rtc_call_viewer.js:0
+#, python-format
+msgid "Change Layout"
+msgstr "更改佈局"
 
 #. module: mail
 #. openerp-web
@@ -4950,7 +4965,7 @@ msgid ""
 "Optional ID of a thread (record) to which all incoming messages will be "
 "attached, even if they did not reply to it. If set, this will disable the "
 "creation of new records completely."
-msgstr "所有的進來的信件都將附上一條線索（記錄）選配的ID，即使它們不曾回覆過它。如果設定了，這個將完全阻止新記錄的建立。"
+msgstr "所有的進來的信件都將附上一條追蹤（記錄）選配的ID，即使它們不曾回覆過它。如果設定了，這個將完全阻止新記錄的建立。"
 
 #. module: mail
 #: model:ir.model.fields,help:mail.field_mail_notification__mail_mail_id
@@ -5556,7 +5571,7 @@ msgstr "記錄"
 #: model:ir.model.fields,field_description:mail.field_mail_alias__alias_force_thread_id
 #: model:ir.model.fields,field_description:mail.field_mail_channel__alias_force_thread_id
 msgid "Record Thread ID"
-msgstr "記錄線索ID"
+msgstr "記錄追蹤ID"
 
 #. module: mail
 #: code:addons/mail/models/mail_message.py:0
@@ -6008,7 +6023,10 @@ msgid ""
 msgstr "選擇每個信件上的操作，並在需要時更正EMail地址。修改後的地址將儲存在相應的聯絡人上。"
 
 #. module: mail
+#. openerp-web
+#: code:addons/mail/static/src/components/thread_icon/thread_icon.xml:0
 #: model:ir.model.fields.selection,name:mail.selection__mail_channel__public__groups
+#, python-format
 msgid "Selected group of users"
 msgstr "選擇的使用者組"
 
@@ -6482,6 +6500,12 @@ msgid "Targeted model"
 msgstr "目標模型"
 
 #. module: mail
+#: model:ir.model.fields,field_description:mail.field_res_partner__vat
+#: model:ir.model.fields,field_description:mail.field_res_users__vat
+msgid "Tax ID"
+msgstr "稅ID"
+
+#. module: mail
 #: model:ir.model.fields,help:mail.field_mail_activity__has_recommended_activities
 msgid "Technical field for UX purpose"
 msgstr "用於UX目的技術欄位"
@@ -6577,13 +6601,6 @@ msgstr "'預計到期日'不能是以前的日期。"
 #, python-format
 msgid "The FullScreen mode was denied by the browser"
 msgstr "全屏模式被瀏覽器拒絕"
-
-#. module: mail
-#. openerp-web
-#: code:addons/mail/static/src/models/rtc_call_viewer/rtc_call_viewer.js:0
-#, python-format
-msgid "Change Layout"
-msgstr "更改佈局"
 
 #. module: mail
 #: model:ir.model.fields,help:mail.field_res_partner__vat
@@ -7330,12 +7347,6 @@ msgid ""
 msgstr ""
 "在社區和企業版本中，發送/接收電子信件需要使用自己的電子信件伺服器。線上使用者已受益於隨時可用的電子信件伺服器 "
 "(@mycompany.odoo.com)。"
-
-#. module: mail
-#: model:ir.model.fields,field_description:mail.field_res_partner__vat
-#: model:ir.model.fields,field_description:mail.field_res_users__vat
-msgid "VAT/Tax ID"
-msgstr "統一編號"
 
 #. module: mail
 #. openerp-web
